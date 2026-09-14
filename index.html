@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Demma · Réseau social d'échange africain</title>
+
+    <!-- Google Font & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <style>
+        /* ---------- RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: #f0f2f5;
+            color: #0a1628;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ---------- NAVBAR ---------- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 1px solid #e4e9f0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: #c0392b;
+            background: #f0e8e0;
+            padding: 10px;
+            border-radius: 14px;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo h1 span {
+            color: #c0392b;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        /* ---------- LANGUE DÉROULANTE (comme WhatsApp) ---------- */
+        .lang-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lang-btn {
+            background: #ffffff;
+            border: 1px solid #dce3ec;
+            border-radius: 40px;
+            padding: 8px 18px 8px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a2f4a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .lang-btn:hover {
+            border-color: #a0b4c8;
+            background: #f8faff;
+        }
+
+        .lang-btn i {
+            color: #5a6e85;
+        }
+
+        .lang-dropdown-content {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background: #ffffff;
+            min-width: 320px;
+            max-height: 380px;
+            overflow-y: auto;
+            border-radius: 20px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e4e9f0;
+            z-index: 999;
+            padding: 8px 0;
+        }
+
+        .lang-dropdown-content.show {
+            display: block;
+        }
+
+        .lang-dropdown-content .lang-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #0a1628;
+            cursor: pointer;
+            transition: 0.1s;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .lang-dropdown-content .lang-item:hover {
+            background: #f5f8ff;
+        }
+
+        .lang-dropdown-content .lang-item .country {
+            font-size: 12px;
+            color: #5a6e85;
+            font-weight: 400;
+        }
+
+        .lang-dropdown-content .lang-item i {
+            color: #c0392b;
+            font-size: 14px;
+        }
+
+        .lang-dropdown-content .lang-item .check {
+            color: #c0392b;
+            font-weight: 700;
+        }
+
+        /* ---------- BOUTONS CONNEXION / INSCRIPTION ---------- */
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #d0dae8;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #1a2f4a;
+            transition: 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline:hover {
+            background: #f0f4fc;
+            border-color: #aab8cc;
+        }
+
+        .btn-primary {
+            background: #0a1628;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #ffffff;
+            transition: 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #1a2f4a;
+            transform: scale(1.02);
+        }
+
+        /* ---------- HERO ---------- */
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 40px;
+            padding: 40px 0 50px;
+        }
+
+        .hero-text {
+            flex: 1 1 50%;
+        }
+
+        .hero-text .badge {
+            display: inline-block;
+            background: #c0392b;
+            color: white;
+            padding: 4px 18px;
+            border-radius: 60px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            margin-bottom: 16px;
+        }
+
+        .hero-text h2 {
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .hero-text h2 span {
+            color: #c0392b;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            color: #3a4f6a;
+            max-width: 520px;
+            margin-bottom: 28px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .hero-buttons .btn-primary {
+            padding: 14px 36px;
+            font-size: 16px;
+        }
+
+        .hero-buttons .btn-outline {
+            padding: 14px 36px;
+            font-size: 16px;
+        }
+
+        .hero-image {
+            flex: 1 1 40%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-image .illustration {
+            background: linear-gradient(145deg, #e8edf6, #dce3ee);
+            border-radius: 40px;
+            padding: 40px 30px;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        .hero-image .illustration i {
+            font-size: 72px;
+            color: #0a1628;
+            opacity: 0.7;
+            margin-bottom: 12px;
+        }
+
+        .hero-image .illustration h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0a1628;
+        }
+
+        .hero-image .illustration p {
+            color: #4a5f7a;
+            font-size: 14px;
+        }
+
+        /* ---------- OBJECTIFS ---------- */
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .section-sub {
+            text-align: center;
+            color: #4a5f7a;
+            margin-bottom: 36px;
+            font-size: 17px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 30px 24px;
+            border: 1px solid #e8eef6;
+            transition: 0.25s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #bccfdf;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        .card .icon {
+            font-size: 32px;
+            color: #c0392b;
+            margin-bottom: 12px;
+        }
+
+        .card h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .card p {
+            font-size: 15px;
+            color: #4a5f7a;
+            line-height: 1.6;
+        }
+
+        /* ---------- FOOTER ---------- */
+        .footer {
+            border-top: 1px solid #e4e9f0;
+            padding: 30px 0 24px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 14px;
+            color: #5a6e85;
+        }
+
+        .footer a {
+            color: #0a1628;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .footer a:hover {
+            color: #c0392b;
+        }
+
+        .footer .socials {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .footer .socials a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #5a6e85;
+            transition: 0.2s;
+        }
+
+        .footer .socials a:hover {
+            color: #0a1628;
+        }
+
+        .footer .socials a i {
+            font-size: 18px;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 768px) {
+            .hero-text h2 {
+                font-size: 30px;
+            }
+            .hero-text p {
+                font-size: 16px;
+            }
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .nav-right {
+                justify-content: center;
+            }
+            .lang-dropdown-content {
+                min-width: 280px;
+                right: auto;
+                left: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h2 {
+                font-size: 26px;
+            }
+            .hero-buttons {
+                flex-direction: column;
+            }
+            .hero-buttons .btn-primary,
+            .hero-buttons .btn-outline {
+                width: 100%;
+                justify-content: center;
+            }
+            .lang-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .nav-right {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-outline,
+            .btn-primary {
+                justify-content: center;
+            }
+            .footer {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .footer .socials {
+                justify-content: center;
+            }
+        }
+
+        /* scroll personnalisé pour la liste des langues */
+        .lang-dropdown-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .lang-dropdown-content::-webkit-scrollbar-track {
+            background: #f0f2f5;
+            border-radius: 10px;
+        }
+        .lang-dropdown-content::-webkit-scrollbar-thumb {
+            background: #c0c8d4;
+            border-radius: 10px;
+        }
+        .lang-dropdown-content::-webkit-scrollbar-thumb:hover {
+            background: #a0b0c0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ===== NAVBAR ===== -->
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-arrows-retweet"></i>
+                <h1>Demma<span>.</span></h1>
+            </div>
+
+            <div class="nav-right">
+                <!-- Langue déroulante -->
+                <div class="lang-dropdown">
+                    <button class="lang-btn" id="langToggle">
+                        <i class="fas fa-globe-africa"></i>
+                        <span>Langue</span>
+                        <i class="fas fa-chevron-down" style="font-size:12px;"></i>
+                    </button>
+
+                    <div class="lang-dropdown-content" id="langMenu">
+                        <!-- Les langues sont chargées via JavaScript ci-dessous -->
+                    </div>
+                </div>
+
+                <a href="#" class="btn-outline"><i class="fas fa-user"></i> Se connecter</a>
+                <a href="#" class="btn-primary"><i class="fas fa-user-plus"></i> Créer un compte</a>
+            </div>
+        </nav>
+
+        <!-- ===== HERO ===== -->
+        <section class="hero">
+            <div class="hero-text">
+                <div class="badge"><i class="fas fa-african-union"></i> Panafricain</div>
+                <h2>
+                    Échangez, partagez,<br />
+                    conservez votre <span>histoire</span>.
+                </h2>
+                <p>
+                    Demma est le premier réseau social africain de troc de produits digitaux
+                    et de mémoire collective. Rejoignez des milliers de créateurs,
+                    artistes et citoyens.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn-primary"><i class="fas fa-rocket"></i> Démarrer</a>
+                    <a href="#" class="btn-outline"><i class="fas fa-info-circle"></i> En savoir plus</a>
+                </div>
+            </div>
+
+            <div class="hero-image">
+                <div class="illustration">
+                    <i class="fas fa-handshake"></i>
+                    <h3>Le troc, nouvelle monnaie</h3>
+                    <p>Échangez vos créations (musique, design, code, formations) sans billets ni pièces.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== OBJECTIFS ===== -->
+        <h2 class="section-title">🎯 Nos Objectifs</h2>
+        <p class="section-sub">
+            Quatre piliers pour construire l'Afrique de demain.
+        </p>
+
+        <div class="cards-grid">
+            <div class="card">
+                <div class="icon"><i class="fas fa-exchange-alt"></i></div>
+                <h4>Échanges</h4>
+                <p>Troc de produits digitaux et physiques sans argent. Donnez ce que vous savez faire, recevez ce dont vous avez besoin.</p>
+            </div>
+            <div class="card">
+                <div class="icon"><i class="fas fa-info-circle"></i></div>
+                <h4>Informations</h4>
+                <p>Accédez à des données authentiques sur l'histoire, la culture, l'économie et la géographie de chaque région.</p>
+            </div>
+            <div class="card">
+                <div class="icon"><i class="fas fa-comments"></i></div>
+                <h4>Communication</h4>
+                <p>Messagerie intégrée, appels audio/vidéo, partage de fichiers pour échanger en toute simplicité.</p>
+            </div>
+            <div class="card">
+                <div class="icon"><i class="fas fa-database"></i></div>
+                <h4>Conservation</h4>
+                <p>Préservation de la mémoire collective : histoires, traditions, langues et savoir-faire africains.</p>
+            </div>
+        </div>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer">
+            <div>
+                &copy; 2026 <strong>Demma</strong> · Réseau social d'échange et mémoire collective
+            </div>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
+                <a href="#">À propos</a>
+                <a href="#">Contact</a>
+                <a href="#">Mentions légales</a>
+                <a href="#">Blog</a>
+                <div class="socials">
+                    <a href="#"><i class="fab fa-x-twitter"></i> X</a>
+                    <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+                    <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                    <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                    <a href="#"><i class="fab fa-tiktok"></i> TikTok</a>
+                    <a href="#"><i class="fab fa-pinterest"></i> Pinterest</a>
+                    <a href="#"><i class="fas fa-globe-africa"></i> Go Africa Online</a>
+                    <a href="#"><i class="fas fa-arrows-retweet"></i> Demma</a>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /container -->
+
+    <script>
+        // ============================================================
+        // 1. LISTE DES LANGUES AVEC PAYS (unique, sans doublons)
+        //    + ajout de Dendi, Ditammari, Yom
+        // ============================================================
+        const languages = [
+            // Afrique du Nord
+            { lang: "Arabe", country: "Algérie, Égypte, Libye, Maroc, Mauritanie, Soudan, Tunisie, Tchad" },
+            { lang: "Amazigh (Berbère)", country: "Maroc, Algérie, Libye, Tunisie, Mali, Niger" },
+            { lang: "Arabe égyptien", country: "Égypte" },
+            { lang: "Arabe marocain", country: "Maroc" },
+            { lang: "Arabe algérien", country: "Algérie" },
+            { lang: "Arabe tunisien", country: "Tunisie" },
+            { lang: "Arabe libyen", country: "Libye" },
+            { lang: "Arabe soudanais", country: "Soudan" },
+            { lang: "Arabe tchadien", country: "Tchad" },
+            { lang: "Hassanya", country: "Mauritanie, Mali, Sénégal" },
+
+            // Afrique de l'Ouest
+            { lang: "Wolof", country: "Sénégal, Gambie, Mauritanie" },
+            { lang: "Peul (Fulfuldé)", country: "Sénégal, Guinée, Mali, Niger, Nigeria, Cameroun, Bénin, Togo" },
+            { lang: "Bambara", country: "Mali, Burkina Faso, Côte d'Ivoire" },
+            { lang: "Dioula", country: "Côte d'Ivoire, Burkina Faso, Mali" },
+            { lang: "Sérère", country: "Sénégal" },
+            { lang: "Soninké", country: "Mali, Mauritanie, Sénégal, Gambie" },
+            { lang: "Mandinka", country: "Gambie, Guinée, Mali, Sénégal" },
+            { lang: "Yoruba", country: "Nigeria, Bénin, Togo" },
+            { lang: "Igbo", country: "Nigeria" },
+            { lang: "Haoussa", country: "Nigeria, Niger, Ghana, Cameroun" },
+            { lang: "Akan (Twi, Fanti)", country: "Ghana, Côte d'Ivoire" },
+            { lang: "Éwé", country: "Togo, Ghana, Bénin" },
+            { lang: "Fon", country: "Bénin, Togo" },
+            { lang: "Dendi", country: "Bénin, Niger, Nigeria" },
+            { lang: "Ditammari", country: "Bénin, Togo" },
+            { lang: "Yom", country: "Bénin" },
+
+            // Afrique Centrale
+            { lang: "Lingala", country: "RDC, Congo, Angola, RCA" },
+            { lang: "Kikongo", country: "RDC, Congo, Angola, Gabon" },
+            { lang: "Swahili", country: "RDC, Kenya, Tanzanie, Ouganda, Rwanda, Burundi, Mozambique, Somalie" },
+            { lang: "Tshiluba", country: "RDC" },
+            { lang: "Sango", country: "RCA, Tchad, RDC" },
+            { lang: "Fang", country: "Gabon, Guinée équatoriale, Cameroun, Congo" },
+            { lang: "Béti", country: "Cameroun, Gabon, Guinée équatoriale" },
+            { lang: "Douala", country: "Cameroun" },
+
+            // Afrique de l'Est
+            { lang: "Amharique", country: "Éthiopie" },
+            { lang: "Oromo", country: "Éthiopie, Kenya" },
+            { lang: "Tigrigna", country: "Érythrée, Éthiopie" },
+            { lang: "Somali", country: "Somalie, Djibouti, Éthiopie, Kenya" },
+            { lang: "Kinyarwanda", country: "Rwanda, RDC, Ouganda" },
+            { lang: "Kirundi", country: "Burundi, RDC, Tanzanie" },
+            { lang: "Ganda (Luganda)", country: "Ouganda" },
+            { lang: "Kikuyu", country: "Kenya" },
+            { lang: "Luo", country: "Kenya, Tanzanie, Ouganda" },
+
+            // Afrique Australe
+            { lang: "Zoulou", country: "Afrique du Sud, Eswatini, Lesotho, Zimbabwe" },
+            { lang: "Xhosa", country: "Afrique du Sud, Zimbabwe" },
+            { lang: "Afrikaans", country: "Afrique du Sud, Namibie" },
+            { lang: "Sesotho", country: "Lesotho, Afrique du Sud" },
+            { lang: "Setswana", country: "Botswana, Afrique du Sud" },
+            { lang: "Shona", country: "Zimbabwe, Mozambique, Zambie" },
+            { lang: "Nyanja (Chichewa)", country: "Malawi, Zambie, Zimbabwe, Mozambique" },
+
+            // Langues officielles importées
+            { lang: "Français", country: "Bénin, Burkina Faso, Cameroun, RCA, Congo, RDC, Côte d'Ivoire, Gabon, Guinée, Mali, Niger, Sénégal, Togo, Tchad, Madagascar, Comores, Maurice, Seychelles" },
+            { lang: "Anglais", country: "Nigeria, Ghana, Kenya, Tanzanie, Ouganda, Zambie, Zimbabwe, Afrique du Sud, Botswana, Lesotho, Eswatini, Namibie, Malawi, Sierra Leone, Liberia, Gambie" },
+            { lang: "Espagnol", country: "Guinée équatoriale" },
+            { lang: "Portugais", country: "Angola, Mozambique, Guinée-Bissau, Cap-Vert, São Tomé, Guinée équatoriale" },
+        ];
+
+        // ============================================================
+        // 2. FONCTION POUR GÉNÉRER LA LISTE DÉROULANTE
+        // ============================================================
+        function renderLanguages() {
+            const menu = document.getElementById('langMenu');
+            if (!menu) return;
+
+            // On trie par ordre alphabétique
+            const sorted = [...languages].sort((a, b) => a.lang.localeCompare(b.lang));
+
+            let html = '';
+            sorted.forEach(item => {
+                html += `
+                    <div class="lang-item" data-lang="${item.lang}">
+                        <span>
+                            <i class="fas fa-check-circle" style="color:#c0392b; margin-right:8px;"></i>
+                            ${item.lang}
+                            <span class="country">· ${item.country}</span>
+                        </span>
+                        <span class="check">✓</span>
+                    </div>
+                `;
+            });
+
+            menu.innerHTML = html;
+
+            // Ajout du comportement de sélection
+            document.querySelectorAll('.lang-item').forEach(el => {
+                el.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+                    const btn = document.getElementById('langToggle');
+                    // On met à jour le texte du bouton
+                    btn.innerHTML = `
+                        <i class="fas fa-globe-africa"></i>
+                        <span>${lang}</span>
+                        <i class="fas fa-chevron-down" style="font-size:12px;"></i>
+                    `;
+                    // On ferme le menu
+                    document.getElementById('langMenu').classList.remove('show');
+                });
+            });
+        }
+
+        // ============================================================
+        // 3. TOGGLE DU MENU DÉROULANT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            renderLanguages();
+
+            const toggle = document.getElementById('langToggle');
+            const menu = document.getElementById('langMenu');
+
+            toggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                menu.classList.toggle('show');
+            });
+
+            // Fermer le menu si on clique ailleurs
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.lang-dropdown')) {
+                    menu.classList.remove('show');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
