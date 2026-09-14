@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Demma · Vérification</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Inter", sans-serif;
+            background: #f0f2f5; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center; padding: 24px;
+        }
+        .card {
+            max-width: 460px; width: 100%; background: #ffffff;
+            border-radius: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            padding: 44px 36px;
+        }
+        .top-row { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+        .lang-dropdown { position: relative; display: inline-block; }
+        .lang-btn {
+            background: #ffffff; border: 1px solid #dce3ec;
+            border-radius: 40px; padding: 8px 18px;
+            font-size: 14px; font-weight: 500; color: #1a2f4a;
+            display: flex; align-items: center; gap: 8px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .lang-btn:hover { border-color: #a0b4c8; background: #f8faff; }
+        .lang-dropdown-content {
+            display: none; position: absolute; top: 110%; right: 0;
+            background: #ffffff; min-width: 180px;
+            border-radius: 16px; box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+            border: 1px solid #e4e9f0; z-index: 999; padding: 6px 0;
+        }
+        .lang-dropdown-content.show { display: block; }
+        .lang-item {
+            padding: 10px 18px; font-size: 14px;
+            cursor: pointer; display: flex;
+            justify-content: space-between; align-items: center;
+        }
+        .lang-item:hover { background: #f5f8ff; }
+        .lang-item .check { color: #c0392b; font-weight: 700; }
+
+        .logo {
+            text-align: center; margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; font-size: 26px; font-weight: 700;
+        }
+        .logo i {
+            color: #c0392b; background: #f0e8e0;
+            padding: 10px; border-radius: 14px; font-size: 24px;
+        }
+        .logo span { color: #c0392b; }
+        h2 { text-align: center; font-size: 22px; margin-bottom: 8px; color: #0a1628; }
+        p.sub { text-align: center; color: #5a6e85; font-size: 14px; margin-bottom: 28px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-weight: 600; font-size: 14px;
+            color: #0a1628; margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%; padding: 16px 18px; border: 1.5px solid #dce3ec;
+            border-radius: 16px; font-size: 22px; text-align: center;
+            letter-spacing: 8px; font-weight: 700; background: #fafcff;
+            transition: 0.2s; color: #0a1628;
+        }
+        .form-group input:focus {
+            outline: none; border-color: #c0392b;
+            box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.08); background: #ffffff;
+        }
+        .btn-validate {
+            width: 100%; padding: 16px; background: #0a1628;
+            border: none; border-radius: 60px; font-size: 16px;
+            font-weight: 700; color: #ffffff; cursor: pointer;
+            transition: 0.25s; display: flex; align-items: center;
+            justify-content: center; gap: 10px;
+        }
+        .btn-validate:hover { background: #1a2f4a; }
+        .btn-validate:disabled { opacity: 0.6; cursor: not-allowed; }
+        .form-error { color: #c0392b; font-size: 13px; margin-top: 6px; display: none; text-align: center; }
+        .form-error.show { display: block; }
+        .info-box {
+            background: #e3f2fd; color: #0d47a1; padding: 12px 18px;
+            border-radius: 14px; margin-bottom: 22px; font-size: 13px;
+            text-align: center; border: 1px solid #90caf9;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+
+        <div class="top-row">
+            <div id="langSelector"></div>
+        </div>
+
+        <div class="logo">
+            <i class="fas fa-shield-alt"></i>
+            <h1>Demma<span>.</span></h1>
+        </div>
+        <h2 data-i18n="ver_title">Vérification du numéro</h2>
+        <p class="sub" data-i18n="ver_sub">Saisissez le code à 6 chiffres reçu</p>
+
+        <div class="info-box">
+            <strong data-i18n="ver_info">Mode test : entrez le code 123456</strong>
+        </div>
+
+        <form id="verifyForm">
+            <div class="form-group">
+                <label data-i18n="ver_label">Code de vérification</label>
+                <input type="text" id="otpCode" maxlength="6" placeholder="······" inputmode="numeric" required />
+                <div class="form-error" id="otpError" data-i18n="err_phone">Code invalide ou expiré.</div>
+            </div>
+
+            <button type="submit" class="btn-validate" id="submitBtn">
+                <i class="fas fa-check-circle"></i> <span data-i18n="btn_validate_account">Valider mon compte</span>
+            </button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="i18n.js"></script>
+    <script>
+        renderLanguageSelector('langSelector');
+
+        const params = new URLSearchParams(window.location.search);
+        const phone = params.get('phone');
+        const form = document.getElementById('verifyForm');
+        const otpInput = document.getElementById('otpCode');
+        const otpError = document.getElementById('otpError');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            otpError.classList.remove('show');
+
+            const code = otpInput.value.trim();
+            if (code.length !== 6) {
+                otpError.classList.add('show');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const { data, error } = await supabaseClient.auth.verifyOtp({
+                    phone: '+' + phone,
+                    token: code,
+                    type: 'sms'
+                });
+                if (error) throw error;
+
+                alert('✅ ' + t('success_login'));
+                window.location.href = 'connexion.html';
+
+            } catch (error) {
+                console.error(error);
+                otpError.textContent = '❌ ' + error.message;
+                otpError.classList.add('show');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>' + t('btn_validate_account') + '</span>';
+            }
+        });
+    </script>
+</body>
+</html>
