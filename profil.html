@@ -687,8 +687,34 @@
         // ============================================================
         // DÉMARRAGE
         // ============================================================
-        appliquerLangue(langueActuelle);
-        chargerProfil();
+        // Affichage des erreurs à l'écran
+window.addEventListener('error', function(e) {
+    const loadingBox = document.getElementById('loadingBox');
+    if (loadingBox) {
+        loadingBox.innerHTML = 
+            '<div class="profile-card"><div class="loading-box">' +
+            '<i class="fas fa-exclamation-triangle" style="color:#c0392b;"></i>' +
+            '<p style="color:#c0392b;font-weight:bold;">ERREUR :</p>' +
+            '<p>' + e.message + '</p>' +
+            '<p style="margin-top:8px;font-size:12px;color:#5a6e85;">Fichier : ' + e.filename + '</p>' +
+            '<p style="font-size:12px;color:#5a6e85;">Ligne : ' + e.lineno + '</p>' +
+            '</div></div>';
+    }
+});
+
+appliquerLangue(langueActuelle);
+chargerProfil().catch(function(err) {
+    const loadingBox = document.getElementById('loadingBox');
+    if (loadingBox) {
+        loadingBox.innerHTML = 
+            '<div class="profile-card"><div class="loading-box">' +
+            '<i class="fas fa-exclamation-triangle" style="color:#c0392b;"></i>' +
+            '<p style="color:#c0392b;font-weight:bold;">ERREUR DE CHARGEMENT :</p>' +
+            '<p>' + err.message + '</p>' +
+            '</div></div>';
+    }
+});
+
     </script>
 
 </body>
