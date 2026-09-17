@@ -15,116 +15,56 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* ---- Bandeau de bienvenue ---- */
         .welcome {
             background: linear-gradient(135deg, #0a1628, #1a2f4a);
-            color: #fff;
-            border-radius: 28px;
-            padding: 28px 30px;
-            margin: 24px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
+            color: #fff; border-radius: 28px; padding: 28px 30px;
+            margin: 24px 0; display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 16px;
         }
-        .welcome h2 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .welcome p {
-            color: #a0b8d4;
-            font-size: 14px;
-        }
+        .welcome h2 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .welcome p { color: #a0b8d4; font-size: 14px; }
         .welcome .btn-create {
-            background: var(--rouge);
-            color: #fff;
-            border: none;
-            padding: 14px 26px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-family: inherit;
-            transition: 0.2s;
+            background: var(--rouge); color: #fff; border: none;
+            padding: 14px 26px; border-radius: 60px; font-weight: 700;
+            font-size: 15px; cursor: pointer; display: inline-flex;
+            align-items: center; gap: 10px; font-family: inherit; transition: 0.2s;
         }
-        .welcome .btn-create:hover {
-            background: #a03020;
-            transform: scale(1.02);
-        }
+        .welcome .btn-create:hover { background: #a03020; transform: scale(1.02); }
 
-        /* ---- Filtres ---- */
         .filters {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 24px;
-            overflow-x: auto;
-            padding-bottom: 6px;
+            display: flex; gap: 10px; flex-wrap: wrap;
+            margin-bottom: 24px; overflow-x: auto; padding-bottom: 6px;
         }
         .filter-btn {
-            background: #fff;
-            border: 1.5px solid var(--gris-clair);
-            border-radius: 40px;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--noir);
-            cursor: pointer;
-            white-space: nowrap;
-            font-family: inherit;
-            transition: 0.15s;
+            background: #fff; border: 1.5px solid var(--gris-clair);
+            border-radius: 40px; padding: 10px 20px; font-size: 14px;
+            font-weight: 500; color: var(--noir); cursor: pointer;
+            white-space: nowrap; font-family: inherit; transition: 0.15s;
         }
-        .filter-btn:hover {
-            border-color: #aab8cc;
-            background: #fafcff;
-        }
-        .filter-btn.active {
-            background: var(--noir);
-            color: #fff;
-            border-color: var(--noir);
-        }
+        .filter-btn:hover { border-color: #aab8cc; background: #fafcff; }
+        .filter-btn.active { background: var(--noir); color: #fff; border-color: var(--noir); }
         .filter-btn i { margin-right: 6px; font-size: 12px; }
 
-        /* ---- Grille de cartes ---- */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 60px;
+            gap: 20px; margin-bottom: 60px;
         }
         .card {
-            background: #fff;
-            border-radius: 24px;
-            padding: 22px 20px;
-            border: 1px solid #e8eef6;
-            transition: 0.2s;
+            background: #fff; border-radius: 24px; padding: 22px 20px;
+            border: 1px solid #e8eef6; transition: 0.2s;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
         }
         .card:hover {
             transform: translateY(-4px);
             box-shadow: 0 16px 32px rgba(0, 0, 0, 0.06);
             border-color: #bccfdf;
         }
-        .card-badges {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
+        .card-badges { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
         .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
+            display: inline-block; padding: 4px 12px; border-radius: 30px;
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
             letter-spacing: 0.3px;
         }
         .badge-demma { background: #e8f0fa; color: #1a4a7a; }
@@ -134,215 +74,188 @@
         .badge-donation { background: #f3e8ff; color: #6b21a8; }
 
         .card h3 {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--noir);
-            margin-bottom: 10px;
-            line-height: 1.3;
+            font-size: 18px; font-weight: 700; color: var(--noir);
+            margin-bottom: 10px; line-height: 1.3;
         }
         .card .detail {
-            font-size: 14px;
-            color: var(--gris-texte);
-            line-height: 1.6;
-            margin-bottom: 14px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical;
-            flex-grow: 1;
+            font-size: 14px; color: var(--gris-texte); line-height: 1.6;
+            margin-bottom: 14px; overflow: hidden;
+            display: -webkit-box; -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical; flex-grow: 1;
         }
         .card .meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 14px;
-            border-top: 1px solid var(--gris-tres-clair);
-            font-size: 13px;
-            color: var(--gris-texte);
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 14px; border-top: 1px solid var(--gris-tres-clair);
+            font-size: 13px; color: var(--gris-texte);
         }
-        .card .author {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .card .author { display: flex; align-items: center; gap: 8px; }
         .card .author-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--noir);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            background-size: cover;
-            background-position: center;
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--noir); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700;
+            background-size: cover; background-position: center;
         }
         .card .btn-open {
-            background: transparent;
-            border: 1.5px solid var(--gris-clair);
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--noir);
-            cursor: pointer;
-            font-family: inherit;
-            transition: 0.15s;
+            background: transparent; border: 1.5px solid var(--gris-clair);
+            padding: 6px 14px; border-radius: 30px; font-size: 12px;
+            font-weight: 600; color: var(--noir); cursor: pointer;
+            font-family: inherit; transition: 0.15s;
         }
-        .card .btn-open:hover {
-            background: var(--noir);
-            color: #fff;
-            border-color: var(--noir);
-        }
+        .card .btn-open:hover { background: var(--noir); color: #fff; border-color: var(--noir); }
 
-        /* ---- État vide ---- */
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            color: var(--gris-texte);
-        }
-        .empty-state i {
-            font-size: 56px;
-            color: #c5d2e0;
-            margin-bottom: 16px;
-            display: block;
-        }
-        .empty-state h3 {
-            color: var(--noir);
-            font-size: 20px;
-            margin-bottom: 8px;
-        }
+        .empty-state { text-align: center; padding: 80px 20px; color: var(--gris-texte); }
+        .empty-state i { font-size: 56px; color: #c5d2e0; margin-bottom: 16px; display: block; }
+        .empty-state h3 { color: var(--noir); font-size: 20px; margin-bottom: 8px; }
 
-        /* ---- Chargement ---- */
-        .loading-cards {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--gris-texte);
-        }
-        .loading-cards i {
-            font-size: 32px;
-            color: var(--rouge);
-            margin-bottom: 12px;
-            display: block;
-        }
+        .loading-cards { text-align: center; padding: 60px 20px; color: var(--gris-texte); }
+        .loading-cards i { font-size: 32px; color: var(--rouge); margin-bottom: 12px; display: block; }
 
-        /* ---- Modale (formulaire de création) ---- */
+        /* ---- MODALE ---- */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 22, 40, 0.7);
-            z-index: 2000;
-            padding: 20px;
-            overflow-y: auto;
+            display: none; position: fixed; inset: 0;
+            background: rgba(10, 22, 40, 0.7); z-index: 2000;
+            padding: 20px; overflow-y: auto;
         }
         .modal-overlay.show { display: block; }
 
         .modal {
-            background: #fff;
-            border-radius: 32px;
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 32px 28px;
-            position: relative;
+            background: #fff; border-radius: 32px; max-width: 700px;
+            margin: 20px auto; padding: 32px 28px; position: relative;
         }
         .modal-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: #f5f0f0;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 18px;
-            color: var(--rouge);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; top: 16px; right: 16px;
+            background: #f5f0f0; border: none; width: 40px; height: 40px;
+            border-radius: 50%; font-size: 18px; color: var(--rouge);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
         .modal h2 {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--noir);
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 22px; font-weight: 700; color: var(--noir);
+            margin-bottom: 24px; display: flex; align-items: center; gap: 10px;
         }
         .modal h2 i { color: var(--rouge); }
 
-        .modal .form-group {
-            margin-bottom: 18px;
-        }
+        .modal .form-group { margin-bottom: 18px; }
         .modal .form-group label {
-            display: block;
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--noir);
-            margin-bottom: 6px;
+            display: block; font-weight: 600; font-size: 14px;
+            color: var(--noir); margin-bottom: 6px;
         }
         .modal .form-group input[type="text"],
         .modal .form-group input[type="number"],
+        .modal .form-group input[type="url"],
         .modal .form-group textarea,
         .modal .form-group select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid var(--gris-clair);
-            border-radius: 14px;
-            font-size: 15px;
-            font-family: inherit;
-            background: #fafcff;
-            transition: 0.2s;
-            color: var(--noir);
+            width: 100%; padding: 12px 16px;
+            border: 1.5px solid var(--gris-clair); border-radius: 14px;
+            font-size: 15px; font-family: inherit; background: #fafcff;
+            transition: 0.2s; color: var(--noir);
         }
-        .modal .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+        .modal .form-group textarea { resize: vertical; min-height: 100px; }
         .modal .form-group input:focus,
         .modal .form-group textarea:focus,
         .modal .form-group select:focus {
-            outline: none;
-            border-color: var(--rouge);
-            box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.08);
-            background: #fff;
+            outline: none; border-color: var(--rouge);
+            box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.08); background: #fff;
         }
-        .modal .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
+        .modal .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        /* ---- Upload zones ---- */
+        .upload-section {
+            background: #f7faff; border-radius: 20px;
+            padding: 18px 16px; margin-bottom: 18px;
+            border: 1px solid #e8eef6;
         }
+        .upload-section h4 {
+            font-size: 15px; font-weight: 700; color: var(--noir);
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .upload-section h4 i { color: var(--rouge); }
+
+        .upload-zone {
+            border: 2px dashed #c5d2e0; border-radius: 16px;
+            padding: 24px 16px; text-align: center; cursor: pointer;
+            transition: 0.2s; background: #fff;
+        }
+        .upload-zone:hover {
+            border-color: var(--rouge); background: #fdf0f0;
+        }
+        .upload-zone input[type="file"] { display: none; }
+        .upload-zone i {
+            font-size: 28px; color: #a0b4c8; margin-bottom: 8px; display: block;
+        }
+        .upload-zone p { font-size: 13px; color: var(--gris-texte); }
+
+        .preview-list {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px;
+        }
+        .preview-item {
+            position: relative;
+            width: 80px; height: 80px;
+            border-radius: 12px; overflow: hidden;
+            background: #eef3f9;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid #dce3ec;
+        }
+        .preview-item img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .preview-item i {
+            font-size: 28px; color: var(--rouge);
+        }
+        .preview-item .name {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: rgba(10, 22, 40, 0.75); color: #fff;
+            font-size: 9px; padding: 2px 4px; text-align: center;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .preview-item .remove {
+            position: absolute; top: 2px; right: 2px;
+            background: var(--rouge); color: #fff; border: none;
+            width: 20px; height: 20px; border-radius: 50%;
+            font-size: 10px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .preview-item .loading {
+            position: absolute; inset: 0;
+            background: rgba(10, 22, 40, 0.6);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 18px;
+        }
+
+        /* ---- URLs ---- */
+        .url-input-row {
+            display: flex; gap: 8px; margin-bottom: 8px;
+        }
+        .url-input-row input { flex: 1; }
+        .url-input-row button {
+            background: var(--rouge); color: #fff; border: none;
+            width: 42px; border-radius: 12px; cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-add-url {
+            background: transparent; border: 1.5px solid var(--gris-clair);
+            padding: 8px 16px; border-radius: 30px; font-size: 13px;
+            font-weight: 600; color: var(--noir); cursor: pointer;
+            font-family: inherit; display: inline-flex;
+            align-items: center; gap: 6px;
+        }
+        .btn-add-url:hover { background: #f5f8ff; border-color: #aab8cc; }
+
         .modal .btn-submit {
-            width: 100%;
-            padding: 16px;
-            background: var(--noir);
-            border: none;
-            border-radius: 60px;
-            font-size: 16px;
-            font-weight: 700;
-            color: #fff;
-            cursor: pointer;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: 0.2s;
+            width: 100%; padding: 16px; background: var(--noir);
+            border: none; border-radius: 60px; font-size: 16px;
+            font-weight: 700; color: #fff; cursor: pointer;
+            font-family: inherit; display: flex; align-items: center;
+            justify-content: center; gap: 10px; transition: 0.2s;
+            margin-top: 10px;
         }
         .modal .btn-submit:hover { background: var(--noir-clair); }
         .modal .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .modal .msg {
-            padding: 12px 18px;
-            border-radius: 14px;
-            margin-top: 14px;
-            font-size: 14px;
-            font-weight: 500;
-            display: none;
+            padding: 12px 18px; border-radius: 14px;
+            margin-top: 14px; font-size: 14px; font-weight: 500; display: none;
         }
         .modal .msg.success { background: #e8f5e9; color: #1e5a2f; display: block; }
         .modal .msg.error { background: #fdecea; color: var(--rouge); display: block; }
@@ -359,7 +272,6 @@
 
     <div class="container">
 
-        <!-- NAVBAR -->
         <nav class="navbar">
             <div class="logo">
                 <i class="fas fa-arrows-rotate"></i>
@@ -388,7 +300,6 @@
             </div>
         </nav>
 
-        <!-- BANDEAU DE BIENVENUE -->
         <div class="welcome">
             <div>
                 <h2 data-i18n="welcome_hello">Bonjour 👋</h2>
@@ -400,7 +311,6 @@
             </button>
         </div>
 
-        <!-- FILTRES -->
         <div class="filters">
             <button class="filter-btn active" data-filter="all"><i class="fas fa-th"></i> <span data-i18n="filter_all">Tous</span></button>
             <button class="filter-btn" data-filter="demma"><i class="fas fa-shield-alt"></i> <span data-i18n="filter_demma">Cartes Demma</span></button>
@@ -410,16 +320,13 @@
             <button class="filter-btn" data-filter="donation"><i class="fas fa-gift"></i> <span data-i18n="filter_donation">Dons</span></button>
         </div>
 
-        <!-- CHARGEMENT -->
         <div class="loading-cards" id="loadingCards">
             <i class="fas fa-spinner fa-spin"></i>
             <p data-i18n="loading_cards">Chargement des cartes...</p>
         </div>
 
-        <!-- GRILLE -->
         <div class="cards-grid" id="cardsGrid" style="display:none;"></div>
 
-        <!-- ÉTAT VIDE -->
         <div class="empty-state" id="emptyState" style="display:none;">
             <i class="fas fa-box-open"></i>
             <h3 data-i18n="empty_title">Aucune carte pour l'instant</h3>
@@ -437,7 +344,7 @@
     </div>
 
     <!-- ============================================
-         MODALE : Création de carte
+         MODALE CRÉATION DE CARTE (avec uploads)
          ============================================ -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
@@ -503,6 +410,59 @@
                     </div>
                 </div>
 
+                <!-- ============ IMAGES ============ -->
+                <div class="upload-section">
+                    <h4><i class="fas fa-images"></i> <span data-i18n="section_images">Images (illimitées)</span></h4>
+                    <label class="upload-zone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p data-i18n="upload_click">Cliquez pour ajouter des images</p>
+                        <input type="file" id="uploadImages" accept="image/*" multiple />
+                    </label>
+                    <div class="preview-list" id="previewImages"></div>
+                </div>
+
+                <!-- ============ VIDÉOS ============ -->
+                <div class="upload-section">
+                    <h4><i class="fas fa-video"></i> <span data-i18n="section_videos">Vidéos (illimitées)</span></h4>
+                    <label class="upload-zone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p data-i18n="upload_click">Cliquez pour ajouter des vidéos</p>
+                        <input type="file" id="uploadVideos" accept="video/*" multiple />
+                    </label>
+                    <div class="preview-list" id="previewVideos"></div>
+                </div>
+
+                <!-- ============ AUDIOS ============ -->
+                <div class="upload-section">
+                    <h4><i class="fas fa-headphones"></i> <span data-i18n="section_audios">Audios (illimités)</span></h4>
+                    <label class="upload-zone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p data-i18n="upload_click">Cliquez pour ajouter des audios</p>
+                        <input type="file" id="uploadAudios" accept="audio/*" multiple />
+                    </label>
+                    <div class="preview-list" id="previewAudios"></div>
+                </div>
+
+                <!-- ============ DOCUMENTS ============ -->
+                <div class="upload-section">
+                    <h4><i class="fas fa-file-alt"></i> <span data-i18n="section_docs">Documents (PDF, Word, Excel...)</span></h4>
+                    <label class="upload-zone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p data-i18n="upload_click">Cliquez pour ajouter des documents</p>
+                        <input type="file" id="uploadDocs" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" multiple />
+                    </label>
+                    <div class="preview-list" id="previewDocs"></div>
+                </div>
+
+                <!-- ============ URLs ============ -->
+                <div class="upload-section">
+                    <h4><i class="fas fa-link"></i> <span data-i18n="section_urls">Liens externes (illimités)</span></h4>
+                    <div id="urlsContainer"></div>
+                    <button type="button" class="btn-add-url" id="btnAddUrl">
+                        <i class="fas fa-plus"></i> <span data-i18n="add_url">Ajouter un lien</span>
+                    </button>
+                </div>
+
                 <button type="submit" class="btn-submit" id="submitBtn">
                     <i class="fas fa-check"></i>
                     <span data-i18n="btn_submit">Publier la carte</span>
@@ -518,7 +478,7 @@
 
     <script>
         // ============================================================
-        // TRADUCTIONS
+        // TRADUCTIONS (version allégée, on garde l'essentiel)
         // ============================================================
         const TRADUCTIONS = {
             fr: {
@@ -526,12 +486,8 @@
                 welcome_hello: "Bonjour 👋",
                 welcome_sub: "Découvrez les cartes de la communauté Demma",
                 btn_create: "Créer une carte",
-                filter_all: "Tous",
-                filter_demma: "Cartes Demma",
-                filter_free: "Libres",
-                filter_coded: "Codées",
-                filter_paid: "Payant",
-                filter_donation: "Dons",
+                filter_all: "Tous", filter_demma: "Cartes Demma", filter_free: "Libres",
+                filter_coded: "Codées", filter_paid: "Payant", filter_donation: "Dons",
                 loading_cards: "Chargement des cartes...",
                 empty_title: "Aucune carte pour l'instant",
                 empty_sub: "Soyez le premier à partager une carte !",
@@ -550,14 +506,21 @@
                 cat_education: "Éducation", cat_sante: "Santé", cat_technologie: "Technologie",
                 cat_autre: "Autre",
                 yes: "Oui", no: "Non",
+                section_images: "Images (illimitées)",
+                section_videos: "Vidéos (illimitées)",
+                section_audios: "Audios (illimités)",
+                section_docs: "Documents (PDF, Word, Excel...)",
+                section_urls: "Liens externes (illimités)",
+                upload_click: "Cliquez pour ajouter des fichiers",
+                add_url: "Ajouter un lien",
                 btn_submit: "Publier la carte",
                 msg_success: "Carte publiée avec succès !",
                 msg_loading: "Publication...",
-                msg_error: "Erreur lors de la publication.",
                 err_titre: "Veuillez entrer un titre.",
                 err_detail: "Veuillez entrer un aperçu.",
                 err_supabase: "Supabase non initialisé.",
-                err_no_session: "Vous devez être connecté."
+                err_no_session: "Vous devez être connecté.",
+                uploading: "Envoi..."
             },
             en: {
                 profile: "My profile", home: "Home",
@@ -584,14 +547,21 @@
                 cat_education: "Education", cat_sante: "Health", cat_technologie: "Technology",
                 cat_autre: "Other",
                 yes: "Yes", no: "No",
+                section_images: "Images (unlimited)",
+                section_videos: "Videos (unlimited)",
+                section_audios: "Audios (unlimited)",
+                section_docs: "Documents (PDF, Word, Excel...)",
+                section_urls: "External links (unlimited)",
+                upload_click: "Click to add files",
+                add_url: "Add a link",
                 btn_submit: "Publish card",
                 msg_success: "Card published successfully!",
                 msg_loading: "Publishing...",
-                msg_error: "Error publishing.",
                 err_titre: "Please enter a title.",
                 err_detail: "Please enter a preview.",
                 err_supabase: "Supabase not initialized.",
-                err_no_session: "You must be logged in."
+                err_no_session: "You must be logged in.",
+                uploading: "Uploading..."
             },
             ar: {
                 profile: "ملفي الشخصي", home: "الرئيسية",
@@ -618,14 +588,21 @@
                 cat_education: "تعليم", cat_sante: "صحة", cat_technologie: "تكنولوجيا",
                 cat_autre: "أخرى",
                 yes: "نعم", no: "لا",
+                section_images: "صور (غير محدود)",
+                section_videos: "فيديو (غير محدود)",
+                section_audios: "صوتيات (غير محدود)",
+                section_docs: "مستندات (PDF، Word، Excel...)",
+                section_urls: "روابط خارجية (غير محدود)",
+                upload_click: "انقر لإضافة ملفات",
+                add_url: "إضافة رابط",
                 btn_submit: "نشر البطاقة",
                 msg_success: "تم نشر البطاقة بنجاح!",
                 msg_loading: "جاري النشر...",
-                msg_error: "خطأ أثناء النشر.",
                 err_titre: "الرجاء إدخال عنوان.",
                 err_detail: "الرجاء إدخال معاينة.",
                 err_supabase: "Supabase غير مهيأ.",
-                err_no_session: "يجب أن تكون مسجلاً."
+                err_no_session: "يجب أن تكون مسجلاً.",
+                uploading: "جاري الإرسال..."
             },
             es: {
                 profile: "Mi perfil", home: "Inicio",
@@ -652,14 +629,21 @@
                 cat_education: "Educación", cat_sante: "Salud", cat_technologie: "Tecnología",
                 cat_autre: "Otro",
                 yes: "Sí", no: "No",
+                section_images: "Imágenes (ilimitadas)",
+                section_videos: "Videos (ilimitados)",
+                section_audios: "Audios (ilimitados)",
+                section_docs: "Documentos (PDF, Word, Excel...)",
+                section_urls: "Enlaces externos (ilimitados)",
+                upload_click: "Haz clic para agregar archivos",
+                add_url: "Agregar un enlace",
                 btn_submit: "Publicar tarjeta",
                 msg_success: "¡Tarjeta publicada con éxito!",
                 msg_loading: "Publicando...",
-                msg_error: "Error al publicar.",
                 err_titre: "Por favor ingresa un título.",
                 err_detail: "Por favor ingresa una vista previa.",
                 err_supabase: "Supabase no inicializado.",
-                err_no_session: "Debes iniciar sesión."
+                err_no_session: "Debes iniciar sesión.",
+                uploading: "Subiendo..."
             }
         };
 
@@ -675,8 +659,6 @@
                 if (!trad[cle]) return;
                 if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
                     el.placeholder = trad[cle];
-                } else if (el.tagName === 'OPTION') {
-                    el.textContent = trad[cle];
                 } else {
                     el.textContent = trad[cle];
                 }
@@ -711,18 +693,28 @@
         });
 
         // ============================================================
-        // GESTION DES CARTES
+        // ÉTAT GLOBAL
         // ============================================================
         let currentUser = null;
         let currentProfile = null;
         let allCards = [];
         let activeFilter = 'all';
 
+        // Stockage temporaire des fichiers uploadés (avant publication)
+        let uploadedFiles = {
+            images: [],
+            videos: [],
+            audios: [],
+            documents: []
+        };
+
+        // ============================================================
+        // INITIALISATION
+        // ============================================================
         async function initialiser() {
             const client = initialiserSupabase();
             if (!client) return;
 
-            // Vérifier la session
             const { data: { session } } = await client.auth.getSession();
             if (!session) {
                 window.location.href = 'connexion.html';
@@ -730,7 +722,6 @@
             }
             currentUser = session.user;
 
-            // Charger le profil
             const { data: profileData } = await client
                 .from('profiles')
                 .select('*')
@@ -738,16 +729,17 @@
                 .single();
             currentProfile = profileData;
 
-            // Message de bienvenue personnalisé
             const hello = document.querySelector('[data-i18n="welcome_hello"]');
             if (hello && currentProfile && currentProfile.nom) {
                 hello.textContent = '👋 ' + currentProfile.nom;
             }
 
-            // Charger les cartes
             await chargerCartes();
         }
 
+        // ============================================================
+        // CHARGEMENT DES CARTES
+        // ============================================================
         async function chargerCartes() {
             const client = initialiserSupabase();
             if (!client) return;
@@ -776,7 +768,6 @@
             const empty = document.getElementById('emptyState');
             const trad = TRADUCTIONS[langueActuelle];
 
-            // Filtrer
             let filtered = allCards;
             if (activeFilter !== 'all') {
                 if (activeFilter === 'paid') {
@@ -800,7 +791,6 @@
             grid.style.display = 'grid';
             grid.innerHTML = '';
 
-            // Charger les profils des auteurs
             const client = initialiserSupabase();
             const userIds = [...new Set(filtered.map(c => c.user_id))];
             let profilsMap = {};
@@ -809,16 +799,13 @@
                     .from('profiles')
                     .select('id, nom, avatar_url')
                     .in('id', userIds);
-                if (profils) {
-                    profils.forEach(p => { profilsMap[p.id] = p; });
-                }
+                if (profils) profils.forEach(p => { profilsMap[p.id] = p; });
             }
 
             filtered.forEach(card => {
                 const auteur = profilsMap[card.user_id] || { nom: '?', avatar_url: null };
                 const initial = (auteur.nom || '?').charAt(0).toUpperCase();
 
-                // Badges
                 let badgesHTML = '';
                 if (card.type === 'demma') badgesHTML += '<span class="badge badge-demma">Demma</span>';
                 if (card.type === 'user_free') badgesHTML += '<span class="badge badge-free">Libre</span>';
@@ -826,7 +813,6 @@
                 if (card.prix > 0) badgesHTML += '<span class="badge badge-paid">' + card.prix + ' FCFA</span>';
                 if (card.donation) badgesHTML += '<span class="badge badge-donation">Don</span>';
 
-                // Avatar
                 const avatarStyle = auteur.avatar_url
                     ? `background-image:url('${auteur.avatar_url}');`
                     : '';
@@ -850,7 +836,6 @@
                 grid.appendChild(cardEl);
             });
 
-            // Boutons "Voir"
             grid.querySelectorAll('.btn-open').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = this.dataset.id;
@@ -868,9 +853,25 @@
         }
 
         function ouvrirCarte(card) {
-            // Pour l'instant, simple alerte
             let msg = '📇 ' + card.titre + '\n\n';
             msg += card.detail + '\n\n';
+
+            const nbImages = (card.images || []).length;
+            const nbVideos = (card.videos || []).length;
+            const nbAudios = (card.audios || []).length;
+            const nbDocs = (card.documents || []).length;
+            const nbUrls = (card.urls || []).length;
+
+            if (nbImages || nbVideos || nbAudios || nbDocs || nbUrls) {
+                msg += '📎 Médias inclus :\n';
+                if (nbImages) msg += '• ' + nbImages + ' image(s)\n';
+                if (nbVideos) msg += '• ' + nbVideos + ' vidéo(s)\n';
+                if (nbAudios) msg += '• ' + nbAudios + ' audio(s)\n';
+                if (nbDocs) msg += '• ' + nbDocs + ' document(s)\n';
+                if (nbUrls) msg += '• ' + nbUrls + ' lien(s)\n';
+                msg += '\n';
+            }
+
             if (card.type === 'user_coded' || card.type === 'demma') {
                 msg += '🔒 Contenu complet protégé par clé.';
                 msg += '\n\nContactez le propriétaire pour obtenir la clé.';
@@ -893,7 +894,7 @@
         });
 
         // ============================================================
-        // MODALE : Création de carte
+        // MODALE
         // ============================================================
         const modalOverlay = document.getElementById('modalOverlay');
         const btnCreate = document.getElementById('btnCreate');
@@ -905,7 +906,159 @@
             if (e.target === modalOverlay) modalOverlay.classList.remove('show');
         });
 
-        // Soumission du formulaire de création
+        // ============================================================
+        // UPLOAD DE FICHIERS
+        // ============================================================
+        const MAX_SIZE = 5 * 1024 * 1024 * 1024; // 5 Go
+
+        async function uploaderFichiers(files, type) {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const trad = TRADUCTIONS[langueActuelle];
+            const previewId = {
+                images: 'previewImages',
+                videos: 'previewVideos',
+                audios: 'previewAudios',
+                documents: 'previewDocs'
+            }[type];
+
+            const previewList = document.getElementById(previewId);
+
+            for (const file of files) {
+                if (file.size > MAX_SIZE) {
+                    alert('Fichier trop lourd : ' + file.name + ' (max 5 Go)');
+                    continue;
+                }
+
+                // Ajouter un aperçu "en chargement"
+                const previewEl = document.createElement('div');
+                previewEl.className = 'preview-item';
+                previewEl.innerHTML = `
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i></div>
+                    <span class="name">${file.name.substring(0, 15)}</span>
+                `;
+                previewList.appendChild(previewEl);
+
+                try {
+                    // Chemin : {user_id}/{timestamp}_{nom_fichier}
+                    const ext = file.name.split('.').pop();
+                    const cleanName = file.name.replace(/[^a-z0-9]/gi, '_').substring(0, 40);
+                    const path = `${currentUser.id}/${Date.now()}_${cleanName}.${ext}`;
+
+                    const { error } = await client
+                        .storage
+                        .from('cards-media')
+                        .upload(path, file, { cacheControl: '3600', upsert: false });
+
+                    if (error) throw error;
+
+                    const { data: urlData } = client
+                        .storage
+                        .from('cards-media')
+                        .getPublicUrl(path);
+
+                    const publicUrl = urlData.publicUrl;
+
+                    // Ajouter au tableau
+                    uploadedFiles[type].push({
+                        url: publicUrl,
+                        name: file.name,
+                        size: file.size,
+                        type: file.type
+                    });
+
+                    // Mettre à jour l'aperçu
+                    let innerHTML = '';
+                    if (type === 'images') {
+                        innerHTML = `<img src="${publicUrl}" alt="" />`;
+                    } else if (type === 'videos') {
+                        innerHTML = `<i class="fas fa-video" style="color:var(--rouge);"></i>`;
+                    } else if (type === 'audios') {
+                        innerHTML = `<i class="fas fa-music" style="color:var(--rouge);"></i>`;
+                    } else {
+                        innerHTML = `<i class="fas fa-file-alt" style="color:var(--rouge);"></i>`;
+                    }
+                    innerHTML += `<span class="name">${file.name.substring(0, 15)}</span>`;
+                    innerHTML += `<button type="button" class="remove" data-type="${type}" data-url="${publicUrl}"><i class="fas fa-times"></i></button>`;
+
+                    previewEl.innerHTML = innerHTML;
+
+                } catch (error) {
+                    console.error('Erreur upload :', error);
+                    previewEl.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:var(--rouge);"></i>`;
+                    alert('Erreur : ' + error.message);
+                }
+            }
+
+            // Gérer les boutons "supprimer"
+            previewList.querySelectorAll('.remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const t = this.dataset.type;
+                    const u = this.dataset.url;
+                    uploadedFiles[t] = uploadedFiles[t].filter(f => f.url !== u);
+                    this.parentElement.remove();
+                });
+            });
+        }
+
+        document.getElementById('uploadImages').addEventListener('change', function() {
+            if (this.files.length) uploaderFichiers([...this.files], 'images');
+            this.value = '';
+        });
+        document.getElementById('uploadVideos').addEventListener('change', function() {
+            if (this.files.length) uploaderFichiers([...this.files], 'videos');
+            this.value = '';
+        });
+        document.getElementById('uploadAudios').addEventListener('change', function() {
+            if (this.files.length) uploaderFichiers([...this.files], 'audios');
+            this.value = '';
+        });
+        document.getElementById('uploadDocs').addEventListener('change', function() {
+            if (this.files.length) uploaderFichiers([...this.files], 'documents');
+            this.value = '';
+        });
+
+        // ============================================================
+        // URLs
+        // ============================================================
+        let urlsList = [];
+
+        function renderUrls() {
+            const container = document.getElementById('urlsContainer');
+            container.innerHTML = '';
+            urlsList.forEach((url, index) => {
+                const row = document.createElement('div');
+                row.className = 'url-input-row';
+                row.innerHTML = `
+                    <input type="url" placeholder="https://..." value="${url}" data-index="${index}" />
+                    <button type="button" data-index="${index}"><i class="fas fa-times"></i></button>
+                `;
+                container.appendChild(row);
+            });
+
+            // Écouteurs
+            container.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', function() {
+                    urlsList[this.dataset.index] = this.value;
+                });
+            });
+            container.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    urlsList.splice(this.dataset.index, 1);
+                    renderUrls();
+                });
+            });
+        }
+
+        document.getElementById('btnAddUrl').addEventListener('click', function() {
+            urlsList.push('');
+            renderUrls();
+        });
+
+        // ============================================================
+        // SOUMISSION DU FORMULAIRE
+        // ============================================================
         document.getElementById('createCardForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -940,12 +1093,13 @@
                 if (!client) throw new Error(trad.err_supabase);
                 if (!currentUser) throw new Error(trad.err_no_session);
 
-                // Générer une clé si carte codée
                 let cleAcces = null;
                 if (type === 'user_coded') {
                     cleAcces = 'DEM-' + Math.random().toString(36).substring(2, 6).toUpperCase() +
                                '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
                 }
+
+                const urlsFinales = urlsList.filter(u => u.trim().length > 0).map(u => ({ url: u }));
 
                 const { error } = await client
                     .from('cards')
@@ -958,7 +1112,12 @@
                         categorie: categorie,
                         prix: prix,
                         donation: donation,
-                        cle_acces: cleAcces
+                        cle_acces: cleAcces,
+                        images: uploadedFiles.images,
+                        videos: uploadedFiles.videos,
+                        audios: uploadedFiles.audios,
+                        documents: uploadedFiles.documents,
+                        urls: urlsFinales
                     }]);
 
                 if (error) throw error;
@@ -968,6 +1127,14 @@
 
                 // Réinitialiser
                 this.reset();
+                uploadedFiles = { images: [], videos: [], audios: [], documents: [] };
+                urlsList = [];
+                renderUrls();
+                document.getElementById('previewImages').innerHTML = '';
+                document.getElementById('previewVideos').innerHTML = '';
+                document.getElementById('previewAudios').innerHTML = '';
+                document.getElementById('previewDocs').innerHTML = '';
+
                 setTimeout(() => {
                     modalOverlay.classList.remove('show');
                     msg.className = 'msg';
@@ -988,9 +1155,8 @@
         // DÉMARRAGE
         // ============================================================
         appliquerLangue(langueActuelle);
-        initialiser().catch(err => {
-            console.error('Erreur démarrage :', err);
-        });
+        renderUrls();
+        initialiser().catch(err => console.error('Erreur démarrage :', err));
     </script>
 
 </body>
