@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Demma · Fil d'actualité</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* ---- Bandeau de bienvenue ---- */
+        .welcome {
+            background: linear-gradient(135deg, #0a1628, #1a2f4a);
+            color: #fff;
+            border-radius: 28px;
+            padding: 28px 30px;
+            margin: 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .welcome h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .welcome p {
+            color: #a0b8d4;
+            font-size: 14px;
+        }
+        .welcome .btn-create {
+            background: var(--rouge);
+            color: #fff;
+            border: none;
+            padding: 14px 26px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .welcome .btn-create:hover {
+            background: #a03020;
+            transform: scale(1.02);
+        }
+
+        /* ---- Filtres ---- */
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+        }
+        .filter-btn {
+            background: #fff;
+            border: 1.5px solid var(--gris-clair);
+            border-radius: 40px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--noir);
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: inherit;
+            transition: 0.15s;
+        }
+        .filter-btn:hover {
+            border-color: #aab8cc;
+            background: #fafcff;
+        }
+        .filter-btn.active {
+            background: var(--noir);
+            color: #fff;
+            border-color: var(--noir);
+        }
+        .filter-btn i { margin-right: 6px; font-size: 12px; }
+
+        /* ---- Grille de cartes ---- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 22px 20px;
+            border: 1px solid #e8eef6;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.06);
+            border-color: #bccfdf;
+        }
+        .card-badges {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .badge-demma { background: #e8f0fa; color: #1a4a7a; }
+        .badge-free { background: #e8f5e9; color: #1e5a2f; }
+        .badge-coded { background: #fdecea; color: var(--rouge); }
+        .badge-paid { background: #fff4e0; color: #8b5a00; }
+        .badge-donation { background: #f3e8ff; color: #6b21a8; }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--noir);
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        .card .detail {
+            font-size: 14px;
+            color: var(--gris-texte);
+            line-height: 1.6;
+            margin-bottom: 14px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            flex-grow: 1;
+        }
+        .card .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid var(--gris-tres-clair);
+            font-size: 13px;
+            color: var(--gris-texte);
+        }
+        .card .author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card .author-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--noir);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            background-size: cover;
+            background-position: center;
+        }
+        .card .btn-open {
+            background: transparent;
+            border: 1.5px solid var(--gris-clair);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--noir);
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.15s;
+        }
+        .card .btn-open:hover {
+            background: var(--noir);
+            color: #fff;
+            border-color: var(--noir);
+        }
+
+        /* ---- État vide ---- */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--gris-texte);
+        }
+        .empty-state i {
+            font-size: 56px;
+            color: #c5d2e0;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .empty-state h3 {
+            color: var(--noir);
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        /* ---- Chargement ---- */
+        .loading-cards {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gris-texte);
+        }
+        .loading-cards i {
+            font-size: 32px;
+            color: var(--rouge);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* ---- Modale (formulaire de création) ---- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 22, 40, 0.7);
+            z-index: 2000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .modal-overlay.show { display: block; }
+
+        .modal {
+            background: #fff;
+            border-radius: 32px;
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 32px 28px;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #f5f0f0;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            color: var(--rouge);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--noir);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal h2 i { color: var(--rouge); }
+
+        .modal .form-group {
+            margin-bottom: 18px;
+        }
+        .modal .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--noir);
+            margin-bottom: 6px;
+        }
+        .modal .form-group input[type="text"],
+        .modal .form-group input[type="number"],
+        .modal .form-group textarea,
+        .modal .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--gris-clair);
+            border-radius: 14px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #fafcff;
+            transition: 0.2s;
+            color: var(--noir);
+        }
+        .modal .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .modal .form-group input:focus,
+        .modal .form-group textarea:focus,
+        .modal .form-group select:focus {
+            outline: none;
+            border-color: var(--rouge);
+            box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.08);
+            background: #fff;
+        }
+        .modal .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .modal .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: var(--noir);
+            border: none;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.2s;
+        }
+        .modal .btn-submit:hover { background: var(--noir-clair); }
+        .modal .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .modal .msg {
+            padding: 12px 18px;
+            border-radius: 14px;
+            margin-top: 14px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+        }
+        .modal .msg.success { background: #e8f5e9; color: #1e5a2f; display: block; }
+        .modal .msg.error { background: #fdecea; color: var(--rouge); display: block; }
+
+        @media (max-width: 520px) {
+            .welcome { flex-direction: column; align-items: stretch; }
+            .welcome .btn-create { width: 100%; justify-content: center; }
+            .modal { padding: 24px 18px; }
+            .modal .form-row { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-arrows-rotate"></i>
+                <a href="index.html"><h1>Demma<span>.</span></h1></a>
+            </div>
+
+            <div class="nav-right">
+                <div class="lang-dropdown" id="langDropdown">
+                    <button class="lang-btn" id="langBtn" type="button">
+                        <i class="fas fa-globe-africa"></i>
+                        <span id="langLabel">Français</span>
+                        <i class="fas fa-chevron-down" style="font-size:12px;"></i>
+                    </button>
+                    <div class="lang-dropdown-content" id="langContent">
+                        <div class="lang-item" data-lang="fr"><span>🇫🇷 Français</span><span class="check">✓</span></div>
+                        <div class="lang-item" data-lang="en"><span>🇬🇧 English</span><span class="check" style="display:none;">✓</span></div>
+                        <div class="lang-item" data-lang="ar"><span>🇸🇦 العربية</span><span class="check" style="display:none;">✓</span></div>
+                        <div class="lang-item" data-lang="es"><span>🇪🇸 Español</span><span class="check" style="display:none;">✓</span></div>
+                    </div>
+                </div>
+
+                <a href="profil.html" class="btn-outline">
+                    <i class="fas fa-user"></i>
+                    <span data-i18n="profile">Mon profil</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- BANDEAU DE BIENVENUE -->
+        <div class="welcome">
+            <div>
+                <h2 data-i18n="welcome_hello">Bonjour 👋</h2>
+                <p data-i18n="welcome_sub">Découvrez les cartes de la communauté Demma</p>
+            </div>
+            <button class="btn-create" id="btnCreate">
+                <i class="fas fa-plus"></i>
+                <span data-i18n="btn_create">Créer une carte</span>
+            </button>
+        </div>
+
+        <!-- FILTRES -->
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all"><i class="fas fa-th"></i> <span data-i18n="filter_all">Tous</span></button>
+            <button class="filter-btn" data-filter="demma"><i class="fas fa-shield-alt"></i> <span data-i18n="filter_demma">Cartes Demma</span></button>
+            <button class="filter-btn" data-filter="user_free"><i class="fas fa-unlock"></i> <span data-i18n="filter_free">Libres</span></button>
+            <button class="filter-btn" data-filter="user_coded"><i class="fas fa-lock"></i> <span data-i18n="filter_coded">Codées</span></button>
+            <button class="filter-btn" data-filter="paid"><i class="fas fa-coins"></i> <span data-i18n="filter_paid">Payant</span></button>
+            <button class="filter-btn" data-filter="donation"><i class="fas fa-gift"></i> <span data-i18n="filter_donation">Dons</span></button>
+        </div>
+
+        <!-- CHARGEMENT -->
+        <div class="loading-cards" id="loadingCards">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p data-i18n="loading_cards">Chargement des cartes...</p>
+        </div>
+
+        <!-- GRILLE -->
+        <div class="cards-grid" id="cardsGrid" style="display:none;"></div>
+
+        <!-- ÉTAT VIDE -->
+        <div class="empty-state" id="emptyState" style="display:none;">
+            <i class="fas fa-box-open"></i>
+            <h3 data-i18n="empty_title">Aucune carte pour l'instant</h3>
+            <p data-i18n="empty_sub">Soyez le premier à partager une carte !</p>
+        </div>
+
+        <footer class="footer">
+            <div>&copy; 2026 <strong>Demma</strong> · Réseau social d'échange</div>
+            <div class="footer-links">
+                <a href="index.html" data-i18n="home">Accueil</a>
+                <a href="profil.html" data-i18n="profile">Profil</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ============================================
+         MODALE : Création de carte
+         ============================================ -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+
+            <h2><i class="fas fa-plus-circle"></i> <span data-i18n="modal_title">Créer une nouvelle carte</span></h2>
+
+            <form id="createCardForm">
+
+                <div class="form-group">
+                    <label data-i18n="form_titre">Titre de la carte *</label>
+                    <input type="text" id="inputTitre" placeholder="Ex: Comment voyager au Canada" required />
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="form_detail">Aperçu (visible par tous, max 30 lignes) *</label>
+                    <textarea id="inputDetail" placeholder="Décrivez votre carte en quelques lignes..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="form_contenu">Contenu complet (protégé si carte codée)</label>
+                    <textarea id="inputContenu" placeholder="Le contenu détaillé, visible uniquement après échange de clé..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="form_type">Type de carte *</label>
+                        <select id="inputType" required>
+                            <option value="user_free" data-i18n="type_free">Libre (accessible à tous)</option>
+                            <option value="user_coded" data-i18n="type_coded">Codée (clé requise)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="form_categorie">Catégorie</label>
+                        <select id="inputCategorie">
+                            <option value="general" data-i18n="cat_general">Général</option>
+                            <option value="voyage" data-i18n="cat_voyage">Voyage</option>
+                            <option value="culture" data-i18n="cat_culture">Culture</option>
+                            <option value="histoire" data-i18n="cat_histoire">Histoire</option>
+                            <option value="economie" data-i18n="cat_economie">Économie</option>
+                            <option value="art" data-i18n="cat_art">Art</option>
+                            <option value="education" data-i18n="cat_education">Éducation</option>
+                            <option value="sante" data-i18n="cat_sante">Santé</option>
+                            <option value="technologie" data-i18n="cat_technologie">Technologie</option>
+                            <option value="autre" data-i18n="cat_autre">Autre</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="form_prix">Prix (FCFA, 0 = gratuit)</label>
+                        <input type="number" id="inputPrix" value="0" min="0" />
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="form_donation">Donation ?</label>
+                        <select id="inputDonation">
+                            <option value="false" data-i18n="no">Non</option>
+                            <option value="true" data-i18n="yes">Oui (offrir cette info)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class="fas fa-check"></i>
+                    <span data-i18n="btn_submit">Publier la carte</span>
+                </button>
+
+                <div class="msg" id="modalMsg"></div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="js/supabase.js"></script>
+
+    <script>
+        // ============================================================
+        // TRADUCTIONS
+        // ============================================================
+        const TRADUCTIONS = {
+            fr: {
+                profile: "Mon profil", home: "Accueil",
+                welcome_hello: "Bonjour 👋",
+                welcome_sub: "Découvrez les cartes de la communauté Demma",
+                btn_create: "Créer une carte",
+                filter_all: "Tous",
+                filter_demma: "Cartes Demma",
+                filter_free: "Libres",
+                filter_coded: "Codées",
+                filter_paid: "Payant",
+                filter_donation: "Dons",
+                loading_cards: "Chargement des cartes...",
+                empty_title: "Aucune carte pour l'instant",
+                empty_sub: "Soyez le premier à partager une carte !",
+                modal_title: "Créer une nouvelle carte",
+                form_titre: "Titre de la carte *",
+                form_detail: "Aperçu (visible par tous, max 30 lignes) *",
+                form_contenu: "Contenu complet (protégé si carte codée)",
+                form_type: "Type de carte *",
+                form_categorie: "Catégorie",
+                form_prix: "Prix (FCFA, 0 = gratuit)",
+                form_donation: "Donation ?",
+                type_free: "Libre (accessible à tous)",
+                type_coded: "Codée (clé requise)",
+                cat_general: "Général", cat_voyage: "Voyage", cat_culture: "Culture",
+                cat_histoire: "Histoire", cat_economie: "Économie", cat_art: "Art",
+                cat_education: "Éducation", cat_sante: "Santé", cat_technologie: "Technologie",
+                cat_autre: "Autre",
+                yes: "Oui", no: "Non",
+                btn_submit: "Publier la carte",
+                msg_success: "Carte publiée avec succès !",
+                msg_loading: "Publication...",
+                msg_error: "Erreur lors de la publication.",
+                err_titre: "Veuillez entrer un titre.",
+                err_detail: "Veuillez entrer un aperçu.",
+                err_supabase: "Supabase non initialisé.",
+                err_no_session: "Vous devez être connecté."
+            },
+            en: {
+                profile: "My profile", home: "Home",
+                welcome_hello: "Hello 👋",
+                welcome_sub: "Discover the Demma community cards",
+                btn_create: "Create a card",
+                filter_all: "All", filter_demma: "Demma cards", filter_free: "Free",
+                filter_coded: "Coded", filter_paid: "Paid", filter_donation: "Donations",
+                loading_cards: "Loading cards...",
+                empty_title: "No cards yet",
+                empty_sub: "Be the first to share a card!",
+                modal_title: "Create a new card",
+                form_titre: "Card title *",
+                form_detail: "Preview (visible to all, max 30 lines) *",
+                form_contenu: "Full content (protected if coded card)",
+                form_type: "Card type *",
+                form_categorie: "Category",
+                form_prix: "Price (FCFA, 0 = free)",
+                form_donation: "Donation?",
+                type_free: "Free (accessible to all)",
+                type_coded: "Coded (key required)",
+                cat_general: "General", cat_voyage: "Travel", cat_culture: "Culture",
+                cat_histoire: "History", cat_economie: "Economy", cat_art: "Art",
+                cat_education: "Education", cat_sante: "Health", cat_technologie: "Technology",
+                cat_autre: "Other",
+                yes: "Yes", no: "No",
+                btn_submit: "Publish card",
+                msg_success: "Card published successfully!",
+                msg_loading: "Publishing...",
+                msg_error: "Error publishing.",
+                err_titre: "Please enter a title.",
+                err_detail: "Please enter a preview.",
+                err_supabase: "Supabase not initialized.",
+                err_no_session: "You must be logged in."
+            },
+            ar: {
+                profile: "ملفي الشخصي", home: "الرئيسية",
+                welcome_hello: "مرحبًا 👋",
+                welcome_sub: "اكتشف بطاقات مجتمع ديمّا",
+                btn_create: "إنشاء بطاقة",
+                filter_all: "الكل", filter_demma: "بطاقات ديمّا", filter_free: "حرة",
+                filter_coded: "مشفرة", filter_paid: "مدفوعة", filter_donation: "تبرعات",
+                loading_cards: "جاري تحميل البطاقات...",
+                empty_title: "لا توجد بطاقات بعد",
+                empty_sub: "كن أول من يشارك بطاقة!",
+                modal_title: "إنشاء بطاقة جديدة",
+                form_titre: "عنوان البطاقة *",
+                form_detail: "معاينة (مرئية للجميع) *",
+                form_contenu: "المحتوى الكامل (محمي إذا كانت مشفرة)",
+                form_type: "نوع البطاقة *",
+                form_categorie: "الفئة",
+                form_prix: "السعر (فرنك، 0 = مجاني)",
+                form_donation: "تبرع؟",
+                type_free: "حرة (متاحة للجميع)",
+                type_coded: "مشفرة (مطلوب مفتاح)",
+                cat_general: "عام", cat_voyage: "سفر", cat_culture: "ثقافة",
+                cat_histoire: "تاريخ", cat_economie: "اقتصاد", cat_art: "فن",
+                cat_education: "تعليم", cat_sante: "صحة", cat_technologie: "تكنولوجيا",
+                cat_autre: "أخرى",
+                yes: "نعم", no: "لا",
+                btn_submit: "نشر البطاقة",
+                msg_success: "تم نشر البطاقة بنجاح!",
+                msg_loading: "جاري النشر...",
+                msg_error: "خطأ أثناء النشر.",
+                err_titre: "الرجاء إدخال عنوان.",
+                err_detail: "الرجاء إدخال معاينة.",
+                err_supabase: "Supabase غير مهيأ.",
+                err_no_session: "يجب أن تكون مسجلاً."
+            },
+            es: {
+                profile: "Mi perfil", home: "Inicio",
+                welcome_hello: "¡Hola! 👋",
+                welcome_sub: "Descubre las tarjetas de la comunidad Demma",
+                btn_create: "Crear una tarjeta",
+                filter_all: "Todas", filter_demma: "Tarjetas Demma", filter_free: "Libres",
+                filter_coded: "Codificadas", filter_paid: "De pago", filter_donation: "Donaciones",
+                loading_cards: "Cargando tarjetas...",
+                empty_title: "Aún no hay tarjetas",
+                empty_sub: "¡Sé el primero en compartir una tarjeta!",
+                modal_title: "Crear una nueva tarjeta",
+                form_titre: "Título de la tarjeta *",
+                form_detail: "Vista previa (visible para todos) *",
+                form_contenu: "Contenido completo (protegido si codificada)",
+                form_type: "Tipo de tarjeta *",
+                form_categorie: "Categoría",
+                form_prix: "Precio (FCFA, 0 = gratis)",
+                form_donation: "¿Donación?",
+                type_free: "Libre (accesible para todos)",
+                type_coded: "Codificada (clave requerida)",
+                cat_general: "General", cat_voyage: "Viaje", cat_culture: "Cultura",
+                cat_histoire: "Historia", cat_economie: "Economía", cat_art: "Arte",
+                cat_education: "Educación", cat_sante: "Salud", cat_technologie: "Tecnología",
+                cat_autre: "Otro",
+                yes: "Sí", no: "No",
+                btn_submit: "Publicar tarjeta",
+                msg_success: "¡Tarjeta publicada con éxito!",
+                msg_loading: "Publicando...",
+                msg_error: "Error al publicar.",
+                err_titre: "Por favor ingresa un título.",
+                err_detail: "Por favor ingresa una vista previa.",
+                err_supabase: "Supabase no inicializado.",
+                err_no_session: "Debes iniciar sesión."
+            }
+        };
+
+        // ============================================================
+        // LANGUE
+        // ============================================================
+        let langueActuelle = localStorage.getItem('demma_lang') || 'fr';
+
+        function appliquerLangue(code) {
+            const trad = TRADUCTIONS[code] || TRADUCTIONS.fr;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const cle = el.getAttribute('data-i18n');
+                if (!trad[cle]) return;
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    el.placeholder = trad[cle];
+                } else if (el.tagName === 'OPTION') {
+                    el.textContent = trad[cle];
+                } else {
+                    el.textContent = trad[cle];
+                }
+            });
+            document.documentElement.lang = code;
+            document.documentElement.dir = (code === 'ar') ? 'rtl' : 'ltr';
+            const libelles = { fr: 'Français', en: 'English', ar: 'العربية', es: 'Español' };
+            document.getElementById('langLabel').textContent = libelles[code] || 'Français';
+            document.querySelectorAll('#langContent .lang-item').forEach(item => {
+                const check = item.querySelector('.check');
+                check.style.display = (item.dataset.lang === code) ? 'inline' : 'none';
+            });
+            localStorage.setItem('demma_lang', code);
+            langueActuelle = code;
+        }
+
+        const langBtn = document.getElementById('langBtn');
+        const langContent = document.getElementById('langContent');
+        langBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            langContent.classList.toggle('show');
+        });
+        document.querySelectorAll('#langContent .lang-item').forEach(item => {
+            item.addEventListener('click', function() {
+                appliquerLangue(this.dataset.lang);
+                langContent.classList.remove('show');
+                afficherCartes();
+            });
+        });
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#langDropdown')) langContent.classList.remove('show');
+        });
+
+        // ============================================================
+        // GESTION DES CARTES
+        // ============================================================
+        let currentUser = null;
+        let currentProfile = null;
+        let allCards = [];
+        let activeFilter = 'all';
+
+        async function initialiser() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            // Vérifier la session
+            const { data: { session } } = await client.auth.getSession();
+            if (!session) {
+                window.location.href = 'connexion.html';
+                return;
+            }
+            currentUser = session.user;
+
+            // Charger le profil
+            const { data: profileData } = await client
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+            currentProfile = profileData;
+
+            // Message de bienvenue personnalisé
+            const hello = document.querySelector('[data-i18n="welcome_hello"]');
+            if (hello && currentProfile && currentProfile.nom) {
+                hello.textContent = '👋 ' + currentProfile.nom;
+            }
+
+            // Charger les cartes
+            await chargerCartes();
+        }
+
+        async function chargerCartes() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client
+                .from('cards')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Erreur chargement cartes :', error);
+                document.getElementById('loadingCards').innerHTML =
+                    '<i class="fas fa-exclamation-triangle" style="color:#c0392b;"></i>' +
+                    '<p>Erreur de chargement.</p>';
+                return;
+            }
+
+            allCards = data || [];
+            afficherCartes();
+        }
+
+        async function afficherCartes() {
+            document.getElementById('loadingCards').style.display = 'none';
+
+            const grid = document.getElementById('cardsGrid');
+            const empty = document.getElementById('emptyState');
+            const trad = TRADUCTIONS[langueActuelle];
+
+            // Filtrer
+            let filtered = allCards;
+            if (activeFilter !== 'all') {
+                if (activeFilter === 'paid') {
+                    filtered = allCards.filter(c => c.prix > 0);
+                } else if (activeFilter === 'donation') {
+                    filtered = allCards.filter(c => c.donation === true);
+                } else {
+                    filtered = allCards.filter(c => c.type === activeFilter);
+                }
+            }
+
+            if (filtered.length === 0) {
+                grid.style.display = 'none';
+                empty.style.display = 'block';
+                empty.querySelector('h3').textContent = trad.empty_title;
+                empty.querySelector('p').textContent = trad.empty_sub;
+                return;
+            }
+
+            empty.style.display = 'none';
+            grid.style.display = 'grid';
+            grid.innerHTML = '';
+
+            // Charger les profils des auteurs
+            const client = initialiserSupabase();
+            const userIds = [...new Set(filtered.map(c => c.user_id))];
+            let profilsMap = {};
+            if (userIds.length > 0) {
+                const { data: profils } = await client
+                    .from('profiles')
+                    .select('id, nom, avatar_url')
+                    .in('id', userIds);
+                if (profils) {
+                    profils.forEach(p => { profilsMap[p.id] = p; });
+                }
+            }
+
+            filtered.forEach(card => {
+                const auteur = profilsMap[card.user_id] || { nom: '?', avatar_url: null };
+                const initial = (auteur.nom || '?').charAt(0).toUpperCase();
+
+                // Badges
+                let badgesHTML = '';
+                if (card.type === 'demma') badgesHTML += '<span class="badge badge-demma">Demma</span>';
+                if (card.type === 'user_free') badgesHTML += '<span class="badge badge-free">Libre</span>';
+                if (card.type === 'user_coded') badgesHTML += '<span class="badge badge-coded">🔒 Codée</span>';
+                if (card.prix > 0) badgesHTML += '<span class="badge badge-paid">' + card.prix + ' FCFA</span>';
+                if (card.donation) badgesHTML += '<span class="badge badge-donation">Don</span>';
+
+                // Avatar
+                const avatarStyle = auteur.avatar_url
+                    ? `background-image:url('${auteur.avatar_url}');`
+                    : '';
+
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                cardEl.innerHTML = `
+                    <div class="card-badges">${badgesHTML}</div>
+                    <h3>${escapeHTML(card.titre)}</h3>
+                    <p class="detail">${escapeHTML(card.detail)}</p>
+                    <div class="meta">
+                        <div class="author">
+                            <div class="author-avatar" style="${avatarStyle}">${auteur.avatar_url ? '' : initial}</div>
+                            <span>${escapeHTML(auteur.nom || '—')}</span>
+                        </div>
+                        <button class="btn-open" data-id="${card.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(cardEl);
+            });
+
+            // Boutons "Voir"
+            grid.querySelectorAll('.btn-open').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const card = allCards.find(c => c.id === id);
+                    if (card) ouvrirCarte(card);
+                });
+            });
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function ouvrirCarte(card) {
+            // Pour l'instant, simple alerte
+            let msg = '📇 ' + card.titre + '\n\n';
+            msg += card.detail + '\n\n';
+            if (card.type === 'user_coded' || card.type === 'demma') {
+                msg += '🔒 Contenu complet protégé par clé.';
+                msg += '\n\nContactez le propriétaire pour obtenir la clé.';
+            } else {
+                msg += '✅ Carte libre.';
+            }
+            alert(msg);
+        }
+
+        // ============================================================
+        // FILTRES
+        // ============================================================
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                activeFilter = this.dataset.filter;
+                afficherCartes();
+            });
+        });
+
+        // ============================================================
+        // MODALE : Création de carte
+        // ============================================================
+        const modalOverlay = document.getElementById('modalOverlay');
+        const btnCreate = document.getElementById('btnCreate');
+        const modalClose = document.getElementById('modalClose');
+
+        btnCreate.addEventListener('click', () => modalOverlay.classList.add('show'));
+        modalClose.addEventListener('click', () => modalOverlay.classList.remove('show'));
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) modalOverlay.classList.remove('show');
+        });
+
+        // Soumission du formulaire de création
+        document.getElementById('createCardForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const trad = TRADUCTIONS[langueActuelle];
+            const msg = document.getElementById('modalMsg');
+            const submitBtn = document.getElementById('submitBtn');
+
+            const titre = document.getElementById('inputTitre').value.trim();
+            const detail = document.getElementById('inputDetail').value.trim();
+            const contenu = document.getElementById('inputContenu').value.trim();
+            const type = document.getElementById('inputType').value;
+            const categorie = document.getElementById('inputCategorie').value;
+            const prix = parseInt(document.getElementById('inputPrix').value) || 0;
+            const donation = document.getElementById('inputDonation').value === 'true';
+
+            if (titre.length < 3) {
+                msg.className = 'msg error';
+                msg.textContent = trad.err_titre;
+                return;
+            }
+            if (detail.length < 10) {
+                msg.className = 'msg error';
+                msg.textContent = trad.err_detail;
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + trad.msg_loading;
+
+            try {
+                const client = initialiserSupabase();
+                if (!client) throw new Error(trad.err_supabase);
+                if (!currentUser) throw new Error(trad.err_no_session);
+
+                // Générer une clé si carte codée
+                let cleAcces = null;
+                if (type === 'user_coded') {
+                    cleAcces = 'DEM-' + Math.random().toString(36).substring(2, 6).toUpperCase() +
+                               '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+                }
+
+                const { error } = await client
+                    .from('cards')
+                    .insert([{
+                        user_id: currentUser.id,
+                        type: type,
+                        titre: titre,
+                        detail: detail,
+                        contenu_complet: contenu || null,
+                        categorie: categorie,
+                        prix: prix,
+                        donation: donation,
+                        cle_acces: cleAcces
+                    }]);
+
+                if (error) throw error;
+
+                msg.className = 'msg success';
+                msg.textContent = trad.msg_success;
+
+                // Réinitialiser
+                this.reset();
+                setTimeout(() => {
+                    modalOverlay.classList.remove('show');
+                    msg.className = 'msg';
+                    chargerCartes();
+                }, 1500);
+
+            } catch (error) {
+                console.error(error);
+                msg.className = 'msg error';
+                msg.textContent = '❌ ' + error.message;
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> ' + trad.btn_submit;
+        });
+
+        // ============================================================
+        // DÉMARRAGE
+        // ============================================================
+        appliquerLangue(langueActuelle);
+        initialiser().catch(err => {
+            console.error('Erreur démarrage :', err);
+        });
+    </script>
+
+</body>
+</html>
