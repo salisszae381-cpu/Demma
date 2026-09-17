@@ -26,7 +26,6 @@
             margin: 20px 0;
         }
 
-        /* ---- Liste des conversations ---- */
         .conv-list {
             background: #fff;
             border-radius: 24px;
@@ -128,7 +127,6 @@
             display: block;
         }
 
-        /* ---- Fenêtre de chat ---- */
         .chat-window {
             background: #fff;
             border-radius: 24px;
@@ -339,7 +337,6 @@
             background: var(--noir-clair);
         }
 
-        /* Enregistrement en cours */
         .recording-overlay {
             display: none;
             position: fixed;
@@ -391,7 +388,6 @@
             color: #fff;
         }
 
-        /* Écran vide (aucune conversation sélectionnée) */
         .no-chat-selected {
             display: flex;
             flex-direction: column;
@@ -413,7 +409,6 @@
             margin-bottom: 6px;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .messaging-container {
                 grid-template-columns: 1fr;
@@ -454,14 +449,12 @@
 
         <div class="messaging-container">
 
-            <!-- Liste des conversations -->
             <div class="conv-list">
                 <h3><i class="fas fa-comments"></i> <span data-i18n="conversations">Conversations</span></h3>
                 <input type="text" class="conv-search" id="convSearch" placeholder="Rechercher..." data-i18n="search_placeholder" />
                 <div id="convList"></div>
             </div>
 
-            <!-- Fenêtre de chat -->
             <div class="chat-window" id="chatWindow">
                 <div class="no-chat-selected" id="noChatSelected">
                     <i class="fas fa-comments"></i>
@@ -513,7 +506,6 @@
 
     </div>
 
-    <!-- Overlay d'enregistrement vocal -->
     <div class="recording-overlay" id="recordingOverlay">
         <i class="fas fa-microphone"></i>
         <p data-i18n="recording">Enregistrement en cours...</p>
@@ -658,17 +650,44 @@
         }
 
         // ============================================================
-        // RÉCUPÉRATION AUTEUR
+        // FONCTIONS UTILITAIRES
         // ============================================================
+        function escapeHTML(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function formatTime(iso) {
+            const d = new Date(iso);
+            return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // ⚠️ IMPORTANT : récupérer l'ID de l'autre utilisateur
+        function getOtherUserId(conv) {
+            if (!conv || !currentUser) return null;
+            // Si je suis user1, l'autre est user2, sinon l'autre est user1
+            if (conv.user1_id === currentUser.id) {
+                return conv.user2_id;
+            } else if (conv.user2_id === currentUser.id) {
+                return conv.user1_id;
+            }
+            return null;
+        }
+
         async function getAuteur(userId) {
             const client = initialiserSupabase();
             if (!client || !userId) return { nom: '—', avatar_url: null };
+
             try {
                 const { data, error } = await client.rpc('obtenir_auteur', { p_user_id: userId });
                 if (!error && data && data[0]) {
                     return { nom: data[0].nom || '—', avatar_url: data[0].avatar_url || null };
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.warn('Erreur getAuteur:', e);
+            }
             return { nom: '—', avatar_url: null };
         }
 
@@ -694,28 +713,25 @@
             currentProfile = profileData;
 
             appliquerLangue(langueActuelle);
-
-            // Charger les conversations
             await chargerConversations();
 
-            // Vérifier s'il y a une conversation à ouvrir depuis l'URL
+            // Ouvrir une conversation depuis l'URL
             const params = new URLSearchParams(window.location.search);
             const convId = params.get('conv');
             const otherUser = params.get('user');
             const cardId = params.get('card');
 
             if (otherUser) {
-                // Créer ou récupérer une conversation
                 const { data, error } = await client.rpc('get_or_create_conversation', {
                     p_other_user_id: otherUser,
                     p_card_id: cardId || null
                 });
                 if (!error && data) {
                     await chargerConversations();
-                    ouvrirConversation(data);
+                    await ouvrirConversation(data);
                 }
             } else if (convId) {
-                ouvrirConversation(convId);
+                await ouvrirConversation(convId);
             }
         }
 
@@ -733,7 +749,7 @@
                 .order('updated_at', { ascending: false });
 
             if (error) {
-                console.error(error);
+                console.error('Erreur chargement conversations:', error);
                 return;
             }
 
@@ -758,7 +774,9 @@
             container.innerHTML = '';
 
             for (const conv of allConversations) {
-                const otherId = conv.user1_id === currentUser.id ? conv.user2_id : conv.user1_id;
+                const otherId = getOtherUserId(conv);
+                if (!otherId) continue;
+
                 const auteur = await getAuteur(otherId);
                 const initial = (auteur.nom || '?').charAt(0).toUpperCase();
                 const avatarStyle = auteur.avatar_url ? `background-image:url('${auteur.avatar_url}');` : '';
@@ -786,22 +804,37 @@
             const client = initialiserSupabase();
             if (!client) return;
 
-            currentConversationId = convId;
-
-            const conv = allConversations.find(c => c.id === convId);
-            if (!conv) {
-                // Recharger
+            // S'assurer que les conversations sont chargées
+            if (allConversations.length === 0) {
                 await chargerConversations();
             }
 
-            const convFinal = allConversations.find(c => c.id === convId);
-            if (!convFinal) return;
+            let conv = allConversations.find(c => c.id === convId);
 
-            const otherId = convFinal.user1_id === currentUser.id ? convFinal.user2_id : convFinal.user1_id;
+            // Si pas trouvée, recharger
+            if (!conv) {
+                await chargerConversations();
+                conv = allConversations.find(c => c.id === convId);
+            }
+
+            if (!conv) {
+                console.error('Conversation non trouvée:', convId);
+                return;
+            }
+
+            currentConversationId = convId;
+
+            // ⚠️ Récupérer l'autre utilisateur
+            const otherId = getOtherUserId(conv);
+            if (!otherId) {
+                console.error('Impossible de trouver l\'autre utilisateur');
+                return;
+            }
+
             const auteur = await getAuteur(otherId);
             currentOtherUser = { id: otherId, ...auteur };
 
-            // Afficher l'en-tête
+            // Mettre à jour l'en-tête
             const initial = (auteur.nom || '?').charAt(0).toUpperCase();
             const avatarStyle = auteur.avatar_url ? `background-image:url('${auteur.avatar_url}');` : '';
             const avatar = document.getElementById('chatAvatar');
@@ -812,16 +845,9 @@
             document.getElementById('noChatSelected').style.display = 'none';
             document.getElementById('activeChat').style.display = 'flex';
 
-            // Charger les messages
             await chargerMessages();
-
-            // S'abonner au realtime
             souscrireRealtime(convId);
-
-            // Rafraîchir la liste pour mettre en surbrillance
             await afficherConversations();
-
-            // Scroller en bas
             scrollChatBottom();
         }
 
@@ -870,7 +896,7 @@
             scrollChatBottom();
         }
 
-        async function afficherMessage(msg) {
+        function afficherMessage(msg) {
             const container = document.getElementById('chatMessages');
             const isMe = msg.sender_id === currentUser.id;
 
@@ -904,11 +930,6 @@
             container.appendChild(row);
         }
 
-        function formatTime(iso) {
-            const d = new Date(iso);
-            return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        }
-
         function scrollChatBottom() {
             const c = document.getElementById('chatMessages');
             if (c) c.scrollTop = c.scrollHeight;
@@ -925,11 +946,9 @@
             }
         });
 
-        // Indicateur "est en train d'écrire"
         document.getElementById('msgInput').addEventListener('input', function() {
             if (!currentConversationId) return;
             signalerTyping(true);
-
             clearTimeout(typingTimeout);
             typingTimeout = setTimeout(() => signalerTyping(false), 2000);
         });
@@ -990,7 +1009,6 @@
             const client = initialiserSupabase();
             if (!client || !currentConversationId) return;
 
-            // Détecter le type
             let type = 'document';
             if (file.type.startsWith('image/')) type = 'image';
             else if (file.type.startsWith('video/')) type = 'video';
@@ -1084,7 +1102,6 @@
                 return;
             }
 
-            // Attendre la fin de l'enregistrement
             const finaliser = () => {
                 const blob = new Blob(audioChunks, { type: 'audio/webm' });
                 envoyerAudio(blob);
@@ -1150,15 +1167,9 @@
             const client = initialiserSupabase();
             if (!client) return;
 
-            // Déconnecter l'ancien canal
-            if (realtimeChannel) {
-                client.removeChannel(realtimeChannel);
-            }
-            if (typingChannel) {
-                client.removeChannel(typingChannel);
-            }
+            if (realtimeChannel) client.removeChannel(realtimeChannel);
+            if (typingChannel) client.removeChannel(typingChannel);
 
-            // Canal messages
             realtimeChannel = client
                 .channel('messages_' + convId)
                 .on('postgres_changes', {
@@ -1167,26 +1178,20 @@
                     table: 'messages',
                     filter: `conversation_id=eq.${convId}`
                 }, async (payload) => {
-                    if (payload.new.sender_id !== currentUser.id) {
-                        await afficherMessage(payload.new);
-                        scrollChatBottom();
+                    await afficherMessage(payload.new);
+                    scrollChatBottom();
 
-                        // Marquer comme lu
+                    if (payload.new.sender_id !== currentUser.id) {
                         await client
                             .from('messages')
                             .update({ read: true })
                             .eq('id', payload.new.id);
-                    } else {
-                        await afficherMessage(payload.new);
-                        scrollChatBottom();
                     }
 
-                    // Rafraîchir la liste des conversations
                     await chargerConversations();
                 })
                 .subscribe();
 
-            // Canal typing
             typingChannel = client
                 .channel('typing_' + convId)
                 .on('postgres_changes', {
@@ -1212,7 +1217,7 @@
         }
 
         // ============================================================
-        // RECHERCHE CONVERSATION
+        // RECHERCHE
         // ============================================================
         document.getElementById('convSearch').addEventListener('input', function() {
             const q = this.value.toLowerCase();
@@ -1221,16 +1226,6 @@
                 item.style.display = name.includes(q) ? 'flex' : 'none';
             });
         });
-
-        // ============================================================
-        // UTILITAIRE
-        // ============================================================
-        function escapeHTML(str) {
-            if (!str) return '';
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
 
         // ============================================================
         // LANCEMENT
