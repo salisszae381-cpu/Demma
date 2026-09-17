@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Demma · Mon profil</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* ---- Styles spécifiques au profil ---- */
+        .profile-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+        .profile-card {
+            background: var(--blanc);
+            border-radius: 40px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+        .profile-card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--noir);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .profile-card h2 i { color: var(--rouge); }
+
+        /* ---- Avatar ---- */
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .avatar-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 65px;
+            background: var(--noir);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            font-weight: 700;
+            border: 4px solid var(--gris-tres-clair);
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: var(--rouge);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            transition: 0.2s;
+            font-size: 16px;
+        }
+        .avatar-upload-btn:hover {
+            background: #a03020;
+            transform: scale(1.05);
+        }
+        .avatar-upload-btn input[type="file"] { display: none; }
+
+        .user-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--noir);
+            margin-top: 16px;
+            margin-bottom: 4px;
+        }
+        .user-sub {
+            color: var(--gris-texte);
+            font-size: 14px;
+        }
+
+        /* ---- Infos ---- */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gris-tres-clair);
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label {
+            color: var(--gris-texte);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-label i { color: var(--rouge); width: 18px; }
+        .info-value {
+            color: var(--noir);
+            font-size: 15px;
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        /* ---- Formulaire ---- */
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--noir);
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1.5px solid var(--gris-clair);
+            border-radius: 16px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #fafcff;
+            transition: 0.2s;
+            color: var(--noir);
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--rouge);
+            box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.08);
+            background: #ffffff;
+        }
+        .form-group input[readonly] {
+            background: var(--gris-tres-clair);
+            color: var(--gris-texte);
+            cursor: not-allowed;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 16px;
+            background: var(--noir);
+            border: none;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--blanc);
+            cursor: pointer;
+            transition: 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: inherit;
+            margin-top: 8px;
+        }
+        .btn-save:hover { background: var(--noir-clair); transform: scale(1.01); }
+        .btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .btn-logout {
+            width: 100%;
+            padding: 14px;
+            background: #fdf0f0;
+            border: none;
+            border-radius: 60px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--rouge);
+            cursor: pointer;
+            transition: 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+        .btn-logout:hover { background: #f8dddd; }
+
+        .form-msg {
+            padding: 14px 20px;
+            border-radius: 16px;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-msg.success {
+            background: #e8f5e9;
+            color: #1e5a2f;
+            display: flex;
+            border: 1px solid #a5d6a7;
+        }
+        .form-msg.error {
+            background: #fdecea;
+            color: var(--rouge);
+            display: flex;
+            border: 1px solid #f5c6c6;
+        }
+
+        .loading-box {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .loading-box i {
+            font-size: 36px;
+            color: var(--rouge);
+            margin-bottom: 14px;
+            display: block;
+        }
+        .loading-box p {
+            color: var(--gris-texte);
+        }
+
+        @media (max-width: 520px) {
+            .profile-card { padding: 28px 20px; }
+            .info-value { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ============ NAVBAR ============ -->
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-arrows-rotate"></i>
+                <a href="index.html"><h1>Demma<span>.</span></h1></a>
+            </div>
+
+            <div class="nav-right">
+                <div class="lang-dropdown" id="langDropdown">
+                    <button class="lang-btn" id="langBtn" type="button">
+                        <i class="fas fa-globe-africa"></i>
+                        <span id="langLabel">Français</span>
+                        <i class="fas fa-chevron-down" style="font-size:12px;"></i>
+                    </button>
+                    <div class="lang-dropdown-content" id="langContent">
+                        <div class="lang-item" data-lang="fr">
+                            <span>🇫🇷 Français</span>
+                            <span class="check">✓</span>
+                        </div>
+                        <div class="lang-item" data-lang="en">
+                            <span>🇬🇧 English</span>
+                            <span class="check" style="display:none;">✓</span>
+                        </div>
+                        <div class="lang-item" data-lang="ar">
+                            <span>🇸🇦 العربية</span>
+                            <span class="check" style="display:none;">✓</span>
+                        </div>
+                        <div class="lang-item" data-lang="es">
+                            <span>🇪🇸 Español</span>
+                            <span class="check" style="display:none;">✓</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ============ CHARGEMENT ============ -->
+        <div class="profile-container" id="loadingBox">
+            <div class="profile-card">
+                <div class="loading-box">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p data-i18n="loading">Chargement du profil...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ PROFIL ============ -->
+        <div class="profile-container" id="profileBox" style="display:none;">
+
+            <!-- Carte profil -->
+            <div class="profile-card">
+
+                <div class="avatar-section">
+                    <div class="avatar-wrapper">
+                        <div class="avatar-circle" id="avatarCircle">?</div>
+                        <label class="avatar-upload-btn" title="Changer la photo">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" id="avatarInput" accept="image/*" />
+                        </label>
+                    </div>
+                    <div class="user-name" id="userName">—</div>
+                    <div class="user-sub" id="userSub">—</div>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-venus-mars"></i> <span data-i18n="field_gender">Sexe</span></span>
+                    <span class="info-value" id="userSexe">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-birthday-cake"></i> <span data-i18n="field_age">Âge</span></span>
+                    <span class="info-value" id="userAge">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-globe-africa"></i> <span data-i18n="field_country">Pays</span></span>
+                    <span class="info-value" id="userPays">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="fas fa-briefcase"></i> <span data-i18n="field_activity">Domaine</span></span>
+                    <span class="info-value" id="userDomaine">—</span>
+                </div>
+            </div>
+
+            <!-- Carte modification -->
+            <div class="profile-card">
+                <h2><i class="fas fa-edit"></i> <span data-i18n="edit_title">Modifier mes informations</span></h2>
+
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label data-i18n="field_name">Nom complet</label>
+                        <input type="text" id="inputNom" />
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="field_phone">Numéro de téléphone</label>
+                        <input type="tel" id="inputPhone" readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="field_email">Adresse email</label>
+                        <input type="email" id="inputEmail" readonly />
+                    </div>
+
+                    <button type="submit" class="btn-save" id="saveBtn">
+                        <i class="fas fa-save"></i>
+                        <span data-i18n="btn_save">Enregistrer les modifications</span>
+                    </button>
+
+                    <div class="form-msg" id="globalMsg"></div>
+                </form>
+            </div>
+
+            <!-- Carte déconnexion -->
+            <div class="profile-card">
+                <button class="btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span data-i18n="btn_logout">Se déconnecter</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ============ FOOTER ============ -->
+        <footer class="footer">
+            <div>
+                &copy; 2026 <strong>Demma</strong> · Réseau social d'échange
+            </div>
+            <div class="footer-links">
+                <a href="index.html" data-i18n="home">Accueil</a>
+                <a href="fil-actualite.html" data-i18n="feed">Fil d'actualité</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="js/supabase.js"></script>
+
+    <script>
+        // ============================================================
+        // TRADUCTIONS
+        // ============================================================
+        const TRADUCTIONS = {
+            fr: {
+                home: "Accueil", feed: "Fil d'actualité",
+                loading: "Chargement du profil...",
+                edit_title: "Modifier mes informations",
+                field_name: "Nom complet",
+                field_gender: "Sexe",
+                field_age: "Âge",
+                field_country: "Pays",
+                field_phone: "Numéro de téléphone",
+                field_activity: "Domaine",
+                field_email: "Adresse email",
+                btn_save: "Enregistrer les modifications",
+                btn_logout: "Se déconnecter",
+                msg_saved: "Profil mis à jour avec succès !",
+                msg_saving: "Enregistrement...",
+                msg_avatar: "Photo de profil mise à jour !"
+            },
+            en: {
+                home: "Home", feed: "News feed",
+                loading: "Loading profile...",
+                edit_title: "Edit my information",
+                field_name: "Full name",
+                field_gender: "Gender",
+                field_age: "Age",
+                field_country: "Country",
+                field_phone: "Phone number",
+                field_activity: "Field",
+                field_email: "Email address",
+                btn_save: "Save changes",
+                btn_logout: "Log out",
+                msg_saved: "Profile updated successfully!",
+                msg_saving: "Saving...",
+                msg_avatar: "Profile photo updated!"
+            },
+            ar: {
+                home: "الرئيسية", feed: "آخر الأخبار",
+                loading: "جاري تحميل الملف الشخصي...",
+                edit_title: "تعديل معلوماتي",
+                field_name: "الاسم الكامل",
+                field_gender: "الجنس",
+                field_age: "العمر",
+                field_country: "البلد",
+                field_phone: "رقم الهاتف",
+                field_activity: "المجال",
+                field_email: "البريد الإلكتروني",
+                btn_save: "حفظ التغييرات",
+                btn_logout: "تسجيل الخروج",
+                msg_saved: "تم تحديث الملف الشخصي بنجاح!",
+                msg_saving: "جاري الحفظ...",
+                msg_avatar: "تم تحديث صورة الملف الشخصي!"
+            },
+            es: {
+                home: "Inicio", feed: "Noticias",
+                loading: "Cargando perfil...",
+                edit_title: "Editar mi información",
+                field_name: "Nombre completo",
+                field_gender: "Sexo",
+                field_age: "Edad",
+                field_country: "País",
+                field_phone: "Número de teléfono",
+                field_activity: "Campo",
+                field_email: "Correo electrónico",
+                btn_save: "Guardar cambios",
+                btn_logout: "Cerrar sesión",
+                msg_saved: "¡Perfil actualizado con éxito!",
+                msg_saving: "Guardando...",
+                msg_avatar: "¡Foto de perfil actualizada!"
+            }
+        };
+
+        // ============================================================
+        // GESTION DE LA LANGUE
+        // ============================================================
+        let langueActuelle = localStorage.getItem('demma_lang') || 'fr';
+
+        function appliquerLangue(code) {
+            const trad = TRADUCTIONS[code] || TRADUCTIONS.fr;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const cle = el.getAttribute('data-i18n');
+                if (!trad[cle]) return;
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    el.placeholder = trad[cle];
+                } else {
+                    el.textContent = trad[cle];
+                }
+            });
+            document.documentElement.lang = code;
+            document.documentElement.dir = (code === 'ar') ? 'rtl' : 'ltr';
+            const libelles = { fr: 'Français', en: 'English', ar: 'العربية', es: 'Español' };
+            document.getElementById('langLabel').textContent = libelles[code] || 'Français';
+            document.querySelectorAll('#langContent .lang-item').forEach(item => {
+                const check = item.querySelector('.check');
+                check.style.display = (item.dataset.lang === code) ? 'inline' : 'none';
+            });
+            localStorage.setItem('demma_lang', code);
+            langueActuelle = code;
+        }
+
+        const langBtn = document.getElementById('langBtn');
+        const langContent = document.getElementById('langContent');
+
+        langBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            langContent.classList.toggle('show');
+        });
+
+        document.querySelectorAll('#langContent .lang-item').forEach(item => {
+            item.addEventListener('click', function() {
+                appliquerLangue(this.dataset.lang);
+                langContent.classList.remove('show');
+                // Recharger les infos avec la nouvelle langue
+                if (currentUser) chargerProfil();
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#langDropdown')) {
+                langContent.classList.remove('show');
+            }
+        });
+
+        // ============================================================
+        // CHARGEMENT DU PROFIL
+        // ============================================================
+        let currentUser = null;
+        let currentProfile = null;
+
+        async function chargerProfil() {
+            const trad = TRADUCTIONS[langueActuelle];
+
+            // 1. Vérifier la session
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                // Pas connecté → redirection vers connexion
+                window.location.href = 'connexion.html';
+                return;
+            }
+
+            currentUser = session.user;
+
+            // 2. Charger le profil depuis la table "profiles"
+            const { data, error } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+
+            if (error || !data) {
+                console.error('Erreur chargement profil :', error);
+                document.getElementById('loadingBox').innerHTML =
+                    '<div class="profile-card"><div class="loading-box">' +
+                    '<i class="fas fa-exclamation-triangle"></i>' +
+                    '<p>Impossible de charger le profil.</p>' +
+                    '</div></div>';
+                return;
+            }
+
+            currentProfile = data;
+
+            // 3. Afficher les informations
+            const initial = (data.nom || '?').charAt(0).toUpperCase();
+            const circle = document.getElementById('avatarCircle');
+
+            if (data.avatar_url) {
+                circle.style.backgroundImage = `url('${data.avatar_url}')`;
+                circle.textContent = '';
+            } else {
+                circle.textContent = initial;
+                circle.style.backgroundImage = '';
+            }
+
+            document.getElementById('userName').textContent = data.nom || '—';
+            document.getElementById('userSub').textContent = data.domaine || '—';
+            document.getElementById('userSexe').textContent = data.sexe || '—';
+            document.getElementById('userAge').textContent = data.age ? data.age + ' ans' : '—';
+            document.getElementById('userPays').textContent = data.pays || '—';
+            document.getElementById('userDomaine').textContent = data.domaine || '—';
+
+            // 4. Remplir le formulaire
+            document.getElementById('inputNom').value = data.nom || '';
+            document.getElementById('inputPhone').value = data.telephone || currentUser.phone || '';
+            document.getElementById('inputEmail').value = currentUser.email || '';
+
+            // 5. Afficher le profil
+            document.getElementById('loadingBox').style.display = 'none';
+            document.getElementById('profileBox').style.display = 'block';
+        }
+
+        // ============================================================
+        // UPLOAD DE L'AVATAR
+        // ============================================================
+        document.getElementById('avatarInput').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const trad = TRADUCTIONS[langueActuelle];
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Photo trop lourde (max 2 Mo).');
+                return;
+            }
+            if (!file.type.startsWith('image/')) {
+                alert('Veuillez choisir une image.');
+                return;
+            }
+
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${currentUser.id}/avatar.${fileExt}`;
+
+                const { error: uploadError } = await supabaseClient
+                    .storage.from('avatars')
+                    .upload(fileName, file, { cacheControl: '3600', upsert: true });
+
+                if (uploadError) throw uploadError;
+
+                const { data: urlData } = supabaseClient
+                    .storage.from('avatars')
+                    .getPublicUrl(fileName);
+
+                const publicUrl = urlData.publicUrl + '?t=' + Date.now();
+
+                await supabaseClient
+                    .from('profiles')
+                    .update({ avatar_url: publicUrl })
+                    .eq('id', currentUser.id);
+
+                const circle = document.getElementById('avatarCircle');
+                circle.style.backgroundImage = `url('${publicUrl}')`;
+                circle.textContent = '';
+
+                afficherMessage(trad.msg_avatar, 'success');
+
+            } catch (error) {
+                console.error(error);
+                afficherMessage('❌ ' + error.message, 'error');
+            }
+        });
+
+        // ============================================================
+        // ENREGISTREMENT DU FORMULAIRE
+        // ============================================================
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const trad = TRADUCTIONS[langueActuelle];
+            const nom = document.getElementById('inputNom').value.trim();
+            const saveBtn = document.getElementById('saveBtn');
+
+            if (nom.length < 2) {
+                afficherMessage('❌ Nom invalide.', 'error');
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + trad.msg_saving;
+
+            const { error } = await supabaseClient
+                .from('profiles')
+                .update({ nom: nom })
+                .eq('id', currentUser.id);
+
+            if (error) {
+                afficherMessage('❌ ' + error.message, 'error');
+            } else {
+                afficherMessage('✅ ' + trad.msg_saved, 'success');
+                document.getElementById('userName').textContent = nom;
+                if (!currentProfile.avatar_url) {
+                    document.getElementById('avatarCircle').textContent = nom.charAt(0).toUpperCase();
+                }
+            }
+
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> ' + trad.btn_save;
+        });
+
+        // ============================================================
+        // DÉCONNEXION
+        // ============================================================
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            await supabaseClient.auth.signOut();
+            localStorage.removeItem('demma_logged');
+            window.location.href = 'index.html';
+        });
+
+        // ============================================================
+        // AFFICHER UN MESSAGE
+        // ============================================================
+        function afficherMessage(texte, type) {
+            const box = document.getElementById('globalMsg');
+            box.className = 'form-msg ' + type;
+            box.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i> ${texte}`;
+
+            if (type === 'success') {
+                setTimeout(() => { box.className = 'form-msg'; }, 3000);
+            }
+        }
+
+        // ============================================================
+        // DÉMARRAGE
+        // ============================================================
+        appliquerLangue(langueActuelle);
+        chargerProfil();
+    </script>
+
+</body>
+</html>
