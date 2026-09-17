@@ -65,17 +65,13 @@
             transition: 0.15s;
             margin-bottom: 4px;
         }
-        .conv-item:hover {
-            background: #f5f8ff;
-        }
+        .conv-item:hover { background: #f5f8ff; }
         .conv-item.active {
             background: var(--noir);
             color: #fff;
         }
         .conv-item.active .conv-name,
-        .conv-item.active .conv-last {
-            color: #fff;
-        }
+        .conv-item.active .conv-last { color: #fff; }
         .conv-avatar {
             width: 46px;
             height: 46px;
@@ -91,13 +87,8 @@
             background-size: cover;
             background-position: center;
         }
-        .conv-item.active .conv-avatar {
-            border: 2px solid #fff;
-        }
-        .conv-info {
-            flex: 1;
-            min-width: 0;
-        }
+        .conv-item.active .conv-avatar { border: 2px solid #fff; }
+        .conv-info { flex: 1; min-width: 0; }
         .conv-name {
             font-weight: 700;
             font-size: 14px;
@@ -148,10 +139,7 @@
             height: 42px;
             font-size: 16px;
         }
-        .chat-header .info {
-            flex: 1;
-            min-width: 0;
-        }
+        .chat-header .info { flex: 1; min-width: 0; }
         .chat-header .name {
             font-weight: 700;
             font-size: 15px;
@@ -170,9 +158,7 @@
             border-radius: 50%;
             background: #a0b4c8;
         }
-        .chat-header .status.online .dot {
-            background: #1e5a2f;
-        }
+        .chat-header .status.online .dot { background: #1e5a2f; }
         .chat-header .status.typing .dot {
             background: var(--rouge);
             animation: pulse 1s infinite;
@@ -181,10 +167,7 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
         }
-        .chat-header .actions {
-            display: flex;
-            gap: 8px;
-        }
+        .chat-header .actions { display: flex; gap: 8px; }
         .chat-header .actions button {
             width: 40px;
             height: 40px;
@@ -249,9 +232,7 @@
             border-radius: 12px;
             display: block;
         }
-        .msg-bubble audio {
-            max-width: 220px;
-        }
+        .msg-bubble audio { max-width: 220px; }
         .msg-bubble .file-link {
             display: flex;
             align-items: center;
@@ -259,9 +240,7 @@
             text-decoration: none;
             color: inherit;
         }
-        .msg-bubble .file-link i {
-            font-size: 20px;
-        }
+        .msg-bubble .file-link i { font-size: 20px; }
         .msg-time {
             font-size: 10px;
             color: var(--gris-texte);
@@ -285,6 +264,9 @@
             display: block;
         }
 
+        /* ============================================
+           ZONE DE SAISIE + PIÈCE JOINTE
+           ============================================ */
         .chat-input {
             display: flex;
             align-items: center;
@@ -293,7 +275,8 @@
             border-top: 1px solid var(--gris-tres-clair);
             background: #fff;
         }
-        .chat-input button {
+
+        .chat-input .btn-icon {
             width: 42px;
             height: 42px;
             border-radius: 50%;
@@ -304,16 +287,41 @@
             font-size: 16px;
             transition: 0.15s;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
         }
-        .chat-input button:hover {
+        .chat-input .btn-icon:hover {
             background: var(--noir);
             color: #fff;
         }
-        .chat-input button.recording {
-            background: var(--rouge);
-            color: #fff;
-            animation: pulse 1s infinite;
+
+        /* ⚠️ Le label qui remplace le bouton pièce jointe */
+        .chat-input .btn-attach-label {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: #f0f4fc;
+            color: var(--noir);
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.15s;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
         }
+        .chat-input .btn-attach-label:hover {
+            background: var(--noir);
+            color: #fff;
+        }
+        .chat-input .btn-attach-label:active {
+            transform: scale(0.95);
+        }
+
         .chat-input input[type="text"] {
             flex: 1;
             padding: 12px 18px;
@@ -323,6 +331,7 @@
             font-family: inherit;
             background: #fafcff;
             color: var(--noir);
+            min-width: 0;
         }
         .chat-input input[type="text"]:focus {
             outline: none;
@@ -415,9 +424,7 @@
                 height: auto;
                 min-height: calc(100vh - 140px);
             }
-            .conv-list {
-                max-height: 240px;
-            }
+            .conv-list { max-height: 240px; }
             .chat-window {
                 height: calc(100vh - 200px);
                 min-height: 500px;
@@ -485,17 +492,18 @@
                     <div class="chat-messages" id="chatMessages"></div>
 
                     <div class="chat-input">
-                        <button id="btnAttach" title="Joindre un fichier">
+                        <!-- ⚠️ LABEL NATIF pour pièce jointe -->
+                        <label for="fileInput" class="btn-attach-label" title="Joindre un fichier">
                             <i class="fas fa-paperclip"></i>
-                        </button>
+                        </label>
                         <input type="file" id="fileInput" style="display:none;" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" />
 
                         <input type="text" id="msgInput" placeholder="Votre message..." data-i18n="msg_placeholder" />
 
-                        <button id="btnRecord" title="Enregistrer un vocal">
+                        <button id="btnRecord" class="btn-icon" title="Enregistrer un vocal">
                             <i class="fas fa-microphone"></i>
                         </button>
-                        <button id="btnSend" class="btn-send" title="Envoyer">
+                        <button id="btnSend" class="btn-icon btn-send" title="Envoyer">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -649,9 +657,6 @@
             langueActuelle = code;
         }
 
-        // ============================================================
-        // FONCTIONS UTILITAIRES
-        // ============================================================
         function escapeHTML(str) {
             if (!str) return '';
             const div = document.createElement('div');
@@ -664,22 +669,17 @@
             return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
         }
 
-        // ⚠️ IMPORTANT : récupérer l'ID de l'autre utilisateur
+        // ⚠️ Récupérer l'ID de l'autre utilisateur
         function getOtherUserId(conv) {
             if (!conv || !currentUser) return null;
-            // Si je suis user1, l'autre est user2, sinon l'autre est user1
-            if (conv.user1_id === currentUser.id) {
-                return conv.user2_id;
-            } else if (conv.user2_id === currentUser.id) {
-                return conv.user1_id;
-            }
+            if (conv.user1_id === currentUser.id) return conv.user2_id;
+            if (conv.user2_id === currentUser.id) return conv.user1_id;
             return null;
         }
 
         async function getAuteur(userId) {
             const client = initialiserSupabase();
             if (!client || !userId) return { nom: '—', avatar_url: null };
-
             try {
                 const { data, error } = await client.rpc('obtenir_auteur', { p_user_id: userId });
                 if (!error && data && data[0]) {
@@ -715,7 +715,6 @@
             appliquerLangue(langueActuelle);
             await chargerConversations();
 
-            // Ouvrir une conversation depuis l'URL
             const params = new URLSearchParams(window.location.search);
             const convId = params.get('conv');
             const otherUser = params.get('user');
@@ -736,7 +735,7 @@
         }
 
         // ============================================================
-        // LISTE DES CONVERSATIONS
+        // CONVERSATIONS
         // ============================================================
         async function chargerConversations() {
             const client = initialiserSupabase();
@@ -804,19 +803,13 @@
             const client = initialiserSupabase();
             if (!client) return;
 
-            // S'assurer que les conversations sont chargées
-            if (allConversations.length === 0) {
-                await chargerConversations();
-            }
+            if (allConversations.length === 0) await chargerConversations();
 
             let conv = allConversations.find(c => c.id === convId);
-
-            // Si pas trouvée, recharger
             if (!conv) {
                 await chargerConversations();
                 conv = allConversations.find(c => c.id === convId);
             }
-
             if (!conv) {
                 console.error('Conversation non trouvée:', convId);
                 return;
@@ -824,17 +817,12 @@
 
             currentConversationId = convId;
 
-            // ⚠️ Récupérer l'autre utilisateur
             const otherId = getOtherUserId(conv);
-            if (!otherId) {
-                console.error('Impossible de trouver l\'autre utilisateur');
-                return;
-            }
+            if (!otherId) return;
 
             const auteur = await getAuteur(otherId);
             currentOtherUser = { id: otherId, ...auteur };
 
-            // Mettre à jour l'en-tête
             const initial = (auteur.nom || '?').charAt(0).toUpperCase();
             const avatarStyle = auteur.avatar_url ? `background-image:url('${auteur.avatar_url}');` : '';
             const avatar = document.getElementById('chatAvatar');
@@ -852,7 +840,7 @@
         }
 
         // ============================================================
-        // CHARGER LES MESSAGES
+        // MESSAGES
         // ============================================================
         async function chargerMessages() {
             const client = initialiserSupabase();
@@ -882,11 +870,8 @@
             }
 
             container.innerHTML = '';
-            for (const msg of data) {
-                await afficherMessage(msg);
-            }
+            data.forEach(msg => afficherMessage(msg));
 
-            // Marquer comme lu
             await client
                 .from('messages')
                 .update({ read: true })
@@ -936,7 +921,7 @@
         }
 
         // ============================================================
-        // ENVOI DE MESSAGE TEXTE
+        // ENVOI TEXTE
         // ============================================================
         document.getElementById('btnSend').addEventListener('click', envoyerMessageTexte);
         document.getElementById('msgInput').addEventListener('keypress', function(e) {
@@ -996,18 +981,17 @@
         }
 
         // ============================================================
-        // ENVOI DE FICHIER
+        // PIÈCE JOINTE (via label natif)
         // ============================================================
-        document.getElementById('btnAttach').addEventListener('click', () => {
-            document.getElementById('fileInput').click();
-        });
-
         document.getElementById('fileInput').addEventListener('change', async function() {
             const file = this.files[0];
             if (!file) return;
 
             const client = initialiserSupabase();
-            if (!client || !currentConversationId) return;
+            if (!client || !currentConversationId) {
+                this.value = '';
+                return;
+            }
 
             let type = 'document';
             if (file.type.startsWith('image/')) type = 'image';
@@ -1151,7 +1135,7 @@
         }
 
         // ============================================================
-        // APPELS AUDIO / VIDÉO (simulés)
+        // APPELS (simulés)
         // ============================================================
         document.getElementById('btnCallAudio').addEventListener('click', function() {
             alert('📞 ' + t('soon') + ' : Appel audio');
@@ -1178,7 +1162,7 @@
                     table: 'messages',
                     filter: `conversation_id=eq.${convId}`
                 }, async (payload) => {
-                    await afficherMessage(payload.new);
+                    afficherMessage(payload.new);
                     scrollChatBottom();
 
                     if (payload.new.sender_id !== currentUser.id) {
