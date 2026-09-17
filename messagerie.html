@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Demma · Messagerie</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body { background: #f0f2f5; }
+
+        .messaging-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            height: calc(100vh - 140px);
+            min-height: 500px;
+            margin: 20px 0;
+        }
+
+        /* ---- Liste des conversations ---- */
+        .conv-list {
+            background: #fff;
+            border-radius: 24px;
+            padding: 20px 16px;
+            overflow-y: auto;
+            border: 1px solid #e8eef6;
+        }
+        .conv-list h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--noir);
+            margin-bottom: 16px;
+            padding: 0 8px;
+        }
+        .conv-search {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--gris-clair);
+            border-radius: 30px;
+            font-size: 14px;
+            font-family: inherit;
+            margin-bottom: 12px;
+            background: #fafcff;
+            color: var(--noir);
+        }
+        .conv-search:focus {
+            outline: none;
+            border-color: var(--rouge);
+        }
+        .conv-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 10px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: 0.15s;
+            margin-bottom: 4px;
+        }
+        .conv-item:hover {
+            background: #f5f8ff;
+        }
+        .conv-item.active {
+            background: var(--noir);
+            color: #fff;
+        }
+        .conv-item.active .conv-name,
+        .conv-item.active .conv-last {
+            color: #fff;
+        }
+        .conv-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: var(--noir);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+            background-size: cover;
+            background-position: center;
+        }
+        .conv-item.active .conv-avatar {
+            border: 2px solid #fff;
+        }
+        .conv-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .conv-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--noir);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .conv-last {
+            font-size: 12px;
+            color: var(--gris-texte);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .conv-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gris-texte);
+            font-size: 14px;
+        }
+        .conv-empty i {
+            font-size: 36px;
+            color: #c5d2e0;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        /* ---- Fenêtre de chat ---- */
+        .chat-window {
+            background: #fff;
+            border-radius: 24px;
+            border: 1px solid #e8eef6;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--gris-tres-clair);
+            background: #fafdff;
+        }
+        .chat-header .conv-avatar {
+            width: 42px;
+            height: 42px;
+            font-size: 16px;
+        }
+        .chat-header .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .chat-header .name {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--noir);
+        }
+        .chat-header .status {
+            font-size: 12px;
+            color: var(--gris-texte);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chat-header .status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #a0b4c8;
+        }
+        .chat-header .status.online .dot {
+            background: #1e5a2f;
+        }
+        .chat-header .status.typing .dot {
+            background: var(--rouge);
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .chat-header .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-header .actions button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #f0f4fc;
+            color: var(--noir);
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.15s;
+        }
+        .chat-header .actions button:hover {
+            background: var(--noir);
+            color: #fff;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #fafdff;
+        }
+        .msg-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        .msg-row.me { flex-direction: row-reverse; }
+        .msg-bubble {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            background: #fff;
+            border: 1px solid #e8eef6;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--noir);
+            word-wrap: break-word;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+        .msg-row.me .msg-bubble {
+            background: var(--noir);
+            color: #fff;
+            border-color: var(--noir);
+        }
+        .msg-bubble.audio {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+        }
+        .msg-bubble img {
+            max-width: 100%;
+            border-radius: 12px;
+            display: block;
+        }
+        .msg-bubble video {
+            max-width: 100%;
+            border-radius: 12px;
+            display: block;
+        }
+        .msg-bubble audio {
+            max-width: 220px;
+        }
+        .msg-bubble .file-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: inherit;
+        }
+        .msg-bubble .file-link i {
+            font-size: 20px;
+        }
+        .msg-time {
+            font-size: 10px;
+            color: var(--gris-texte);
+            margin-top: 4px;
+        }
+        .msg-row.me .msg-time {
+            color: #a0b8d4;
+            text-align: right;
+        }
+
+        .chat-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gris-texte);
+            font-size: 14px;
+        }
+        .chat-empty i {
+            font-size: 48px;
+            color: #c5d2e0;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .chat-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-top: 1px solid var(--gris-tres-clair);
+            background: #fff;
+        }
+        .chat-input button {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: #f0f4fc;
+            color: var(--noir);
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.15s;
+            flex-shrink: 0;
+        }
+        .chat-input button:hover {
+            background: var(--noir);
+            color: #fff;
+        }
+        .chat-input button.recording {
+            background: var(--rouge);
+            color: #fff;
+            animation: pulse 1s infinite;
+        }
+        .chat-input input[type="text"] {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1.5px solid var(--gris-clair);
+            border-radius: 30px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #fafcff;
+            color: var(--noir);
+        }
+        .chat-input input[type="text"]:focus {
+            outline: none;
+            border-color: var(--rouge);
+            background: #fff;
+        }
+        .chat-input .btn-send {
+            background: var(--noir);
+            color: #fff;
+        }
+        .chat-input .btn-send:hover {
+            background: var(--noir-clair);
+        }
+
+        /* Enregistrement en cours */
+        .recording-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 22, 40, 0.85);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #fff;
+            gap: 20px;
+        }
+        .recording-overlay.show { display: flex; }
+        .recording-overlay i {
+            font-size: 64px;
+            color: var(--rouge);
+            animation: pulse 1s infinite;
+        }
+        .recording-overlay p {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .recording-overlay .timer {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: monospace;
+        }
+        .recording-overlay .actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .recording-overlay .actions button {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .recording-overlay .actions .cancel {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+        .recording-overlay .actions .send {
+            background: var(--rouge);
+            color: #fff;
+        }
+
+        /* Écran vide (aucune conversation sélectionnée) */
+        .no-chat-selected {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--gris-texte);
+            text-align: center;
+            padding: 40px;
+        }
+        .no-chat-selected i {
+            font-size: 64px;
+            color: #c5d2e0;
+            margin-bottom: 16px;
+        }
+        .no-chat-selected h3 {
+            color: var(--noir);
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .messaging-container {
+                grid-template-columns: 1fr;
+                height: auto;
+                min-height: calc(100vh - 140px);
+            }
+            .conv-list {
+                max-height: 240px;
+            }
+            .chat-window {
+                height: calc(100vh - 200px);
+                min-height: 500px;
+            }
+            .msg-bubble { max-width: 85%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-arrows-rotate"></i>
+                <a href="index.html"><h1>Demma<span>.</span></h1></a>
+            </div>
+            <div class="nav-right">
+                <a href="fil-actualite.html" class="btn-outline">
+                    <i class="fas fa-arrow-left"></i>
+                    <span data-i18n="back_feed">Fil d'actualité</span>
+                </a>
+                <a href="profil.html" class="btn-outline">
+                    <i class="fas fa-user"></i>
+                    <span data-i18n="profile">Mon profil</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="messaging-container">
+
+            <!-- Liste des conversations -->
+            <div class="conv-list">
+                <h3><i class="fas fa-comments"></i> <span data-i18n="conversations">Conversations</span></h3>
+                <input type="text" class="conv-search" id="convSearch" placeholder="Rechercher..." data-i18n="search_placeholder" />
+                <div id="convList"></div>
+            </div>
+
+            <!-- Fenêtre de chat -->
+            <div class="chat-window" id="chatWindow">
+                <div class="no-chat-selected" id="noChatSelected">
+                    <i class="fas fa-comments"></i>
+                    <h3 data-i18n="no_chat_title">Sélectionnez une conversation</h3>
+                    <p data-i18n="no_chat_sub">Ou commencez une nouvelle discussion depuis une carte.</p>
+                </div>
+
+                <div id="activeChat" style="display:none; flex-direction: column; height: 100%;">
+                    <div class="chat-header">
+                        <div class="conv-avatar" id="chatAvatar">?</div>
+                        <div class="info">
+                            <div class="name" id="chatName">—</div>
+                            <div class="status" id="chatStatus">
+                                <span class="dot"></span>
+                                <span id="chatStatusText">—</span>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <button id="btnCallAudio" title="Appel audio">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                            <button id="btnCallVideo" title="Appel vidéo">
+                                <i class="fas fa-video"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages" id="chatMessages"></div>
+
+                    <div class="chat-input">
+                        <button id="btnAttach" title="Joindre un fichier">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <input type="file" id="fileInput" style="display:none;" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" />
+
+                        <input type="text" id="msgInput" placeholder="Votre message..." data-i18n="msg_placeholder" />
+
+                        <button id="btnRecord" title="Enregistrer un vocal">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button id="btnSend" class="btn-send" title="Envoyer">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Overlay d'enregistrement vocal -->
+    <div class="recording-overlay" id="recordingOverlay">
+        <i class="fas fa-microphone"></i>
+        <p data-i18n="recording">Enregistrement en cours...</p>
+        <div class="timer" id="recordTimer">0:00</div>
+        <div class="actions">
+            <button class="cancel" id="btnCancelRecord" data-i18n="cancel">Annuler</button>
+            <button class="send" id="btnSendRecord" data-i18n="send">Envoyer</button>
+        </div>
+    </div>
+
+    <script src="js/supabase.js"></script>
+
+    <script>
+        const TRADUCTIONS = {
+            fr: {
+                back_feed: "Fil d'actualité",
+                profile: "Mon profil",
+                conversations: "Conversations",
+                search_placeholder: "Rechercher...",
+                no_chat_title: "Sélectionnez une conversation",
+                no_chat_sub: "Ou commencez une nouvelle discussion depuis une carte.",
+                msg_placeholder: "Votre message...",
+                recording: "Enregistrement en cours...",
+                cancel: "Annuler",
+                send: "Envoyer",
+                online: "En ligne",
+                offline: "Hors ligne",
+                typing: "est en train d'écrire...",
+                no_conv: "Aucune conversation",
+                no_conv_sub: "Commencez une discussion depuis une carte",
+                sending: "Envoi...",
+                err_conv: "Erreur de conversation",
+                err_send: "Erreur d'envoi",
+                err_upload: "Erreur d'upload",
+                err_audio: "Impossible d'enregistrer",
+                soon: "Bientôt disponible"
+            },
+            en: {
+                back_feed: "News feed",
+                profile: "My profile",
+                conversations: "Conversations",
+                search_placeholder: "Search...",
+                no_chat_title: "Select a conversation",
+                no_chat_sub: "Or start a new discussion from a card.",
+                msg_placeholder: "Your message...",
+                recording: "Recording...",
+                cancel: "Cancel",
+                send: "Send",
+                online: "Online",
+                offline: "Offline",
+                typing: "is typing...",
+                no_conv: "No conversations",
+                no_conv_sub: "Start a discussion from a card",
+                sending: "Sending...",
+                err_conv: "Conversation error",
+                err_send: "Send error",
+                err_upload: "Upload error",
+                err_audio: "Cannot record",
+                soon: "Coming soon"
+            },
+            ar: {
+                back_feed: "آخر الأخبار",
+                profile: "ملفي الشخصي",
+                conversations: "المحادثات",
+                search_placeholder: "بحث...",
+                no_chat_title: "اختر محادثة",
+                no_chat_sub: "أو ابدأ نقاشًا جديدًا من بطاقة.",
+                msg_placeholder: "رسالتك...",
+                recording: "جاري التسجيل...",
+                cancel: "إلغاء",
+                send: "إرسال",
+                online: "متصل",
+                offline: "غير متصل",
+                typing: "يكتب...",
+                no_conv: "لا محادثات",
+                no_conv_sub: "ابدأ نقاشًا من بطاقة",
+                sending: "جاري الإرسال...",
+                err_conv: "خطأ في المحادثة",
+                err_send: "خطأ في الإرسال",
+                err_upload: "خطأ في التحميل",
+                err_audio: "تعذر التسجيل",
+                soon: "قريباً"
+            },
+            es: {
+                back_feed: "Noticias",
+                profile: "Mi perfil",
+                conversations: "Conversaciones",
+                search_placeholder: "Buscar...",
+                no_chat_title: "Selecciona una conversación",
+                no_chat_sub: "O inicia una nueva discusión desde una tarjeta.",
+                msg_placeholder: "Tu mensaje...",
+                recording: "Grabando...",
+                cancel: "Cancelar",
+                send: "Enviar",
+                online: "En línea",
+                offline: "Desconectado",
+                typing: "está escribiendo...",
+                no_conv: "Sin conversaciones",
+                no_conv_sub: "Inicia una discusión desde una tarjeta",
+                sending: "Enviando...",
+                err_conv: "Error de conversación",
+                err_send: "Error al enviar",
+                err_upload: "Error al subir",
+                err_audio: "No se puede grabar",
+                soon: "Próximamente"
+            }
+        };
+
+        let langueActuelle = localStorage.getItem('demma_lang') || 'fr';
+        let currentUser = null;
+        let currentProfile = null;
+        let currentConversationId = null;
+        let currentOtherUser = null;
+        let allConversations = [];
+        let realtimeChannel = null;
+        let typingChannel = null;
+        let typingTimeout = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordInterval = null;
+        let recordStartTime = 0;
+
+        function t(key) {
+            return (TRADUCTIONS[langueActuelle] || TRADUCTIONS.fr)[key] || key;
+        }
+
+        function appliquerLangue(code) {
+            const trad = TRADUCTIONS[code] || TRADUCTIONS.fr;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const cle = el.getAttribute('data-i18n');
+                if (!trad[cle]) return;
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    el.placeholder = trad[cle];
+                } else {
+                    el.textContent = trad[cle];
+                }
+            });
+            document.documentElement.lang = code;
+            document.documentElement.dir = (code === 'ar') ? 'rtl' : 'ltr';
+            localStorage.setItem('demma_lang', code);
+            langueActuelle = code;
+        }
+
+        // ============================================================
+        // RÉCUPÉRATION AUTEUR
+        // ============================================================
+        async function getAuteur(userId) {
+            const client = initialiserSupabase();
+            if (!client || !userId) return { nom: '—', avatar_url: null };
+            try {
+                const { data, error } = await client.rpc('obtenir_auteur', { p_user_id: userId });
+                if (!error && data && data[0]) {
+                    return { nom: data[0].nom || '—', avatar_url: data[0].avatar_url || null };
+                }
+            } catch (e) {}
+            return { nom: '—', avatar_url: null };
+        }
+
+        // ============================================================
+        // INITIALISATION
+        // ============================================================
+        async function initialiser() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data: { session } } = await client.auth.getSession();
+            if (!session) {
+                window.location.href = 'connexion.html';
+                return;
+            }
+            currentUser = session.user;
+
+            const { data: profileData } = await client
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+            currentProfile = profileData;
+
+            appliquerLangue(langueActuelle);
+
+            // Charger les conversations
+            await chargerConversations();
+
+            // Vérifier s'il y a une conversation à ouvrir depuis l'URL
+            const params = new URLSearchParams(window.location.search);
+            const convId = params.get('conv');
+            const otherUser = params.get('user');
+            const cardId = params.get('card');
+
+            if (otherUser) {
+                // Créer ou récupérer une conversation
+                const { data, error } = await client.rpc('get_or_create_conversation', {
+                    p_other_user_id: otherUser,
+                    p_card_id: cardId || null
+                });
+                if (!error && data) {
+                    await chargerConversations();
+                    ouvrirConversation(data);
+                }
+            } else if (convId) {
+                ouvrirConversation(convId);
+            }
+        }
+
+        // ============================================================
+        // LISTE DES CONVERSATIONS
+        // ============================================================
+        async function chargerConversations() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client
+                .from('conversations')
+                .select('*')
+                .or(`user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`)
+                .order('updated_at', { ascending: false });
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            allConversations = data || [];
+            await afficherConversations();
+        }
+
+        async function afficherConversations() {
+            const container = document.getElementById('convList');
+
+            if (allConversations.length === 0) {
+                container.innerHTML = `
+                    <div class="conv-empty">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>${t('no_conv')}</p>
+                        <p style="font-size:12px;margin-top:6px;">${t('no_conv_sub')}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            for (const conv of allConversations) {
+                const otherId = conv.user1_id === currentUser.id ? conv.user2_id : conv.user1_id;
+                const auteur = await getAuteur(otherId);
+                const initial = (auteur.nom || '?').charAt(0).toUpperCase();
+                const avatarStyle = auteur.avatar_url ? `background-image:url('${auteur.avatar_url}');` : '';
+
+                const item = document.createElement('div');
+                item.className = 'conv-item';
+                if (conv.id === currentConversationId) item.classList.add('active');
+                item.dataset.convId = conv.id;
+                item.innerHTML = `
+                    <div class="conv-avatar" style="${avatarStyle}">${auteur.avatar_url ? '' : initial}</div>
+                    <div class="conv-info">
+                        <div class="conv-name">${escapeHTML(auteur.nom)}</div>
+                        <div class="conv-last">${escapeHTML(conv.last_message || '...')}</div>
+                    </div>
+                `;
+                item.addEventListener('click', () => ouvrirConversation(conv.id));
+                container.appendChild(item);
+            }
+        }
+
+        // ============================================================
+        // OUVRIR UNE CONVERSATION
+        // ============================================================
+        async function ouvrirConversation(convId) {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            currentConversationId = convId;
+
+            const conv = allConversations.find(c => c.id === convId);
+            if (!conv) {
+                // Recharger
+                await chargerConversations();
+            }
+
+            const convFinal = allConversations.find(c => c.id === convId);
+            if (!convFinal) return;
+
+            const otherId = convFinal.user1_id === currentUser.id ? convFinal.user2_id : convFinal.user1_id;
+            const auteur = await getAuteur(otherId);
+            currentOtherUser = { id: otherId, ...auteur };
+
+            // Afficher l'en-tête
+            const initial = (auteur.nom || '?').charAt(0).toUpperCase();
+            const avatarStyle = auteur.avatar_url ? `background-image:url('${auteur.avatar_url}');` : '';
+            const avatar = document.getElementById('chatAvatar');
+            avatar.textContent = auteur.avatar_url ? '' : initial;
+            avatar.style.backgroundImage = auteur.avatar_url ? `url('${auteur.avatar_url}')` : '';
+            document.getElementById('chatName').textContent = auteur.nom || '—';
+
+            document.getElementById('noChatSelected').style.display = 'none';
+            document.getElementById('activeChat').style.display = 'flex';
+
+            // Charger les messages
+            await chargerMessages();
+
+            // S'abonner au realtime
+            souscrireRealtime(convId);
+
+            // Rafraîchir la liste pour mettre en surbrillance
+            await afficherConversations();
+
+            // Scroller en bas
+            scrollChatBottom();
+        }
+
+        // ============================================================
+        // CHARGER LES MESSAGES
+        // ============================================================
+        async function chargerMessages() {
+            const client = initialiserSupabase();
+            if (!client || !currentConversationId) return;
+
+            const { data, error } = await client
+                .from('messages')
+                .select('*')
+                .eq('conversation_id', currentConversationId)
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            const container = document.getElementById('chatMessages');
+
+            if (!data || data.length === 0) {
+                container.innerHTML = `
+                    <div class="chat-empty">
+                        <i class="fas fa-comment-dots"></i>
+                        <p>${t('no_conv_sub')}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            for (const msg of data) {
+                await afficherMessage(msg);
+            }
+
+            // Marquer comme lu
+            await client
+                .from('messages')
+                .update({ read: true })
+                .eq('conversation_id', currentConversationId)
+                .neq('sender_id', currentUser.id);
+
+            scrollChatBottom();
+        }
+
+        async function afficherMessage(msg) {
+            const container = document.getElementById('chatMessages');
+            const isMe = msg.sender_id === currentUser.id;
+
+            const row = document.createElement('div');
+            row.className = 'msg-row' + (isMe ? ' me' : '');
+
+            let bubbleContent = '';
+
+            if (msg.type === 'text') {
+                bubbleContent = `<div class="msg-bubble">${escapeHTML(msg.content || '')}<div class="msg-time">${formatTime(msg.created_at)}</div></div>`;
+            } else if (msg.type === 'audio') {
+                bubbleContent = `<div class="msg-bubble audio">
+                    <audio controls preload="metadata" src="${msg.media_url}"></audio>
+                    <div class="msg-time">${formatTime(msg.created_at)}</div>
+                </div>`;
+            } else if (msg.type === 'image') {
+                bubbleContent = `<div class="msg-bubble"><img src="${msg.media_url}" alt="" loading="lazy" /><div class="msg-time">${formatTime(msg.created_at)}</div></div>`;
+            } else if (msg.type === 'video') {
+                bubbleContent = `<div class="msg-bubble"><video controls preload="metadata" src="${msg.media_url}"></video><div class="msg-time">${formatTime(msg.created_at)}</div></div>`;
+            } else if (msg.type === 'document') {
+                bubbleContent = `<div class="msg-bubble">
+                    <a href="${msg.media_url}" target="_blank" class="file-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>${escapeHTML(msg.content || 'Document')}</span>
+                    </a>
+                    <div class="msg-time">${formatTime(msg.created_at)}</div>
+                </div>`;
+            }
+
+            row.innerHTML = bubbleContent;
+            container.appendChild(row);
+        }
+
+        function formatTime(iso) {
+            const d = new Date(iso);
+            return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function scrollChatBottom() {
+            const c = document.getElementById('chatMessages');
+            if (c) c.scrollTop = c.scrollHeight;
+        }
+
+        // ============================================================
+        // ENVOI DE MESSAGE TEXTE
+        // ============================================================
+        document.getElementById('btnSend').addEventListener('click', envoyerMessageTexte);
+        document.getElementById('msgInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                envoyerMessageTexte();
+            }
+        });
+
+        // Indicateur "est en train d'écrire"
+        document.getElementById('msgInput').addEventListener('input', function() {
+            if (!currentConversationId) return;
+            signalerTyping(true);
+
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => signalerTyping(false), 2000);
+        });
+
+        async function signalerTyping(isTyping) {
+            const client = initialiserSupabase();
+            if (!client || !currentConversationId) return;
+
+            if (isTyping) {
+                await client.from('typing_indicators').upsert({
+                    conversation_id: currentConversationId,
+                    user_id: currentUser.id,
+                    updated_at: new Date().toISOString()
+                });
+            } else {
+                await client.from('typing_indicators')
+                    .delete()
+                    .eq('conversation_id', currentConversationId)
+                    .eq('user_id', currentUser.id);
+            }
+        }
+
+        async function envoyerMessageTexte() {
+            const input = document.getElementById('msgInput');
+            const content = input.value.trim();
+            if (!content || !currentConversationId) return;
+
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            input.value = '';
+            await signalerTyping(false);
+
+            const { error } = await client.from('messages').insert([{
+                conversation_id: currentConversationId,
+                sender_id: currentUser.id,
+                content: content,
+                type: 'text'
+            }]);
+
+            if (error) {
+                console.error(error);
+                alert(t('err_send'));
+            }
+        }
+
+        // ============================================================
+        // ENVOI DE FICHIER
+        // ============================================================
+        document.getElementById('btnAttach').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            const client = initialiserSupabase();
+            if (!client || !currentConversationId) return;
+
+            // Détecter le type
+            let type = 'document';
+            if (file.type.startsWith('image/')) type = 'image';
+            else if (file.type.startsWith('video/')) type = 'video';
+            else if (file.type.startsWith('audio/')) type = 'audio';
+
+            try {
+                const ext = file.name.split('.').pop();
+                const cleanName = file.name.replace(/[^a-z0-9]/gi, '_').substring(0, 40);
+                const path = `${currentUser.id}/chat_${Date.now()}_${cleanName}.${ext}`;
+
+                const { error: uploadError } = await client
+                    .storage
+                    .from('cards-media')
+                    .upload(path, file, { cacheControl: '3600', upsert: false });
+
+                if (uploadError) throw uploadError;
+
+                const { data: urlData } = client
+                    .storage
+                    .from('cards-media')
+                    .getPublicUrl(path);
+
+                await client.from('messages').insert([{
+                    conversation_id: currentConversationId,
+                    sender_id: currentUser.id,
+                    content: file.name,
+                    type: type,
+                    media_url: urlData.publicUrl
+                }]);
+
+            } catch (error) {
+                console.error(error);
+                alert(t('err_upload') + ' : ' + error.message);
+            }
+
+            this.value = '';
+        });
+
+        // ============================================================
+        // ENREGISTREMENT VOCAL
+        // ============================================================
+        document.getElementById('btnRecord').addEventListener('click', async function() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = e => {
+                    if (e.data.size > 0) audioChunks.push(e.data);
+                };
+
+                mediaRecorder.start();
+                ouvrirOverlayEnregistrement();
+            } catch (error) {
+                console.error(error);
+                alert(t('err_audio'));
+            }
+        });
+
+        function ouvrirOverlayEnregistrement() {
+            const overlay = document.getElementById('recordingOverlay');
+            overlay.classList.add('show');
+            recordStartTime = Date.now();
+            document.getElementById('recordTimer').textContent = '0:00';
+
+            recordInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - recordStartTime) / 1000);
+                const min = Math.floor(elapsed / 60);
+                const sec = String(elapsed % 60).padStart(2, '0');
+                document.getElementById('recordTimer').textContent = `${min}:${sec}`;
+            }, 1000);
+        }
+
+        function fermerOverlayEnregistrement() {
+            document.getElementById('recordingOverlay').classList.remove('show');
+            clearInterval(recordInterval);
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            }
+        }
+
+        document.getElementById('btnCancelRecord').addEventListener('click', function() {
+            audioChunks = [];
+            fermerOverlayEnregistrement();
+        });
+
+        document.getElementById('btnSendRecord').addEventListener('click', async function() {
+            if (!mediaRecorder || audioChunks.length === 0) {
+                fermerOverlayEnregistrement();
+                return;
+            }
+
+            // Attendre la fin de l'enregistrement
+            const finaliser = () => {
+                const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                envoyerAudio(blob);
+            };
+
+            if (mediaRecorder.state === 'recording') {
+                mediaRecorder.onstop = finaliser;
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            } else {
+                finaliser();
+            }
+
+            fermerOverlayEnregistrement();
+        });
+
+        async function envoyerAudio(blob) {
+            const client = initialiserSupabase();
+            if (!client || !currentConversationId) return;
+
+            try {
+                const path = `${currentUser.id}/audio_${Date.now()}.webm`;
+                const { error: uploadError } = await client
+                    .storage
+                    .from('cards-media')
+                    .upload(path, blob, { contentType: 'audio/webm' });
+
+                if (uploadError) throw uploadError;
+
+                const { data: urlData } = client
+                    .storage
+                    .from('cards-media')
+                    .getPublicUrl(path);
+
+                await client.from('messages').insert([{
+                    conversation_id: currentConversationId,
+                    sender_id: currentUser.id,
+                    content: '🎤 Message vocal',
+                    type: 'audio',
+                    media_url: urlData.publicUrl
+                }]);
+
+            } catch (error) {
+                console.error(error);
+                alert(t('err_upload'));
+            }
+        }
+
+        // ============================================================
+        // APPELS AUDIO / VIDÉO (simulés)
+        // ============================================================
+        document.getElementById('btnCallAudio').addEventListener('click', function() {
+            alert('📞 ' + t('soon') + ' : Appel audio');
+        });
+        document.getElementById('btnCallVideo').addEventListener('click', function() {
+            alert('🎥 ' + t('soon') + ' : Appel vidéo');
+        });
+
+        // ============================================================
+        // REALTIME
+        // ============================================================
+        function souscrireRealtime(convId) {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            // Déconnecter l'ancien canal
+            if (realtimeChannel) {
+                client.removeChannel(realtimeChannel);
+            }
+            if (typingChannel) {
+                client.removeChannel(typingChannel);
+            }
+
+            // Canal messages
+            realtimeChannel = client
+                .channel('messages_' + convId)
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'messages',
+                    filter: `conversation_id=eq.${convId}`
+                }, async (payload) => {
+                    if (payload.new.sender_id !== currentUser.id) {
+                        await afficherMessage(payload.new);
+                        scrollChatBottom();
+
+                        // Marquer comme lu
+                        await client
+                            .from('messages')
+                            .update({ read: true })
+                            .eq('id', payload.new.id);
+                    } else {
+                        await afficherMessage(payload.new);
+                        scrollChatBottom();
+                    }
+
+                    // Rafraîchir la liste des conversations
+                    await chargerConversations();
+                })
+                .subscribe();
+
+            // Canal typing
+            typingChannel = client
+                .channel('typing_' + convId)
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'typing_indicators',
+                    filter: `conversation_id=eq.${convId}`
+                }, (payload) => {
+                    const status = document.getElementById('chatStatus');
+                    const txt = document.getElementById('chatStatusText');
+
+                    if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+                        if (payload.new.user_id !== currentUser.id) {
+                            status.classList.add('typing');
+                            txt.textContent = t('typing');
+                        }
+                    } else if (payload.eventType === 'DELETE') {
+                        status.classList.remove('typing');
+                        txt.textContent = t('online');
+                    }
+                })
+                .subscribe();
+        }
+
+        // ============================================================
+        // RECHERCHE CONVERSATION
+        // ============================================================
+        document.getElementById('convSearch').addEventListener('input', function() {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('.conv-item').forEach(item => {
+                const name = item.querySelector('.conv-name').textContent.toLowerCase();
+                item.style.display = name.includes(q) ? 'flex' : 'none';
+            });
+        });
+
+        // ============================================================
+        // UTILITAIRE
+        // ============================================================
+        function escapeHTML(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ============================================================
+        // LANCEMENT
+        // ============================================================
+        initialiser().catch(err => console.error('Erreur messagerie :', err));
+    </script>
+
+</body>
+</html>
