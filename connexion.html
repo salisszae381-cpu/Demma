@@ -15,210 +15,110 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* ---- Styles spécifiques à la page de connexion ---- */
-        .auth-container {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 40px 0;
-        }
+        .auth-container { max-width: 480px; margin: 0 auto; padding: 40px 0; }
         .auth-card {
-            background: var(--blanc);
-            border-radius: 40px;
+            background: var(--blanc); border-radius: 40px;
             padding: 44px 40px 36px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
         }
-        .auth-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
+        .auth-header { text-align: center; margin-bottom: 32px; }
         .auth-header .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--noir);
-            margin-bottom: 8px;
-            justify-content: center;
+            display: inline-flex; align-items: center; gap: 10px;
+            font-size: 28px; font-weight: 700; color: var(--noir);
+            margin-bottom: 8px; justify-content: center;
         }
         .auth-header .logo i {
-            color: var(--rouge);
-            background: #f0e8e0;
-            padding: 10px;
-            border-radius: 14px;
-            font-size: 26px;
+            color: var(--rouge); background: #f0e8e0;
+            padding: 10px; border-radius: 14px; font-size: 26px;
         }
         .auth-header .logo span { color: var(--rouge); }
-        .auth-header p {
-            color: var(--gris-texte);
-            font-size: 15px;
-        }
-        .auth-header p a {
-            color: var(--rouge);
-            font-weight: 600;
-            text-decoration: none;
-        }
+        .auth-header p { color: var(--gris-texte); font-size: 15px; }
+        .auth-header p a { color: var(--rouge); font-weight: 600; text-decoration: none; }
         .auth-header p a:hover { text-decoration: underline; }
 
         .form-group { margin-bottom: 20px; }
         .form-group label {
-            display: block;
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--noir);
-            margin-bottom: 6px;
+            display: block; font-weight: 600; font-size: 14px;
+            color: var(--noir); margin-bottom: 6px;
         }
         .form-group label .required { color: var(--rouge); margin-left: 2px; }
         .form-group input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 1.5px solid var(--gris-clair);
-            border-radius: 16px;
-            font-size: 15px;
-            font-family: inherit;
-            background: #fafcff;
-            transition: 0.2s;
-            color: var(--noir);
+            width: 100%; padding: 14px 18px;
+            border: 1.5px solid var(--gris-clair); border-radius: 16px;
+            font-size: 15px; font-family: inherit;
+            background: #fafcff; transition: 0.2s; color: var(--noir);
         }
         .form-group input:focus {
-            outline: none;
-            border-color: var(--rouge);
+            outline: none; border-color: var(--rouge);
             box-shadow: 0 0 0 4px rgba(192, 57, 43, 0.08);
             background: #ffffff;
         }
-        .form-group input::placeholder { color: #a0b4c8; }
-
         .password-wrapper { position: relative; }
         .password-wrapper input { padding-right: 50px; }
         .password-wrapper .toggle-pwd {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--gris-texte);
-            font-size: 18px;
-            cursor: pointer;
-            padding: 4px;
+            position: absolute; right: 16px; top: 50%;
+            transform: translateY(-50%); background: none; border: none;
+            color: var(--gris-texte); font-size: 18px; cursor: pointer; padding: 4px;
         }
-        .password-wrapper .toggle-pwd:hover { color: var(--noir); }
-
         .login-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 22px;
-            font-size: 14px;
-            flex-wrap: wrap;
-            gap: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 22px; font-size: 14px; flex-wrap: wrap; gap: 8px;
         }
         .login-options .remember {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #3a4f6a;
-            cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            color: #3a4f6a; cursor: pointer;
         }
         .login-options .remember input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--rouge);
-            cursor: pointer;
+            width: 18px; height: 18px; accent-color: var(--rouge); cursor: pointer;
         }
-        .login-options .forgot {
-            color: var(--rouge);
-            text-decoration: none;
-            font-weight: 500;
-        }
+        .login-options .forgot { color: var(--rouge); text-decoration: none; font-weight: 500; }
         .login-options .forgot:hover { text-decoration: underline; }
 
         .btn-validate {
-            width: 100%;
-            padding: 16px;
-            background: var(--noir);
-            border: none;
-            border-radius: 60px;
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--blanc);
-            cursor: pointer;
-            transition: 0.25s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 8px;
-            font-family: inherit;
+            width: 100%; padding: 16px; background: var(--noir);
+            border: none; border-radius: 60px; font-size: 17px;
+            font-weight: 700; color: var(--blanc); cursor: pointer;
+            transition: 0.25s; display: flex; align-items: center;
+            justify-content: center; gap: 10px; margin-top: 8px; font-family: inherit;
         }
         .btn-validate:hover { background: var(--noir-clair); transform: scale(1.01); }
         .btn-validate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         .divider {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            color: #a0b4c8;
-            font-size: 13px;
-            margin: 22px 0;
+            display: flex; align-items: center; gap: 16px;
+            color: #a0b4c8; font-size: 13px; margin: 22px 0;
         }
-        .divider::before,
-        .divider::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: var(--gris-clair);
+        .divider::before, .divider::after {
+            content: ""; flex: 1; height: 1px; background: var(--gris-clair);
         }
-
         .btn-register {
-            width: 100%;
-            padding: 14px;
-            background: transparent;
-            border: 1.5px solid var(--gris-clair);
-            border-radius: 60px;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--noir);
-            cursor: pointer;
-            transition: 0.25s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-decoration: none;
-            font-family: inherit;
+            width: 100%; padding: 14px; background: transparent;
+            border: 1.5px solid var(--gris-clair); border-radius: 60px;
+            font-size: 15px; font-weight: 600; color: var(--noir);
+            cursor: pointer; transition: 0.25s;
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; text-decoration: none; font-family: inherit;
         }
         .btn-register:hover { background: #f5f8ff; border-color: #aab8cc; }
         .btn-register i { color: var(--rouge); }
 
         .form-error {
-            color: var(--rouge);
-            font-size: 13px;
-            margin-top: 4px;
-            display: none;
+            color: var(--rouge); font-size: 13px;
+            margin-top: 4px; display: none;
         }
         .form-error.show { display: block; }
 
         .form-msg {
-            padding: 14px 20px;
-            border-radius: 16px;
-            margin-top: 16px;
-            font-size: 14px;
-            font-weight: 500;
-            display: none;
-            align-items: center;
-            gap: 10px;
+            padding: 14px 20px; border-radius: 16px;
+            margin-top: 16px; font-size: 14px; font-weight: 500;
+            display: none; align-items: center; gap: 10px;
         }
         .form-msg.success {
-            background: #e8f5e9;
-            color: #1e5a2f;
-            display: flex;
+            background: #e8f5e9; color: #1e5a2f; display: flex;
             border: 1px solid #a5d6a7;
         }
         .form-msg.error {
-            background: #fdecea;
-            color: var(--rouge);
-            display: flex;
+            background: #fdecea; color: var(--rouge); display: flex;
             border: 1px solid #f5c6c6;
         }
     </style>
@@ -227,7 +127,6 @@
 
     <div class="container">
 
-        <!-- ============ NAVBAR ============ -->
         <nav class="navbar">
             <div class="logo">
                 <i class="fas fa-arrows-rotate"></i>
@@ -242,22 +141,10 @@
                         <i class="fas fa-chevron-down" style="font-size:12px;"></i>
                     </button>
                     <div class="lang-dropdown-content" id="langContent">
-                        <div class="lang-item" data-lang="fr">
-                            <span>🇫🇷 Français</span>
-                            <span class="check">✓</span>
-                        </div>
-                        <div class="lang-item" data-lang="en">
-                            <span>🇬🇧 English</span>
-                            <span class="check" style="display:none;">✓</span>
-                        </div>
-                        <div class="lang-item" data-lang="ar">
-                            <span>🇸🇦 العربية</span>
-                            <span class="check" style="display:none;">✓</span>
-                        </div>
-                        <div class="lang-item" data-lang="es">
-                            <span>🇪🇸 Español</span>
-                            <span class="check" style="display:none;">✓</span>
-                        </div>
+                        <div class="lang-item" data-lang="fr"><span>🇫🇷 Français</span><span class="check">✓</span></div>
+                        <div class="lang-item" data-lang="en"><span>🇬🇧 English</span><span class="check" style="display:none;">✓</span></div>
+                        <div class="lang-item" data-lang="ar"><span>🇸🇦 العربية</span><span class="check" style="display:none;">✓</span></div>
+                        <div class="lang-item" data-lang="es"><span>🇪🇸 Español</span><span class="check" style="display:none;">✓</span></div>
                     </div>
                 </div>
 
@@ -268,10 +155,8 @@
             </div>
         </nav>
 
-        <!-- ============ FORMULAIRE DE CONNEXION ============ -->
         <div class="auth-container">
             <div class="auth-card">
-
                 <div class="auth-header">
                     <div class="logo">
                         <i class="fas fa-sign-in-alt"></i>
@@ -329,19 +214,13 @@
                     </a>
 
                 </form>
-
             </div>
         </div>
 
-        <!-- ============ FOOTER ============ -->
         <footer class="footer">
-            <div>
-                &copy; 2026 <strong>Demma</strong> · Réseau social d'échange
-            </div>
+            <div>&copy; 2026 <strong>Demma</strong> · Réseau social d'échange</div>
             <div class="footer-links">
                 <a href="index.html" data-i18n="home">Accueil</a>
-                <a href="#" data-i18n="about">À propos</a>
-                <a href="#" data-i18n="contact">Contact</a>
             </div>
         </footer>
 
@@ -350,13 +229,9 @@
     <script src="js/supabase.js"></script>
 
     <script>
-        // ============================================================
-        // TRADUCTIONS
-        // ============================================================
         const TRADUCTIONS = {
             fr: {
-                register: "Créer un compte",
-                home: "Accueil", about: "À propos", contact: "Contact",
+                register: "Créer un compte", home: "Accueil",
                 log_title: "Connectez-vous à votre compte",
                 log_no_account: "Pas encore membre ?",
                 log_create_link: "Créer un compte",
@@ -374,8 +249,7 @@
                 err_invalid: "Email ou mot de passe incorrect."
             },
             en: {
-                register: "Sign up",
-                home: "Home", about: "About", contact: "Contact",
+                register: "Sign up", home: "Home",
                 log_title: "Log in to your account",
                 log_no_account: "Not a member yet?",
                 log_create_link: "Create an account",
@@ -393,8 +267,7 @@
                 err_invalid: "Invalid email or password."
             },
             ar: {
-                register: "إنشاء حساب",
-                home: "الرئيسية", about: "من نحن", contact: "اتصل بنا",
+                register: "إنشاء حساب", home: "الرئيسية",
                 log_title: "سجل الدخول إلى حسابك",
                 log_no_account: "لست عضوًا بعد؟",
                 log_create_link: "إنشاء حساب",
@@ -412,8 +285,7 @@
                 err_invalid: "البريد الإلكتروني أو كلمة المرور غير صحيحة."
             },
             es: {
-                register: "Crear cuenta",
-                home: "Inicio", about: "Acerca de", contact: "Contacto",
+                register: "Crear cuenta", home: "Inicio",
                 log_title: "Inicia sesión en tu cuenta",
                 log_no_account: "¿Aún no eres miembro?",
                 log_create_link: "Crear una cuenta",
@@ -432,9 +304,6 @@
             }
         };
 
-        // ============================================================
-        // GESTION DE LA LANGUE (PARTAGÉE ENTRE TOUTES LES PAGES)
-        // ============================================================
         let langueActuelle = localStorage.getItem('demma_lang') || 'fr';
 
         function appliquerLangue(code) {
@@ -462,28 +331,20 @@
 
         const langBtn = document.getElementById('langBtn');
         const langContent = document.getElementById('langContent');
-
         langBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             langContent.classList.toggle('show');
         });
-
         document.querySelectorAll('#langContent .lang-item').forEach(item => {
             item.addEventListener('click', function() {
                 appliquerLangue(this.dataset.lang);
                 langContent.classList.remove('show');
             });
         });
-
         document.addEventListener('click', function(e) {
-            if (!e.target.closest('#langDropdown')) {
-                langContent.classList.remove('show');
-            }
+            if (!e.target.closest('#langDropdown')) langContent.classList.remove('show');
         });
 
-        // ============================================================
-        // VOIR / CACHER LE MOT DE PASSE
-        // ============================================================
         const pwdInput = document.getElementById('loginPassword');
         document.getElementById('togglePwd').addEventListener('click', function() {
             const isPwd = pwdInput.type === 'password';
@@ -492,13 +353,9 @@
             this.querySelector('i').classList.toggle('fa-eye-slash');
         });
 
-        // ============================================================
-        // SOUMISSION DU FORMULAIRE
-        // ============================================================
         const form = document.getElementById('loginForm');
         const submitBtn = document.getElementById('submitBtn');
         const globalMsg = document.getElementById('globalMsg');
-
         const emailInput = document.getElementById('loginEmail');
         const emailError = document.getElementById('emailError');
         const pwdError = document.getElementById('pwdError');
@@ -515,6 +372,22 @@
             globalMsg.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i> ${texte}`;
         }
 
+        // ============================================================
+        // VÉRIFICATION : si déjà connecté → fil d'actualité
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const client = initialiserSupabase();
+                if (!client) return;
+                const { data: { session } } = await client.auth.getSession();
+                if (session) {
+                    window.location.href = 'fil-actualite.html';
+                }
+            } catch (e) {
+                console.warn('Pas de session active');
+            }
+        });
+
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             hideAllErrors();
@@ -524,34 +397,33 @@
             const trad = TRADUCTIONS[langueActuelle];
 
             let isValid = true;
-
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(emailVal)) { emailError.classList.add('show'); isValid = false; }
             if (pwdVal.length < 6) { pwdError.classList.add('show'); isValid = false; }
-
             if (!isValid) return;
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + trad.msg_loading;
 
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                const client = initialiserSupabase();
+                if (!client) throw new Error('Supabase non initialisé');
+
+                const { data, error } = await client.auth.signInWithPassword({
                     email: emailVal,
                     password: pwdVal
                 });
 
                 if (error) throw error;
 
-                // Sauvegarder la session si "Se souvenir de moi" est coché
                 const remember = document.getElementById('rememberMe').checked;
-                if (remember) {
-                    localStorage.setItem('demma_remember', 'true');
-                }
+                if (remember) localStorage.setItem('demma_remember', 'true');
 
                 afficherMessage(trad.msg_success, 'success');
 
+                // ✅ REDIRECTION VERS LE FIL D'ACTUALITÉ
                 setTimeout(() => {
-                    window.location.href = 'profil.html';
+                    window.location.href = 'fil-actualite.html';
                 }, 1500);
 
             } catch (error) {
@@ -566,9 +438,6 @@
             }
         });
 
-        // ============================================================
-        // APPLIQUER LA LANGUE AU DÉMARRAGE
-        // ============================================================
         appliquerLangue(langueActuelle);
     </script>
 
