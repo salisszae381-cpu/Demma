@@ -493,9 +493,9 @@
 
                     <div class="chat-input">
                         <!-- ⚠️ LABEL NATIF pour pièce jointe -->
-                        <label for="fileInput" class="btn-attach-label" title="Joindre un fichier">
-                            <i class="fas fa-paperclip"></i>
-                        </label>
+                        <button type="button" class="btn-icon" id="btnAttach" onclick="document.getElementById('fileInput').click()" title="Joindre un fichier">
+    <i class="fas fa-paperclip"></i>
+</button>
                         <input type="file" id="fileInput" style="display:none;" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" />
 
                         <input type="text" id="msgInput" placeholder="Votre message..." data-i18n="msg_placeholder" />
