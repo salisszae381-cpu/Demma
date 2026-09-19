@@ -264,9 +264,6 @@
             display: block;
         }
 
-        /* ============================================
-           ZONE DE SAISIE + PIÈCE JOINTE
-           ============================================ */
         .chat-input {
             display: flex;
             align-items: center;
@@ -275,7 +272,6 @@
             border-top: 1px solid var(--gris-tres-clair);
             background: #fff;
         }
-
         .chat-input .btn-icon {
             width: 42px;
             height: 42px;
@@ -296,8 +292,6 @@
             background: var(--noir);
             color: #fff;
         }
-
-        /* ⚠️ Le label qui remplace le bouton pièce jointe */
         .chat-input .btn-attach-label {
             width: 42px;
             height: 42px;
@@ -318,10 +312,7 @@
             background: var(--noir);
             color: #fff;
         }
-        .chat-input .btn-attach-label:active {
-            transform: scale(0.95);
-        }
-
+        .chat-input .btn-attach-label:active { transform: scale(0.95); }
         .chat-input input[type="text"] {
             flex: 1;
             padding: 12px 18px;
@@ -342,9 +333,7 @@
             background: var(--noir);
             color: #fff;
         }
-        .chat-input .btn-send:hover {
-            background: var(--noir-clair);
-        }
+        .chat-input .btn-send:hover { background: var(--noir-clair); }
 
         .recording-overlay {
             display: none;
@@ -418,6 +407,175 @@
             margin-bottom: 6px;
         }
 
+        /* ---- Fiche profil ---- */
+        .profile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 22, 40, 0.7);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .profile-overlay.show { display: flex; }
+        .profile-box {
+            background: #fff;
+            border-radius: 32px;
+            padding: 32px 28px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .profile-box .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #f5f0f0;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            color: var(--rouge);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-box .big-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--noir);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 700;
+            margin: 0 auto 16px;
+            background-size: cover;
+            background-position: center;
+            border: 4px solid #f0f2f5;
+        }
+        .profile-box h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--noir);
+            margin-bottom: 4px;
+        }
+        .profile-box .subtitle {
+            color: var(--gris-texte);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .profile-info-list {
+            text-align: left;
+            background: #fafdff;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            border: 1px solid #e8eef6;
+        }
+        .profile-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eef3f9;
+            font-size: 14px;
+        }
+        .profile-info-row:last-child { border-bottom: none; }
+        .profile-info-row .label {
+            color: var(--gris-texte);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .profile-info-row .label i {
+            color: var(--rouge);
+            width: 18px;
+        }
+        .profile-info-row .value {
+            color: var(--noir);
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+        .profile-info-row .value a {
+            color: var(--rouge);
+            text-decoration: none;
+        }
+        .profile-info-row .value a:hover { text-decoration: underline; }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .profile-actions button {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 60px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.15s;
+            min-width: 130px;
+        }
+        .btn-add-friend {
+            background: var(--noir);
+            color: #fff;
+        }
+        .btn-add-friend:hover { background: var(--noir-clair); }
+        .btn-accept-friend {
+            background: #e8f5e9;
+            color: #1e5a2f;
+            border: 1.5px solid #a5d6a7 !important;
+        }
+        .btn-accept-friend:hover { background: #1e5a2f; color: #fff; }
+        .btn-reject-friend {
+            background: #fdecea;
+            color: var(--rouge);
+            border: 1.5px solid #f5c6c6 !important;
+        }
+        .btn-reject-friend:hover { background: var(--rouge); color: #fff; }
+        .btn-remove-friend {
+            background: #f0f2f5;
+            color: var(--gris-texte);
+        }
+        .btn-remove-friend:hover { background: #fdecea; color: var(--rouge); }
+        .btn-message-friend {
+            background: var(--rouge);
+            color: #fff;
+        }
+        .btn-message-friend:hover { background: #a03020; }
+
+        .friend-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .friend-badge.accepted { background: #e8f5e9; color: #1e5a2f; }
+        .friend-badge.pending-sent { background: #fff4e0; color: #8b5a00; }
+        .friend-badge.pending-received { background: #e8f0fa; color: #1a4a7a; }
+
         @media (max-width: 768px) {
             .messaging-container {
                 grid-template-columns: 1fr;
@@ -430,6 +588,7 @@
                 min-height: 500px;
             }
             .msg-bubble { max-width: 85%; }
+            .profile-box { padding: 24px 20px; }
         }
     </style>
 </head>
@@ -445,11 +604,11 @@
             <div class="nav-right">
                 <a href="fil-actualite.html" class="btn-outline">
                     <i class="fas fa-arrow-left"></i>
-                    <span data-i18n="back_feed">Fil d'actualité</span>
+                    <span>Fil d'actualité</span>
                 </a>
                 <a href="profil.html" class="btn-outline">
                     <i class="fas fa-user"></i>
-                    <span data-i18n="profile">Mon profil</span>
+                    <span>Mon profil</span>
                 </a>
             </div>
         </nav>
@@ -457,22 +616,22 @@
         <div class="messaging-container">
 
             <div class="conv-list">
-                <h3><i class="fas fa-comments"></i> <span data-i18n="conversations">Conversations</span></h3>
-                <input type="text" class="conv-search" id="convSearch" placeholder="Rechercher..." data-i18n="search_placeholder" />
+                <h3><i class="fas fa-comments"></i> Conversations</h3>
+                <input type="text" class="conv-search" id="convSearch" placeholder="Rechercher..." />
                 <div id="convList"></div>
             </div>
 
             <div class="chat-window" id="chatWindow">
                 <div class="no-chat-selected" id="noChatSelected">
                     <i class="fas fa-comments"></i>
-                    <h3 data-i18n="no_chat_title">Sélectionnez une conversation</h3>
-                    <p data-i18n="no_chat_sub">Ou commencez une nouvelle discussion depuis une carte.</p>
+                    <h3>Sélectionnez une conversation</h3>
+                    <p>Ou commencez une nouvelle discussion depuis une carte.</p>
                 </div>
 
                 <div id="activeChat" style="display:none; flex-direction: column; height: 100%;">
                     <div class="chat-header">
-                        <div class="conv-avatar" id="chatAvatar">?</div>
-                        <div class="info">
+                        <div class="conv-avatar" id="chatAvatar" style="cursor:pointer;" onclick="ouvrirFicheProfilChat()">?</div>
+                        <div class="info" style="cursor:pointer;" onclick="ouvrirFicheProfilChat()">
                             <div class="name" id="chatName">—</div>
                             <div class="status" id="chatStatus">
                                 <span class="dot"></span>
@@ -492,13 +651,12 @@
                     <div class="chat-messages" id="chatMessages"></div>
 
                     <div class="chat-input">
-                        <!-- ⚠️ LABEL NATIF pour pièce jointe -->
-                        <button type="button" class="btn-icon" id="btnAttach" onclick="document.getElementById('fileInput').click()" title="Joindre un fichier">
-    <i class="fas fa-paperclip"></i>
-</button>
+                        <label for="fileInput" class="btn-attach-label" title="Joindre un fichier">
+                            <i class="fas fa-paperclip"></i>
+                        </label>
                         <input type="file" id="fileInput" style="display:none;" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" />
 
-                        <input type="text" id="msgInput" placeholder="Votre message..." data-i18n="msg_placeholder" />
+                        <input type="text" id="msgInput" placeholder="Votre message..." />
 
                         <button id="btnRecord" class="btn-icon" title="Enregistrer un vocal">
                             <i class="fas fa-microphone"></i>
@@ -516,113 +674,25 @@
 
     <div class="recording-overlay" id="recordingOverlay">
         <i class="fas fa-microphone"></i>
-        <p data-i18n="recording">Enregistrement en cours...</p>
+        <p>Enregistrement en cours...</p>
         <div class="timer" id="recordTimer">0:00</div>
         <div class="actions">
-            <button class="cancel" id="btnCancelRecord" data-i18n="cancel">Annuler</button>
-            <button class="send" id="btnSendRecord" data-i18n="send">Envoyer</button>
+            <button class="cancel" id="btnCancelRecord">Annuler</button>
+            <button class="send" id="btnSendRecord">Envoyer</button>
+        </div>
+    </div>
+
+    <!-- MODALE FICHE PROFIL -->
+    <div class="profile-overlay" id="profileOverlay">
+        <div class="profile-box" id="profileBox">
+            <button class="close-btn" id="profileClose"><i class="fas fa-times"></i></button>
+            <div id="profileContent"></div>
         </div>
     </div>
 
     <script src="js/supabase.js"></script>
 
     <script>
-        const TRADUCTIONS = {
-            fr: {
-                back_feed: "Fil d'actualité",
-                profile: "Mon profil",
-                conversations: "Conversations",
-                search_placeholder: "Rechercher...",
-                no_chat_title: "Sélectionnez une conversation",
-                no_chat_sub: "Ou commencez une nouvelle discussion depuis une carte.",
-                msg_placeholder: "Votre message...",
-                recording: "Enregistrement en cours...",
-                cancel: "Annuler",
-                send: "Envoyer",
-                online: "En ligne",
-                offline: "Hors ligne",
-                typing: "est en train d'écrire...",
-                no_conv: "Aucune conversation",
-                no_conv_sub: "Commencez une discussion depuis une carte",
-                sending: "Envoi...",
-                err_conv: "Erreur de conversation",
-                err_send: "Erreur d'envoi",
-                err_upload: "Erreur d'upload",
-                err_audio: "Impossible d'enregistrer",
-                soon: "Bientôt disponible"
-            },
-            en: {
-                back_feed: "News feed",
-                profile: "My profile",
-                conversations: "Conversations",
-                search_placeholder: "Search...",
-                no_chat_title: "Select a conversation",
-                no_chat_sub: "Or start a new discussion from a card.",
-                msg_placeholder: "Your message...",
-                recording: "Recording...",
-                cancel: "Cancel",
-                send: "Send",
-                online: "Online",
-                offline: "Offline",
-                typing: "is typing...",
-                no_conv: "No conversations",
-                no_conv_sub: "Start a discussion from a card",
-                sending: "Sending...",
-                err_conv: "Conversation error",
-                err_send: "Send error",
-                err_upload: "Upload error",
-                err_audio: "Cannot record",
-                soon: "Coming soon"
-            },
-            ar: {
-                back_feed: "آخر الأخبار",
-                profile: "ملفي الشخصي",
-                conversations: "المحادثات",
-                search_placeholder: "بحث...",
-                no_chat_title: "اختر محادثة",
-                no_chat_sub: "أو ابدأ نقاشًا جديدًا من بطاقة.",
-                msg_placeholder: "رسالتك...",
-                recording: "جاري التسجيل...",
-                cancel: "إلغاء",
-                send: "إرسال",
-                online: "متصل",
-                offline: "غير متصل",
-                typing: "يكتب...",
-                no_conv: "لا محادثات",
-                no_conv_sub: "ابدأ نقاشًا من بطاقة",
-                sending: "جاري الإرسال...",
-                err_conv: "خطأ في المحادثة",
-                err_send: "خطأ في الإرسال",
-                err_upload: "خطأ في التحميل",
-                err_audio: "تعذر التسجيل",
-                soon: "قريباً"
-            },
-            es: {
-                back_feed: "Noticias",
-                profile: "Mi perfil",
-                conversations: "Conversaciones",
-                search_placeholder: "Buscar...",
-                no_chat_title: "Selecciona una conversación",
-                no_chat_sub: "O inicia una nueva discusión desde una tarjeta.",
-                msg_placeholder: "Tu mensaje...",
-                recording: "Grabando...",
-                cancel: "Cancelar",
-                send: "Enviar",
-                online: "En línea",
-                offline: "Desconectado",
-                typing: "está escribiendo...",
-                no_conv: "Sin conversaciones",
-                no_conv_sub: "Inicia una discusión desde una tarjeta",
-                sending: "Enviando...",
-                err_conv: "Error de conversación",
-                err_send: "Error al enviar",
-                err_upload: "Error al subir",
-                err_audio: "No se puede grabar",
-                soon: "Próximamente"
-            }
-        };
-
-        let langueActuelle = localStorage.getItem('demma_lang') || 'fr';
         let currentUser = null;
         let currentProfile = null;
         let currentConversationId = null;
@@ -636,27 +706,6 @@
         let recordInterval = null;
         let recordStartTime = 0;
 
-        function t(key) {
-            return (TRADUCTIONS[langueActuelle] || TRADUCTIONS.fr)[key] || key;
-        }
-
-        function appliquerLangue(code) {
-            const trad = TRADUCTIONS[code] || TRADUCTIONS.fr;
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const cle = el.getAttribute('data-i18n');
-                if (!trad[cle]) return;
-                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                    el.placeholder = trad[cle];
-                } else {
-                    el.textContent = trad[cle];
-                }
-            });
-            document.documentElement.lang = code;
-            document.documentElement.dir = (code === 'ar') ? 'rtl' : 'ltr';
-            localStorage.setItem('demma_lang', code);
-            langueActuelle = code;
-        }
-
         function escapeHTML(str) {
             if (!str) return '';
             const div = document.createElement('div');
@@ -669,7 +718,6 @@
             return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
         }
 
-        // ⚠️ Récupérer l'ID de l'autre utilisateur
         function getOtherUserId(conv) {
             if (!conv || !currentUser) return null;
             if (conv.user1_id === currentUser.id) return conv.user2_id;
@@ -685,15 +733,10 @@
                 if (!error && data && data[0]) {
                     return { nom: data[0].nom || '—', avatar_url: data[0].avatar_url || null };
                 }
-            } catch (e) {
-                console.warn('Erreur getAuteur:', e);
-            }
+            } catch (e) {}
             return { nom: '—', avatar_url: null };
         }
 
-        // ============================================================
-        // INITIALISATION
-        // ============================================================
         async function initialiser() {
             const client = initialiserSupabase();
             if (!client) return;
@@ -712,7 +755,6 @@
                 .single();
             currentProfile = profileData;
 
-            appliquerLangue(langueActuelle);
             await chargerConversations();
 
             const params = new URLSearchParams(window.location.search);
@@ -734,9 +776,6 @@
             }
         }
 
-        // ============================================================
-        // CONVERSATIONS
-        // ============================================================
         async function chargerConversations() {
             const client = initialiserSupabase();
             if (!client) return;
@@ -763,8 +802,8 @@
                 container.innerHTML = `
                     <div class="conv-empty">
                         <i class="fas fa-comment-slash"></i>
-                        <p>${t('no_conv')}</p>
-                        <p style="font-size:12px;margin-top:6px;">${t('no_conv_sub')}</p>
+                        <p>Aucune conversation</p>
+                        <p style="font-size:12px;margin-top:6px;">Commencez une discussion depuis une carte</p>
                     </div>
                 `;
                 return;
@@ -796,9 +835,6 @@
             }
         }
 
-        // ============================================================
-        // OUVRIR UNE CONVERSATION
-        // ============================================================
         async function ouvrirConversation(convId) {
             const client = initialiserSupabase();
             if (!client) return;
@@ -839,9 +875,6 @@
             scrollChatBottom();
         }
 
-        // ============================================================
-        // MESSAGES
-        // ============================================================
         async function chargerMessages() {
             const client = initialiserSupabase();
             if (!client || !currentConversationId) return;
@@ -863,7 +896,7 @@
                 container.innerHTML = `
                     <div class="chat-empty">
                         <i class="fas fa-comment-dots"></i>
-                        <p>${t('no_conv_sub')}</p>
+                        <p>Commencez la discussion</p>
                     </div>
                 `;
                 return;
@@ -920,9 +953,6 @@
             if (c) c.scrollTop = c.scrollHeight;
         }
 
-        // ============================================================
-        // ENVOI TEXTE
-        // ============================================================
         document.getElementById('btnSend').addEventListener('click', envoyerMessageTexte);
         document.getElementById('msgInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -976,13 +1006,10 @@
 
             if (error) {
                 console.error(error);
-                alert(t('err_send'));
+                alert('Erreur d\'envoi');
             }
         }
 
-        // ============================================================
-        // PIÈCE JOINTE (via label natif)
-        // ============================================================
         document.getElementById('fileInput').addEventListener('change', async function() {
             const file = this.files[0];
             if (!file) return;
@@ -1025,15 +1052,12 @@
 
             } catch (error) {
                 console.error(error);
-                alert(t('err_upload') + ' : ' + error.message);
+                alert('Erreur d\'upload : ' + error.message);
             }
 
             this.value = '';
         });
 
-        // ============================================================
-        // ENREGISTREMENT VOCAL
-        // ============================================================
         document.getElementById('btnRecord').addEventListener('click', async function() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1048,7 +1072,7 @@
                 ouvrirOverlayEnregistrement();
             } catch (error) {
                 console.error(error);
-                alert(t('err_audio'));
+                alert('Impossible d\'enregistrer');
             }
         });
 
@@ -1130,23 +1154,16 @@
 
             } catch (error) {
                 console.error(error);
-                alert(t('err_upload'));
             }
         }
 
-        // ============================================================
-        // APPELS (simulés)
-        // ============================================================
         document.getElementById('btnCallAudio').addEventListener('click', function() {
-            alert('📞 ' + t('soon') + ' : Appel audio');
+            alert('📞 Bientôt disponible : Appel audio');
         });
         document.getElementById('btnCallVideo').addEventListener('click', function() {
-            alert('🎥 ' + t('soon') + ' : Appel vidéo');
+            alert('🎥 Bientôt disponible : Appel vidéo');
         });
 
-        // ============================================================
-        // REALTIME
-        // ============================================================
         function souscrireRealtime(convId) {
             const client = initialiserSupabase();
             if (!client) return;
@@ -1190,19 +1207,16 @@
                     if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
                         if (payload.new.user_id !== currentUser.id) {
                             status.classList.add('typing');
-                            txt.textContent = t('typing');
+                            txt.textContent = 'est en train d\'écrire...';
                         }
                     } else if (payload.eventType === 'DELETE') {
                         status.classList.remove('typing');
-                        txt.textContent = t('online');
+                        txt.textContent = 'En ligne';
                     }
                 })
                 .subscribe();
         }
 
-        // ============================================================
-        // RECHERCHE
-        // ============================================================
         document.getElementById('convSearch').addEventListener('input', function() {
             const q = this.value.toLowerCase();
             document.querySelectorAll('.conv-item').forEach(item => {
@@ -1210,6 +1224,190 @@
                 item.style.display = name.includes(q) ? 'flex' : 'none';
             });
         });
+
+        // ============================================================
+        // FICHE PROFIL
+        // ============================================================
+        const profileOverlay = document.getElementById('profileOverlay');
+        const profileContent = document.getElementById('profileContent');
+        const profileClose = document.getElementById('profileClose');
+
+        profileClose.addEventListener('click', () => profileOverlay.classList.remove('show'));
+        profileOverlay.addEventListener('click', (e) => {
+            if (e.target === profileOverlay) profileOverlay.classList.remove('show');
+        });
+
+        async function ouvrirFicheProfilChat() {
+            if (!currentOtherUser || !currentOtherUser.id) return;
+            await afficherFicheProfil(currentOtherUser.id);
+        }
+
+        async function afficherFicheProfil(userId) {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            profileContent.innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-spin" style="font-size:32px;color:var(--rouge);"></i></div>';
+            profileOverlay.classList.add('show');
+
+            const { data: profilData, error: profilError } = await client.rpc('obtenir_profil_public', { p_user_id: userId });
+            if (profilError || !profilData || !profilData[0]) {
+                profileContent.innerHTML = '<div style="text-align:center;padding:40px;color:var(--rouge);">Profil introuvable</div>';
+                return;
+            }
+
+            const profil = profilData[0];
+
+            const { data: statutData } = await client.rpc('statut_amitie', { p_other_user_id: userId });
+            const statut = statutData && statutData[0] ? statutData[0] : { status: null, direction: null, friendship_id: null };
+
+            const initial = (profil.nom || '?').charAt(0).toUpperCase();
+            const avatarStyle = profil.avatar_url ? `background-image:url('${profil.avatar_url}');` : '';
+            const dateInscription = new Date(profil.created_at).toLocaleDateString('fr-FR', {
+                day: '2-digit', month: 'long', year: 'numeric'
+            });
+
+            const estMoi = currentUser && currentUser.id === userId;
+
+            let html = `
+                <div class="big-avatar" style="${avatarStyle}">${profil.avatar_url ? '' : initial}</div>
+                <h2>${escapeHTML(profil.nom || '—')}</h2>
+                <p class="subtitle">${escapeHTML(profil.domaine || '—')}</p>
+            `;
+
+            if (statut.status === 'accepted') {
+                html += `<span class="friend-badge accepted"><i class="fas fa-user-check"></i> Ami</span>`;
+            } else if (statut.status === 'pending' && statut.direction === 'sent') {
+                html += `<span class="friend-badge pending-sent"><i class="fas fa-clock"></i> Demande envoyée</span>`;
+            } else if (statut.status === 'pending' && statut.direction === 'received') {
+                html += `<span class="friend-badge pending-received"><i class="fas fa-user-plus"></i> Demande reçue</span>`;
+            }
+
+            html += `<div class="profile-info-list">`;
+
+            if (profil.sexe) {
+                html += `<div class="profile-info-row">
+                    <span class="label"><i class="fas fa-venus-mars"></i> Sexe</span>
+                    <span class="value">${escapeHTML(profil.sexe)}</span>
+                </div>`;
+            }
+            if (profil.age) {
+                html += `<div class="profile-info-row">
+                    <span class="label"><i class="fas fa-birthday-cake"></i> Âge</span>
+                    <span class="value">${profil.age} ans</span>
+                </div>`;
+            }
+            if (profil.pays) {
+                html += `<div class="profile-info-row">
+                    <span class="label"><i class="fas fa-globe-africa"></i> Pays</span>
+                    <span class="value">${escapeHTML(profil.pays)}</span>
+                </div>`;
+            }
+            if (profil.domaine) {
+                html += `<div class="profile-info-row">
+                    <span class="label"><i class="fas fa-briefcase"></i> Domaine</span>
+                    <span class="value">${escapeHTML(profil.domaine)}</span>
+                </div>`;
+            }
+            if (profil.email) {
+                html += `<div class="profile-info-row">
+                    <span class="label"><i class="fas fa-envelope"></i> Email</span>
+                    <span class="value"><a href="mailto:${profil.email}">${escapeHTML(profil.email)}</a></span>
+                </div>`;
+            }
+            if (profil.telephone) {
+                const telClean = profil.telephone.replace(/[^0-9+]/g, '');
+                html += `<div class="profile-info-row">
+                    <span class="label"><i class="fas fa-phone"></i> Téléphone</span>
+                    <span class="value"><a href="tel:${telClean}">${escapeHTML(profil.telephone)}</a></span>
+                </div>`;
+            }
+            html += `<div class="profile-info-row">
+                <span class="label"><i class="fas fa-calendar"></i> Inscription</span>
+                <span class="value">${dateInscription}</span>
+            </div>`;
+            html += `</div>`;
+
+            html += `<div class="profile-actions">`;
+
+            if (estMoi) {
+                html += `<button class="btn-message-friend" onclick="window.location.href='profil.html'">
+                    <i class="fas fa-user-edit"></i> Mon profil
+                </button>`;
+            } else {
+                if (!statut.status) {
+                    html += `<button class="btn-add-friend" onclick="envoyerDemandeAmi('${userId}')">
+                        <i class="fas fa-user-plus"></i> Ajouter en ami
+                    </button>`;
+                } else if (statut.status === 'pending' && statut.direction === 'received') {
+                    html += `<button class="btn-accept-friend" onclick="repondreAmi('${statut.friendship_id}', true)">
+                        <i class="fas fa-check"></i> Accepter
+                    </button>`;
+                    html += `<button class="btn-reject-friend" onclick="repondreAmi('${statut.friendship_id}', false)">
+                        <i class="fas fa-times"></i> Refuser
+                    </button>`;
+                } else if (statut.status === 'pending' && statut.direction === 'sent') {
+                    html += `<button class="btn-remove-friend" onclick="supprimerAmi('${statut.friendship_id}')">
+                        <i class="fas fa-clock"></i> Annuler
+                    </button>`;
+                } else if (statut.status === 'accepted') {
+                    html += `<button class="btn-remove-friend" onclick="supprimerAmi('${statut.friendship_id}')">
+                        <i class="fas fa-user-minus"></i> Retirer
+                    </button>`;
+                }
+
+                html += `<button class="btn-message-friend" onclick="profileOverlay.classList.remove('show')">
+                    <i class="fas fa-comments"></i> Message
+                </button>`;
+            }
+
+            html += `</div>`;
+            profileContent.innerHTML = html;
+        }
+
+        async function envoyerDemandeAmi(userId) {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client.rpc('ajouter_ami', { p_friend_id: userId });
+            if (error || !data) {
+                alert('Erreur : impossible d\'envoyer la demande');
+                return;
+            }
+
+            await afficherFicheProfil(userId);
+        }
+
+        async function repondreAmi(friendshipId, accept) {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client.rpc('repondre_demande_ami', {
+                p_friendship_id: friendshipId,
+                p_accept: accept
+            });
+
+            if (error || !data) {
+                alert('Erreur : action impossible');
+                return;
+            }
+
+            await afficherFicheProfil(currentOtherUser.id);
+        }
+
+        async function supprimerAmi(friendshipId) {
+            if (!confirm('Confirmer ?')) return;
+
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client.rpc('supprimer_ami', { p_friendship_id: friendshipId });
+            if (error || !data) {
+                alert('Erreur : action impossible');
+                return;
+            }
+
+            await afficherFicheProfil(currentOtherUser.id);
+        }
 
         // ============================================================
         // LANCEMENT
