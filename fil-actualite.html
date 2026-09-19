@@ -31,6 +31,42 @@
         }
         .welcome .btn-create:hover { background: #a03020; transform: scale(1.02); }
 
+        /* Menu admin */
+        .admin-create-menu {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e4e9f0;
+            z-index: 999;
+            padding: 8px;
+            min-width: 220px;
+        }
+        .admin-create-menu.show { display: block; }
+        .admin-create-menu button {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            text-align: left;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--noir);
+            cursor: pointer;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.1s;
+        }
+        .admin-create-menu button:hover { background: #f5f8ff; }
+        .admin-create-menu button i { color: var(--rouge); width: 18px; }
+        .admin-create-menu button.demma-option i { color: #1a4a7a; }
+
         .filters {
             display: flex; gap: 10px; flex-wrap: wrap;
             margin-bottom: 24px; overflow-x: auto; padding-bottom: 6px;
@@ -97,9 +133,7 @@
             font-size: 12px; font-weight: 700;
             background-size: cover; background-position: center;
         }
-        .card .actions-buttons {
-            display: flex; gap: 6px;
-        }
+        .card .actions-buttons { display: flex; gap: 6px; }
         .card .btn-open, .card .btn-share {
             background: transparent; border: 1.5px solid var(--gris-clair);
             padding: 6px 12px; border-radius: 30px; font-size: 12px;
@@ -425,110 +459,56 @@
             border: 1px solid #f5c6c6;
         }
 
-        /* ---- Menu de partage ---- */
         .share-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 22, 40, 0.7);
-            z-index: 3000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            display: none; position: fixed; inset: 0;
+            background: rgba(10, 22, 40, 0.7); z-index: 3000;
+            align-items: center; justify-content: center; padding: 20px;
         }
         .share-overlay.show { display: flex; }
         .share-box {
-            background: #fff;
-            border-radius: 28px;
-            padding: 28px 24px;
-            max-width: 420px;
-            width: 100%;
-            text-align: center;
+            background: #fff; border-radius: 28px;
+            padding: 28px 24px; max-width: 420px; width: 100%; text-align: center;
         }
         .share-box h3 {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--noir);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            font-size: 20px; font-weight: 700; color: var(--noir);
+            margin-bottom: 20px; display: flex; align-items: center;
+            justify-content: center; gap: 10px;
         }
         .share-box h3 i { color: var(--rouge); }
         .share-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 12px; margin-bottom: 20px;
         }
         .share-item {
-            background: #f5f8ff;
-            border-radius: 16px;
-            padding: 14px 8px;
-            cursor: pointer;
-            transition: 0.15s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
+            background: #f5f8ff; border-radius: 16px; padding: 14px 8px;
+            cursor: pointer; transition: 0.15s; display: flex;
+            flex-direction: column; align-items: center; gap: 6px;
             border: 1px solid #e8eef6;
         }
-        .share-item:hover {
-            background: var(--noir);
-            color: #fff;
-            transform: translateY(-2px);
-        }
+        .share-item:hover { background: var(--noir); color: #fff; transform: translateY(-2px); }
         .share-item:hover i { color: #fff; }
-        .share-item i {
-            font-size: 24px;
-            color: var(--rouge);
-        }
-        .share-item span {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--noir);
-        }
+        .share-item i { font-size: 24px; color: var(--rouge); }
+        .share-item span { font-size: 11px; font-weight: 600; color: var(--noir); }
         .share-item:hover span { color: #fff; }
-        .share-url-box {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-        }
+        .share-url-box { display: flex; gap: 8px; margin-top: 16px; }
         .share-url-box input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 1.5px solid var(--gris-clair);
-            border-radius: 14px;
-            font-size: 13px;
-            font-family: inherit;
-            background: #fafcff;
-            color: var(--gris-texte);
-            overflow: hidden;
-            text-overflow: ellipsis;
+            flex: 1; padding: 12px 16px; border: 1.5px solid var(--gris-clair);
+            border-radius: 14px; font-size: 13px; font-family: inherit;
+            background: #fafcff; color: var(--gris-texte);
+            overflow: hidden; text-overflow: ellipsis;
         }
         .share-url-box button {
-            background: var(--noir);
-            color: #fff;
-            border: none;
-            padding: 0 18px;
-            border-radius: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 13px;
+            background: var(--noir); color: #fff; border: none;
+            padding: 0 18px; border-radius: 14px; font-weight: 700;
+            cursor: pointer; font-family: inherit; font-size: 13px;
         }
         .share-url-box button:hover { background: var(--noir-clair); }
         .share-close {
-            margin-top: 16px;
-            background: transparent;
+            margin-top: 16px; background: transparent;
             border: 1.5px solid var(--gris-clair);
-            padding: 10px 24px;
-            border-radius: 30px;
-            font-weight: 600;
-            color: var(--gris-texte);
-            cursor: pointer;
-            font-family: inherit;
+            padding: 10px 24px; border-radius: 30px;
+            font-weight: 600; color: var(--gris-texte);
+            cursor: pointer; font-family: inherit;
         }
 
         @media (max-width: 520px) {
@@ -584,10 +564,24 @@
                 <h2 data-i18n="welcome_hello">Bonjour 👋</h2>
                 <p data-i18n="welcome_sub">Découvrez les cartes de la communauté Demma</p>
             </div>
-            <button class="btn-create" id="btnCreate">
-                <i class="fas fa-plus"></i>
-                <span data-i18n="btn_create">Créer une carte</span>
-            </button>
+
+            <div style="position: relative;">
+                <button class="btn-create" id="btnCreate">
+                    <i class="fas fa-plus"></i>
+                    <span data-i18n="btn_create">Créer une carte</span>
+                    <i class="fas fa-chevron-down" id="createChevron" style="display:none; font-size:12px; margin-left:4px;"></i>
+                </button>
+
+                <!-- Menu admin -->
+                <div class="admin-create-menu" id="adminCreateMenu">
+                    <button id="createUserCard">
+                        <i class="fas fa-user"></i> Carte utilisateur
+                    </button>
+                    <button id="createDemmaCard" class="demma-option">
+                        <i class="fas fa-shield-alt"></i> Carte Demma officielle
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="filters">
@@ -667,6 +661,11 @@
             <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
 
             <h2><i class="fas fa-plus-circle" id="modalIcon"></i> <span id="modalTitle" data-i18n="modal_title">Créer une nouvelle carte</span></h2>
+
+            <!-- Badge type de carte (visible seulement pour admin) -->
+            <div id="cardTypeBadge" style="display:none; margin-bottom:16px; padding:10px 16px; border-radius:12px; background:#e8f0fa; color:#1a4a7a; font-size:13px; font-weight:600; text-align:center;">
+                <i class="fas fa-shield-alt"></i> Vous créez une <strong>Carte Demma officielle</strong>
+            </div>
 
             <form id="createCardForm">
 
@@ -796,30 +795,12 @@
         <div class="share-box">
             <h3><i class="fas fa-share-alt"></i> Partager cette carte</h3>
             <div class="share-grid">
-                <div class="share-item" data-share="whatsapp">
-                    <i class="fab fa-whatsapp"></i>
-                    <span>WhatsApp</span>
-                </div>
-                <div class="share-item" data-share="facebook">
-                    <i class="fab fa-facebook"></i>
-                    <span>Facebook</span>
-                </div>
-                <div class="share-item" data-share="twitter">
-                    <i class="fab fa-x-twitter"></i>
-                    <span>X</span>
-                </div>
-                <div class="share-item" data-share="telegram">
-                    <i class="fab fa-telegram"></i>
-                    <span>Telegram</span>
-                </div>
-                <div class="share-item" data-share="linkedin">
-                    <i class="fab fa-linkedin"></i>
-                    <span>LinkedIn</span>
-                </div>
-                <div class="share-item" data-share="email">
-                    <i class="fas fa-envelope"></i>
-                    <span>Email</span>
-                </div>
+                <div class="share-item" data-share="whatsapp"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></div>
+                <div class="share-item" data-share="facebook"><i class="fab fa-facebook"></i><span>Facebook</span></div>
+                <div class="share-item" data-share="twitter"><i class="fab fa-x-twitter"></i><span>X</span></div>
+                <div class="share-item" data-share="telegram"><i class="fab fa-telegram"></i><span>Telegram</span></div>
+                <div class="share-item" data-share="linkedin"><i class="fab fa-linkedin"></i><span>LinkedIn</span></div>
+                <div class="share-item" data-share="email"><i class="fas fa-envelope"></i><span>Email</span></div>
             </div>
             <div class="share-url-box">
                 <input type="text" id="shareUrlInput" readonly />
@@ -845,6 +826,7 @@
                 empty_sub: "Soyez le premier à partager une carte !",
                 modal_title: "Créer une nouvelle carte",
                 modal_edit_title: "Modifier la carte",
+                modal_demma_title: "Créer une carte Demma",
                 form_titre: "Titre de la carte *",
                 form_detail: "Aperçu (visible par tous, max 30 lignes) *",
                 form_contenu: "Contenu complet (protégé si carte codée)",
@@ -928,6 +910,7 @@
                 empty_sub: "Be the first to share a card!",
                 modal_title: "Create a new card",
                 modal_edit_title: "Edit card",
+                modal_demma_title: "Create a Demma card",
                 form_titre: "Card title *",
                 form_detail: "Preview (visible to all, max 30 lines) *",
                 form_contenu: "Full content (protected if coded card)",
@@ -1011,6 +994,7 @@
                 empty_sub: "كن أول من يشارك بطاقة!",
                 modal_title: "إنشاء بطاقة جديدة",
                 modal_edit_title: "تعديل البطاقة",
+                modal_demma_title: "إنشاء بطاقة ديمّا",
                 form_titre: "عنوان البطاقة *",
                 form_detail: "معاينة (مرئية للجميع) *",
                 form_contenu: "المحتوى الكامل (محمي إذا كانت مشفرة)",
@@ -1094,6 +1078,7 @@
                 empty_sub: "¡Sé el primero en compartir una tarjeta!",
                 modal_title: "Crear una nueva tarjeta",
                 modal_edit_title: "Editar tarjeta",
+                modal_demma_title: "Crear tarjeta Demma",
                 form_titre: "Título de la tarjeta *",
                 form_detail: "Vista previa (visible para todos) *",
                 form_contenu: "Contenido completo (protegido si codificada)",
@@ -1170,9 +1155,11 @@
         let langueActuelle = localStorage.getItem('demma_lang') || 'fr';
         let currentUser = null;
         let currentProfile = null;
+        let isAdmin = false;
         let allCards = [];
         let activeFilter = 'all';
         let editingCardId = null;
+        let creationMode = 'user'; // 'user' ou 'demma'
         let sharingCard = null;
 
         let uploadedFiles = { images: [], videos: [], audios: [], documents: [] };
@@ -1259,15 +1246,75 @@
                 .eq('id', currentUser.id)
                 .single();
             currentProfile = profileData;
+            isAdmin = currentProfile && currentProfile.is_admin === true;
 
             const hello = document.querySelector('[data-i18n="welcome_hello"]');
             if (hello && currentProfile && currentProfile.nom) {
                 hello.textContent = '👋 ' + currentProfile.nom;
             }
 
+            // Si admin, activer le menu déroulant
+            if (isAdmin) {
+                document.getElementById('createChevron').style.display = 'inline';
+            }
+
             await chargerCartes();
         }
 
+        // ============================================================
+        // GESTION DU BOUTON CRÉER (Admin a 2 choix)
+        // ============================================================
+        const btnCreate = document.getElementById('btnCreate');
+        const adminMenu = document.getElementById('adminCreateMenu');
+
+        btnCreate.addEventListener('click', function(e) {
+            e.stopPropagation();
+
+            if (isAdmin) {
+                adminMenu.classList.toggle('show');
+            } else {
+                ouvrirCreation('user');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#btnCreate') && !e.target.closest('#adminCreateMenu')) {
+                adminMenu.classList.remove('show');
+            }
+        });
+
+        document.getElementById('createUserCard').addEventListener('click', function() {
+            adminMenu.classList.remove('show');
+            ouvrirCreation('user');
+        });
+
+        document.getElementById('createDemmaCard').addEventListener('click', function() {
+            adminMenu.classList.remove('show');
+            ouvrirCreation('demma');
+        });
+
+        function ouvrirCreation(mode) {
+            resetForm();
+            creationMode = mode;
+
+            if (mode === 'demma') {
+                document.getElementById('modalTitle').textContent = t('modal_demma_title');
+                document.getElementById('modalIcon').className = 'fas fa-shield-alt';
+                document.getElementById('cardTypeBadge').style.display = 'block';
+                // Pré-sélectionner "codée" par défaut pour les cartes Demma
+                document.getElementById('inputType').value = 'user_coded';
+            } else {
+                document.getElementById('modalTitle').textContent = t('modal_title');
+                document.getElementById('modalIcon').className = 'fas fa-plus-circle';
+                document.getElementById('cardTypeBadge').style.display = 'none';
+            }
+
+            modalOverlay.classList.add('show');
+        }
+
+        // ============================================================
+        // CHARGEMENT DES CARTES
+        // ============================================================
         async function chargerCartes() {
             const client = initialiserSupabase();
             if (!client) return;
@@ -1330,7 +1377,7 @@
                 const initial = (auteur.nom || '?').charAt(0).toUpperCase();
 
                 let badgesHTML = '';
-                if (card.type === 'demma') badgesHTML += '<span class="badge badge-demma">Demma</span>';
+                if (card.type === 'demma') badgesHTML += '<span class="badge badge-demma">🛡️ Demma</span>';
                 if (card.type === 'user_free') badgesHTML += '<span class="badge badge-free">Libre</span>';
                 if (card.type === 'user_coded') badgesHTML += '<span class="badge badge-coded">🔒 Codée</span>';
                 if (card.prix > 0) badgesHTML += '<span class="badge badge-paid">' + card.prix + ' FCFA</span>';
@@ -1388,7 +1435,7 @@
         }
 
         // ============================================================
-        // CONSULTATION D'UNE CARTE
+        // CONSULTATION
         // ============================================================
         const consultOverlay = document.getElementById('consultOverlay');
         const consultContent = document.getElementById('consultContent');
@@ -1411,7 +1458,7 @@
             let html = `
                 <h2><i class="fas fa-book-open"></i> ${escapeHTML(card.titre)}</h2>
                 <div class="consult-badges">
-                    ${card.type === 'demma' ? '<span class="badge badge-demma">Demma</span>' : ''}
+                    ${card.type === 'demma' ? '<span class="badge badge-demma">🛡️ Demma</span>' : ''}
                     ${card.type === 'user_free' ? '<span class="badge badge-free">Libre</span>' : ''}
                     ${card.type === 'user_coded' ? '<span class="badge badge-coded">🔒 Codée</span>' : ''}
                     ${card.prix > 0 ? '<span class="badge badge-paid">' + card.prix + ' FCFA</span>' : ''}
@@ -1511,7 +1558,6 @@
                     </div>`;
                 }
 
-                // Boutons pour le propriétaire : Modifier + Partager
                 html += `<button class="btn-contact btn-modifier" onclick="modifierCarte('${card.id}')">
                     <i class="fas fa-edit"></i> ${trad.consult_edit}
                 </button>`;
@@ -1587,7 +1633,7 @@
                     this.disabled = false;
                     this.textContent = trad.consult_key_validate;
 
-                    if (error || !data || !data[0] || !data[0].success) {
+                    if (error || !data) {
                         result.style.color = 'var(--rouge)';
                         result.textContent = '❌ ' + trad.consult_key_error;
                         return;
@@ -1598,7 +1644,7 @@
 
                     const contenuHTML = `<div class="consult-section" style="margin-top:16px;">
                         <h4><i class="fas fa-file-alt"></i> ${trad.consult_contenu}</h4>
-                        <div class="text-content">${escapeHTML(data[0].contenu_complet || '—')}</div>
+                        <div class="text-content">${escapeHTML(data || '—')}</div>
                     </div>`;
                     document.getElementById('lockedSection').insertAdjacentHTML('afterend', contenuHTML);
                 });
@@ -1607,8 +1653,7 @@
 
         function copierCle(cle) {
             navigator.clipboard.writeText(cle).then(() => {
-                const trad = TRADUCTIONS[langueActuelle];
-                alert('✅ ' + trad.consult_key_copied + ' : ' + cle);
+                alert('✅ ' + t('consult_key_copied') + ' : ' + cle);
             }).catch(() => {
                 alert('Clé : ' + cle);
             });
@@ -1619,16 +1664,14 @@
         }
 
         // ============================================================
-        // MODIFICATION D'UNE CARTE
+        // MODIFICATION
         // ============================================================
         async function modifierCarte(cardId) {
             const client = initialiserSupabase();
             if (!client) return;
 
-            // Fermer la modale de consultation
             consultOverlay.classList.remove('show');
 
-            // Récupérer la carte complète
             const { data: card, error } = await client
                 .from('cards')
                 .select('*')
@@ -1642,15 +1685,12 @@
 
             editingCardId = cardId;
 
-            // Ouvrir la modale
             modalOverlay.classList.add('show');
-
-            // Changer le titre
             document.getElementById('modalTitle').textContent = t('modal_edit_title');
             document.getElementById('modalIcon').className = 'fas fa-edit';
+            document.getElementById('cardTypeBadge').style.display = 'none';
             document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> ' + t('btn_update');
 
-            // Remplir le formulaire
             document.getElementById('inputTitre').value = card.titre || '';
             document.getElementById('inputDetail').value = card.detail || '';
             document.getElementById('inputContenu').value = card.contenu_complet || '';
@@ -1659,7 +1699,6 @@
             document.getElementById('inputPrix').value = card.prix || 0;
             document.getElementById('inputDonation').value = card.donation ? 'true' : 'false';
 
-            // Charger les médias existants
             uploadedFiles.images = card.images || [];
             uploadedFiles.videos = card.videos || [];
             uploadedFiles.audios = card.audios || [];
@@ -1721,6 +1760,8 @@
             document.getElementById('previewAudios').innerHTML = '';
             document.getElementById('previewDocs').innerHTML = '';
             editingCardId = null;
+            creationMode = 'user';
+            document.getElementById('cardTypeBadge').style.display = 'none';
             document.getElementById('modalTitle').textContent = t('modal_title');
             document.getElementById('modalIcon').className = 'fas fa-plus-circle';
             document.getElementById('submitBtn').innerHTML = '<i class="fas fa-check"></i> ' + t('btn_submit');
@@ -1768,24 +1809,12 @@
                 let shareLink = '';
 
                 switch(reseau) {
-                    case 'whatsapp':
-                        shareLink = 'https://wa.me/?text=' + texte + '%20' + url;
-                        break;
-                    case 'facebook':
-                        shareLink = 'https://www.facebook.com/sharer/sharer.php?u=' + url;
-                        break;
-                    case 'twitter':
-                        shareLink = 'https://twitter.com/intent/tweet?text=' + texte + '&url=' + url;
-                        break;
-                    case 'telegram':
-                        shareLink = 'https://t.me/share/url?url=' + url + '&text=' + texte;
-                        break;
-                    case 'linkedin':
-                        shareLink = 'https://www.linkedin.com/sharing/share-offsite/?url=' + url;
-                        break;
-                    case 'email':
-                        shareLink = 'mailto:?subject=' + texte + '&body=' + url;
-                        break;
+                    case 'whatsapp': shareLink = 'https://wa.me/?text=' + texte + '%20' + url; break;
+                    case 'facebook': shareLink = 'https://www.facebook.com/sharer/sharer.php?u=' + url; break;
+                    case 'twitter': shareLink = 'https://twitter.com/intent/tweet?text=' + texte + '&url=' + url; break;
+                    case 'telegram': shareLink = 'https://t.me/share/url?url=' + url + '&text=' + texte; break;
+                    case 'linkedin': shareLink = 'https://www.linkedin.com/sharing/share-offsite/?url=' + url; break;
+                    case 'email': shareLink = 'mailto:?subject=' + texte + '&body=' + url; break;
                 }
 
                 if (shareLink) window.open(shareLink, '_blank');
@@ -1793,16 +1822,11 @@
         });
 
         // ============================================================
-        // FORMULAIRE DE CRÉATION / MODIFICATION
+        // FORMULAIRE
         // ============================================================
         const modalOverlay = document.getElementById('modalOverlay');
-        const btnCreate = document.getElementById('btnCreate');
         const modalClose = document.getElementById('modalClose');
 
-        btnCreate.addEventListener('click', () => {
-            resetForm();
-            modalOverlay.classList.add('show');
-        });
         modalClose.addEventListener('click', () => {
             modalOverlay.classList.remove('show');
             resetForm();
@@ -1954,10 +1978,16 @@
             const titre = document.getElementById('inputTitre').value.trim();
             const detail = document.getElementById('inputDetail').value.trim();
             const contenu = document.getElementById('inputContenu').value.trim();
-            const type = document.getElementById('inputType').value;
+            const typeInput = document.getElementById('inputType').value;
             const categorie = document.getElementById('inputCategorie').value;
             const prix = parseInt(document.getElementById('inputPrix').value) || 0;
             const donation = document.getElementById('inputDonation').value === 'true';
+
+            // Déterminer le type final
+            let finalType = typeInput;
+            if (creationMode === 'demma' && !editingCardId) {
+                finalType = 'demma';
+            }
 
             if (titre.length < 3) {
                 msg.className = 'msg error';
@@ -1980,9 +2010,6 @@
                 const urlsFinales = urlsList.filter(u => u.trim().length > 0).map(u => ({ url: u }));
 
                 if (editingCardId) {
-                    // ==========================
-                    // MODE MODIFICATION
-                    // ==========================
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + trad.msg_updating;
 
                     const { data: success, error } = await client.rpc('modifier_carte', {
@@ -1990,7 +2017,7 @@
                         p_titre: titre,
                         p_detail: detail,
                         p_contenu_complet: contenu || null,
-                        p_type: type,
+                        p_type: typeInput,
                         p_categorie: categorie,
                         p_prix: prix,
                         p_donation: donation,
@@ -2008,13 +2035,11 @@
                     msg.textContent = '✅ ' + trad.msg_update;
 
                 } else {
-                    // ==========================
-                    // MODE CRÉATION
-                    // ==========================
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + trad.msg_loading;
 
                     let cleAcces = null;
-                    if (type === 'user_coded') {
+                    // Carte codée OU carte Demma → clé générée
+                    if (finalType === 'user_coded' || finalType === 'demma') {
                         cleAcces = 'DEM-' + Math.random().toString(36).substring(2, 6).toUpperCase() +
                                    '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
                     }
@@ -2023,7 +2048,7 @@
                         .from('cards')
                         .insert([{
                             user_id: currentUser.id,
-                            type: type,
+                            type: finalType,
                             titre: titre,
                             detail: detail,
                             contenu_complet: contenu || null,
@@ -2067,11 +2092,9 @@
         // ============================================================
         document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
             const trad = TRADUCTIONS[langueActuelle];
             const msgBox = document.getElementById('feedbackMsg');
             const submitBtn = document.getElementById('feedbackSubmit');
-
             const type = document.getElementById('feedbackType').value;
             const contact = document.getElementById('feedbackContact').value.trim();
             const sujet = document.getElementById('feedbackSujet').value.trim();
@@ -2129,13 +2152,12 @@
         });
 
         // ============================================================
-        // VÉRIFIER SI ON ARRIVE DEPUIS UN LIEN PARTAGÉ
+        // LIEN PARTAGÉ
         // ============================================================
         function verifierPartageDepuisUrl() {
             const params = new URLSearchParams(window.location.search);
             const cardId = params.get('card');
             if (cardId) {
-                // On attend que les cartes soient chargées
                 const check = setInterval(() => {
                     const card = allCards.find(c => c.id === cardId);
                     if (card) {
