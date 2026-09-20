@@ -365,7 +365,6 @@
         .toast.error { background: var(--rouge); }
         .toast.success { background: #1e5a2f; }
 
-        /* ---- Menu contextuel (appui long) ---- */
         .context-menu-overlay {
             display: none;
             position: fixed;
@@ -548,7 +547,6 @@
         </div>
     </div>
 
-    <!-- MENU CONTEXTUEL (appui long) -->
     <div class="context-menu-overlay" id="contextMenuOverlay">
         <div class="context-menu-box">
             <div class="context-menu-title">Options du message</div>
@@ -579,6 +577,7 @@
         let notifInterval = null;
         let allMessages = [];
         let msgContexte = null;
+        let chargementConversationsEnCours = false;
 
         function afficherToast(texte, type) {
             try {
@@ -689,32 +688,62 @@
             } catch (e) {}
         }
 
+        // ============================================================
+        // CHARGEMENT DES CONVERSATIONS (avec anti-double appel)
+        // ============================================================
         async function chargerConversations() {
             const client = initialiserSupabase();
             if (!client) return;
 
-            const { data, error } = await client
-                .from('conversations')
-                .select('*')
-                .or('user1_id.eq.' + currentUser.id + ',user2_id.eq.' + currentUser.id)
-                .order('updated_at', { ascending: false });
+            // Anti-double appel : si un chargement est déjà en cours, on attend
+            if (chargementConversationsEnCours) {
+                return;
+            }
+            chargementConversationsEnCours = true;
 
-            if (error) { console.error(error); return; }
-            allConversations = data || [];
-            await afficherConversations();
+            try {
+                const { data, error } = await client
+                    .from('conversations')
+                    .select('*')
+                    .or('user1_id.eq.' + currentUser.id + ',user2_id.eq.' + currentUser.id)
+                    .order('updated_at', { ascending: false });
+
+                if (error) { console.error(error); return; }
+
+                // === DÉDUPLICATION par ID ===
+                const map = {};
+                (data || []).forEach(function(conv) {
+                    map[conv.id] = conv;
+                });
+                allConversations = Object.values(map);
+
+                await afficherConversations();
+            } finally {
+                chargementConversationsEnCours = false;
+            }
         }
 
         async function afficherConversations() {
             const container = document.getElementById('convList');
+            if (!container) return;
+
+            // === VIDAGE SYSTÉMATIQUE ===
+            container.innerHTML = '';
 
             if (allConversations.length === 0) {
                 container.innerHTML = '<div class="conv-empty"><i class="fas fa-comment-slash"></i><p>Aucune conversation</p></div>';
                 return;
             }
 
-            container.innerHTML = '';
+            // Créer un fragment pour éviter les reflows multiples
+            const fragment = document.createDocumentFragment();
+            const seenIds = {};
 
             for (const conv of allConversations) {
+                // Anti-doublon supplémentaire
+                if (seenIds[conv.id]) continue;
+                seenIds[conv.id] = true;
+
                 const otherId = getOtherUserId(conv);
                 if (!otherId) continue;
 
@@ -732,8 +761,10 @@
                         '<div class="conv-last">' + escapeHTML(conv.last_message || '...') + '</div>' +
                     '</div>';
                 item.addEventListener('click', function() { ouvrirConversation(conv.id); });
-                container.appendChild(item);
+                fragment.appendChild(item);
             }
+
+            container.appendChild(fragment);
         }
 
         async function ouvrirConversation(convId) {
@@ -807,6 +838,13 @@
 
         function afficherMessage(msg) {
             const container = document.getElementById('chatMessages');
+            if (!container) return;
+
+            // Anti-doublon : vérifier si le message existe déjà dans le DOM
+            if (container.querySelector('[data-msg-id="' + msg.id + '"]')) {
+                return;
+            }
+
             const isMe = msg.sender_id === currentUser.id;
 
             const row = document.createElement('div');
@@ -830,19 +868,15 @@
             row.innerHTML = bubbleContent;
             container.appendChild(row);
 
-            // ==== ÉVÉNEMENTS APPUI LONG ====
+            // Événements appui long
             const bubble = row.querySelector('.msg-bubble');
             if (bubble) {
-                // Pour les médias audio/video, on attache l'événement à la bulle (pas aux contrôles)
                 let pressTimer = null;
 
                 const startPress = function(e) {
-                    // Ne pas déclencher si on touche les contrôles audio/video
                     if (e.target.tagName === 'AUDIO' || e.target.tagName === 'VIDEO' || e.target.tagName === 'A' || e.target.tagName === 'IMG') {
-                        // Pour audio/video, on laisse le comportement natif MAIS on ajoute un long press sur la zone "msg-time" de la bulle
                         return;
                     }
-
                     pressTimer = setTimeout(function() {
                         ouvrirMenuContextuel(msg, isMe);
                         if (navigator.vibrate) {
@@ -858,7 +892,6 @@
                     }
                 };
 
-                // Sur la bulle entière
                 bubble.addEventListener('touchstart', startPress, { passive: true });
                 bubble.addEventListener('touchend', cancelPress);
                 bubble.addEventListener('touchmove', cancelPress);
@@ -867,13 +900,12 @@
                 bubble.addEventListener('mouseup', cancelPress);
                 bubble.addEventListener('mouseleave', cancelPress);
 
-                // Clic droit (desktop)
                 bubble.addEventListener('contextmenu', function(e) {
                     e.preventDefault();
                     ouvrirMenuContextuel(msg, isMe);
                 });
 
-                // Pour audio/video : attacher un bouton invisible qui couvre la zone temps
+                // Pour audio/video : clic sur la zone temps
                 const timeEl = bubble.querySelector('.msg-time');
                 if (timeEl) {
                     timeEl.style.cursor = 'pointer';
@@ -896,26 +928,9 @@
             const btnCopy = document.getElementById('ctxCopy');
             const btnDownload = document.getElementById('ctxDownload');
 
-            // Afficher/cacher le bouton Supprimer
-            if (isMe) {
-                btnDelete.style.display = 'flex';
-            } else {
-                btnDelete.style.display = 'none';
-            }
-
-            // Afficher/cacher le bouton Copier (seulement pour les textes)
-            if (msg.type === 'text' && msg.content) {
-                btnCopy.style.display = 'flex';
-            } else {
-                btnCopy.style.display = 'none';
-            }
-
-            // Afficher/cacher le bouton Télécharger (seulement pour les médias)
-            if (msg.media_url) {
-                btnDownload.style.display = 'flex';
-            } else {
-                btnDownload.style.display = 'none';
-            }
+            btnDelete.style.display = isMe ? 'flex' : 'none';
+            btnCopy.style.display = (msg.type === 'text' && msg.content) ? 'flex' : 'none';
+            btnDownload.style.display = msg.media_url ? 'flex' : 'none';
 
             overlay.classList.add('show');
         }
@@ -965,7 +980,6 @@
             if (!client) return;
 
             try {
-                // Supprimer le fichier média si présent
                 if (mediaUrl) {
                     const urlParts = mediaUrl.split('/cards-media/');
                     if (urlParts.length > 1) {
@@ -983,8 +997,17 @@
 
                 if (error) throw error;
 
+                // Retirer le message du DOM immédiatement
+                const row = document.querySelector('[data-msg-id="' + msgId + '"]');
+                if (row) row.remove();
+
                 afficherToast('Message supprimé', 'success');
+
+                // Recharger les messages (pour être sûr)
                 await chargerMessages();
+
+                // Recharger les conversations une seule fois
+                await chargerConversations();
 
             } catch (error) {
                 console.error(error);
@@ -1270,7 +1293,7 @@
         });
 
         // ============================================================
-        // REALTIME
+        // REALTIME (anti-double rechargement)
         // ============================================================
         function souscrireRealtime(convId) {
             const client = initialiserSupabase();
@@ -1282,21 +1305,20 @@
             realtimeChannel = client
                 .channel('messages_' + convId)
                 .on('postgres_changes', {
-                    event: '*',
+                    event: 'INSERT',
                     schema: 'public',
                     table: 'messages',
                     filter: 'conversation_id=eq.' + convId
                 }, async function(payload) {
-                    if (payload.eventType === 'INSERT') {
-                        afficherMessage(payload.new);
-                        scrollChatBottom();
-                        if (payload.new.sender_id !== currentUser.id) {
-                            await client.from('messages').update({ read: true }).eq('id', payload.new.id);
-                        }
-                    } else if (payload.eventType === 'DELETE') {
-                        const row = document.querySelector('[data-msg-id="' + payload.old.id + '"]');
-                        if (row) row.remove();
+                    // Ajouter le message s'il n'existe pas déjà
+                    afficherMessage(payload.new);
+                    scrollChatBottom();
+
+                    if (payload.new.sender_id !== currentUser.id) {
+                        await client.from('messages').update({ read: true }).eq('id', payload.new.id);
                     }
+
+                    // Mettre à jour la liste des conversations (dédupliquée)
                     await chargerConversations();
                 })
                 .subscribe();
