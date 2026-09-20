@@ -31,7 +31,6 @@
         }
         .welcome .btn-create:hover { background: #a03020; transform: scale(1.02); }
 
-        /* Menu admin */
         .admin-create-menu {
             display: none;
             position: absolute;
@@ -125,7 +124,10 @@
             padding-top: 14px; border-top: 1px solid var(--gris-tres-clair);
             font-size: 13px; color: var(--gris-texte);
         }
-        .card .author { display: flex; align-items: center; gap: 8px; }
+        .card .author {
+            display: flex; align-items: center; gap: 8px;
+            cursor: pointer;
+        }
         .card .author-avatar {
             width: 28px; height: 28px; border-radius: 50%;
             background: var(--noir); color: #fff;
@@ -212,14 +214,23 @@
         .upload-zone {
             border: 2px dashed #c5d2e0; border-radius: 16px;
             padding: 24px 16px; text-align: center; cursor: pointer;
-            transition: 0.2s; background: #fff; display: block;
+            transition: 0.2s; background: #fff;
+            display: block;
+            user-select: none;
         }
         .upload-zone:hover { border-color: var(--rouge); background: #fdf0f0; }
-        .upload-zone input[type="file"] { display: none; }
+        .upload-zone:active { transform: scale(0.98); }
         .upload-zone i {
             font-size: 28px; color: #a0b4c8; margin-bottom: 8px; display: block;
+            pointer-events: none;
         }
-        .upload-zone p { font-size: 13px; color: var(--gris-texte); }
+        .upload-zone p { font-size: 13px; color: var(--gris-texte); pointer-events: none; }
+        .upload-zone input[type="file"] {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+        }
 
         .preview-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
         .preview-item {
@@ -359,6 +370,7 @@
             padding: 10px 14px; background: #fff; border-radius: 12px;
             border: 1px solid #dce3ec; font-size: 13px;
             color: var(--noir); text-decoration: none; overflow: hidden;
+            margin-bottom: 8px;
         }
         .media-link i { color: var(--rouge); }
         .media-link span {
@@ -511,6 +523,124 @@
             cursor: pointer; font-family: inherit;
         }
 
+        /* ---- Fiche profil ---- */
+        .profile-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(10, 22, 40, 0.7); z-index: 3000;
+            align-items: center; justify-content: center;
+            padding: 20px; overflow-y: auto;
+        }
+        .profile-overlay.show { display: flex; }
+        .profile-box {
+            background: #fff; border-radius: 32px;
+            padding: 32px 28px; max-width: 500px; width: 100%;
+            position: relative; text-align: center;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .profile-box .close-btn {
+            position: absolute; top: 16px; right: 16px;
+            background: #f5f0f0; border: none;
+            width: 40px; height: 40px; border-radius: 50%;
+            font-size: 18px; color: var(--rouge);
+            cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .profile-box .big-avatar {
+            width: 100px; height: 100px; border-radius: 50%;
+            background: var(--noir); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px; font-weight: 700; margin: 0 auto 16px;
+            background-size: cover; background-position: center;
+            border: 4px solid #f0f2f5;
+        }
+        .profile-box h2 {
+            font-size: 22px; font-weight: 700;
+            color: var(--noir); margin-bottom: 4px;
+        }
+        .profile-box .subtitle {
+            color: var(--gris-texte); font-size: 14px; margin-bottom: 24px;
+        }
+        .profile-info-list {
+            text-align: left; background: #fafdff;
+            border-radius: 16px; padding: 16px 20px;
+            margin-bottom: 16px; border: 1px solid #e8eef6;
+        }
+        .profile-info-row {
+            display: flex; justify-content: space-between;
+            padding: 10px 0; border-bottom: 1px solid #eef3f9; font-size: 14px;
+        }
+        .profile-info-row:last-child { border-bottom: none; }
+        .profile-info-row .label {
+            color: var(--gris-texte); font-weight: 500;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .profile-info-row .label i { color: var(--rouge); width: 18px; }
+        .profile-info-row .value {
+            color: var(--noir); font-weight: 600;
+            text-align: right; max-width: 60%; word-break: break-word;
+        }
+        .profile-info-row .value a { color: var(--rouge); text-decoration: none; }
+        .profile-info-row .value a:hover { text-decoration: underline; }
+
+        .profile-actions {
+            display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;
+        }
+        .profile-actions button {
+            flex: 1; padding: 14px 20px; border-radius: 60px;
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            font-family: inherit; border: none;
+            display: inline-flex; align-items: center;
+            justify-content: center; gap: 8px;
+            transition: 0.15s; min-width: 130px;
+        }
+        .btn-add-friend { background: var(--noir); color: #fff; }
+        .btn-add-friend:hover { background: var(--noir-clair); }
+        .btn-accept-friend {
+            background: #e8f5e9; color: #1e5a2f;
+            border: 1.5px solid #a5d6a7 !important;
+        }
+        .btn-accept-friend:hover { background: #1e5a2f; color: #fff; }
+        .btn-reject-friend {
+            background: #fdecea; color: var(--rouge);
+            border: 1.5px solid #f5c6c6 !important;
+        }
+        .btn-reject-friend:hover { background: var(--rouge); color: #fff; }
+        .btn-remove-friend { background: #f0f2f5; color: var(--gris-texte); }
+        .btn-remove-friend:hover { background: #fdecea; color: var(--rouge); }
+        .btn-message-friend { background: var(--rouge); color: #fff; }
+        .btn-message-friend:hover { background: #a03020; }
+
+        .friend-badge {
+            display: inline-block; padding: 4px 14px;
+            border-radius: 30px; font-size: 12px;
+            font-weight: 700; margin-bottom: 16px;
+        }
+        .friend-badge.accepted { background: #e8f5e9; color: #1e5a2f; }
+        .friend-badge.pending-sent { background: #fff4e0; color: #8b5a00; }
+        .friend-badge.pending-received { background: #e8f0fa; color: #1a4a7a; }
+
+        .notif-badge {
+            position: absolute; top: -6px; right: -6px;
+            background: var(--rouge); color: #fff;
+            font-size: 11px; font-weight: 700;
+            min-width: 20px; height: 20px;
+            padding: 0 6px; border-radius: 12px;
+            display: flex; align-items: center;
+            justify-content: center; border: 2px solid #f0f2f5;
+        }
+
+        .toast {
+            position: fixed; bottom: 30px; left: 50%;
+            transform: translateX(-50%); background: var(--noir);
+            color: #fff; padding: 14px 24px; border-radius: 40px;
+            font-size: 14px; font-weight: 600; z-index: 9999;
+            display: none; align-items: center; gap: 10px;
+            max-width: 90%; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        .toast.show { display: flex; }
+        .toast.error { background: var(--rouge); }
+        .toast.success { background: #1e5a2f; }
+
         @media (max-width: 520px) {
             .welcome { flex-direction: column; align-items: stretch; }
             .welcome .btn-create { width: 100%; justify-content: center; }
@@ -519,6 +649,7 @@
             .key-box .key-value { font-size: 16px; }
             .feedback-section .form-row { grid-template-columns: 1fr; gap: 0; }
             .feedback-actions { flex-direction: column; }
+            .profile-box { padding: 24px 20px; }
         }
     </style>
 </head>
@@ -547,9 +678,16 @@
                     </div>
                 </div>
 
-                <a href="messagerie.html" class="btn-outline">
+                <a href="messagerie.html" class="btn-outline" style="position:relative;">
                     <i class="fas fa-comments"></i>
                     <span data-i18n="messages">Messages</span>
+                    <span class="notif-badge" id="notifMessages" style="display:none;">0</span>
+                </a>
+
+                <a href="amis.html" class="btn-outline" style="position:relative;">
+                    <i class="fas fa-users"></i>
+                    <span data-i18n="friends">Amis</span>
+                    <span class="notif-badge" id="notifFriends" style="display:none;">0</span>
                 </a>
 
                 <a href="profil.html" class="btn-outline">
@@ -572,7 +710,6 @@
                     <i class="fas fa-chevron-down" id="createChevron" style="display:none; font-size:12px; margin-left:4px;"></i>
                 </button>
 
-                <!-- Menu admin -->
                 <div class="admin-create-menu" id="adminCreateMenu">
                     <button id="createUserCard">
                         <i class="fas fa-user"></i> Carte utilisateur
@@ -662,7 +799,6 @@
 
             <h2><i class="fas fa-plus-circle" id="modalIcon"></i> <span id="modalTitle" data-i18n="modal_title">Créer une nouvelle carte</span></h2>
 
-            <!-- Badge type de carte (visible seulement pour admin) -->
             <div id="cardTypeBadge" style="display:none; margin-bottom:16px; padding:10px 16px; border-radius:12px; background:#e8f0fa; color:#1a4a7a; font-size:13px; font-weight:600; text-align:center;">
                 <i class="fas fa-shield-alt"></i> Vous créez une <strong>Carte Demma officielle</strong>
             </div>
@@ -723,46 +859,51 @@
                     </div>
                 </div>
 
+                <!-- IMAGES -->
                 <div class="upload-section">
                     <h4><i class="fas fa-images"></i> <span data-i18n="section_images">Images (illimitées)</span></h4>
-                    <label for="uploadImages" class="upload-zone">
+                    <div class="upload-zone" onclick="document.getElementById('uploadImages').click()">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p data-i18n="upload_click">Cliquez pour ajouter des images</p>
-                    </label>
-                    <input type="file" id="uploadImages" accept="image/*" multiple style="display:none;" />
+                        <input type="file" id="uploadImages" accept="image/*" multiple />
+                    </div>
                     <div class="preview-list" id="previewImages"></div>
                 </div>
 
+                <!-- VIDÉOS -->
                 <div class="upload-section">
                     <h4><i class="fas fa-video"></i> <span data-i18n="section_videos">Vidéos (illimitées)</span></h4>
-                    <label for="uploadVideos" class="upload-zone">
+                    <div class="upload-zone" onclick="document.getElementById('uploadVideos').click()">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p data-i18n="upload_click">Cliquez pour ajouter des vidéos</p>
-                    </label>
-                    <input type="file" id="uploadVideos" accept="video/*" multiple style="display:none;" />
+                        <input type="file" id="uploadVideos" accept="video/*,.mp4,.mov,.avi,.mkv,.webm" multiple />
+                    </div>
                     <div class="preview-list" id="previewVideos"></div>
                 </div>
 
+                <!-- AUDIOS -->
                 <div class="upload-section">
                     <h4><i class="fas fa-headphones"></i> <span data-i18n="section_audios">Audios (illimités)</span></h4>
-                    <label for="uploadAudios" class="upload-zone">
+                    <div class="upload-zone" onclick="document.getElementById('uploadAudios').click()">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p data-i18n="upload_click">Cliquez pour ajouter des audios</p>
-                    </label>
-                    <input type="file" id="uploadAudios" accept="audio/*" multiple style="display:none;" />
+                        <input type="file" id="uploadAudios" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac,.opus" multiple />
+                    </div>
                     <div class="preview-list" id="previewAudios"></div>
                 </div>
 
+                <!-- DOCUMENTS -->
                 <div class="upload-section">
                     <h4><i class="fas fa-file-alt"></i> <span data-i18n="section_docs">Documents (PDF, Word, Excel...)</span></h4>
-                    <label for="uploadDocs" class="upload-zone">
+                    <div class="upload-zone" onclick="document.getElementById('uploadDocs').click()">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p data-i18n="upload_click">Cliquez pour ajouter des documents</p>
-                    </label>
-                    <input type="file" id="uploadDocs" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" multiple style="display:none;" />
+                        <input type="file" id="uploadDocs" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.odt,.ods" multiple />
+                    </div>
                     <div class="preview-list" id="previewDocs"></div>
                 </div>
 
+                <!-- URLS -->
                 <div class="upload-section">
                     <h4><i class="fas fa-link"></i> <span data-i18n="section_urls">Liens externes (illimités)</span></h4>
                     <div id="urlsContainer"></div>
@@ -810,12 +951,23 @@
         </div>
     </div>
 
+    <!-- MODALE FICHE PROFIL -->
+    <div class="profile-overlay" id="profileOverlay">
+        <div class="profile-box" id="profileBox">
+            <button class="close-btn" id="profileClose"><i class="fas fa-times"></i></button>
+            <div id="profileContent"></div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
     <script src="js/supabase.js"></script>
 
     <script>
         const TRADUCTIONS = {
             fr: {
-                profile: "Mon profil", home: "Accueil", messages: "Messages",
+                profile: "Mon profil", home: "Accueil", messages: "Messages", friends: "Amis",
                 welcome_hello: "Bonjour 👋",
                 welcome_sub: "Découvrez les cartes de la communauté Demma",
                 btn_create: "Créer une carte",
@@ -893,13 +1045,14 @@
                 feedback_ok: "Merci, votre message a bien été envoyé !",
                 feedback_err: "Erreur lors de l'envoi.",
                 feedback_sending: "Envoi...",
+                feedback_no_session: "Vous devez être connecté pour envoyer un message.",
                 share_title: "Partager cette carte",
                 share_copy: "Copier le lien",
                 share_copied: "Lien copié !",
                 share_close: "Fermer"
             },
             en: {
-                profile: "My profile", home: "Home", messages: "Messages",
+                profile: "My profile", home: "Home", messages: "Messages", friends: "Friends",
                 welcome_hello: "Hello 👋",
                 welcome_sub: "Discover the Demma community cards",
                 btn_create: "Create a card",
@@ -977,13 +1130,14 @@
                 feedback_ok: "Thank you, your message has been sent!",
                 feedback_err: "Error sending.",
                 feedback_sending: "Sending...",
+                feedback_no_session: "You must be logged in to send a message.",
                 share_title: "Share this card",
                 share_copy: "Copy link",
                 share_copied: "Link copied!",
                 share_close: "Close"
             },
             ar: {
-                profile: "ملفي الشخصي", home: "الرئيسية", messages: "الرسائل",
+                profile: "ملفي الشخصي", home: "الرئيسية", messages: "الرسائل", friends: "الأصدقاء",
                 welcome_hello: "مرحبًا 👋",
                 welcome_sub: "اكتشف بطاقات مجتمع ديمّا",
                 btn_create: "إنشاء بطاقة",
@@ -1061,13 +1215,14 @@
                 feedback_ok: "شكرًا، تم إرسال رسالتك!",
                 feedback_err: "خطأ أثناء الإرسال.",
                 feedback_sending: "جاري الإرسال...",
+                feedback_no_session: "يجب تسجيل الدخول لإرسال رسالة.",
                 share_title: "مشاركة هذه البطاقة",
                 share_copy: "نسخ الرابط",
                 share_copied: "تم نسخ الرابط!",
                 share_close: "إغلاق"
             },
             es: {
-                profile: "Mi perfil", home: "Inicio", messages: "Mensajes",
+                profile: "Mi perfil", home: "Inicio", messages: "Mensajes", friends: "Amigos",
                 welcome_hello: "¡Hola! 👋",
                 welcome_sub: "Descubre las tarjetas de la comunidad Demma",
                 btn_create: "Crear una tarjeta",
@@ -1145,6 +1300,7 @@
                 feedback_ok: "¡Gracias, tu mensaje ha sido enviado!",
                 feedback_err: "Error al enviar.",
                 feedback_sending: "Enviando...",
+                feedback_no_session: "Debes iniciar sesión para enviar un mensaje.",
                 share_title: "Compartir esta tarjeta",
                 share_copy: "Copiar enlace",
                 share_copied: "¡Enlace copiado!",
@@ -1159,7 +1315,7 @@
         let allCards = [];
         let activeFilter = 'all';
         let editingCardId = null;
-        let creationMode = 'user'; // 'user' ou 'demma'
+        let creationMode = 'user';
         let sharingCard = null;
 
         let uploadedFiles = { images: [], videos: [], audios: [], documents: [] };
@@ -1167,6 +1323,24 @@
 
         function t(key) {
             return (TRADUCTIONS[langueActuelle] || TRADUCTIONS.fr)[key] || key;
+        }
+
+        function afficherToast(texte, type) {
+            try {
+                const toast = document.getElementById('toast');
+                if (!toast) { alert(texte); return; }
+                toast.className = 'toast show' + (type === 'error' ? ' error' : (type === 'success' ? ' success' : ''));
+                let icon = 'fa-info-circle';
+                if (type === 'error') icon = 'fa-exclamation-triangle';
+                if (type === 'success') icon = 'fa-check-circle';
+                toast.innerHTML = '<i class="fas ' + icon + '"></i> ' + texte;
+                clearTimeout(window._toastTimer);
+                window._toastTimer = setTimeout(function() {
+                    toast.classList.remove('show');
+                }, 4000);
+            } catch (e) {
+                alert(texte);
+            }
         }
 
         function appliquerLangue(code) {
@@ -1229,6 +1403,61 @@
             return { nom: '—', avatar_url: null };
         }
 
+        // ============================================================
+        // ENREGISTREMENT DES VISITES
+        // ============================================================
+        async function enregistrerVisite() {
+            const client = initialiserSupabase();
+            if (!client) return;
+            try {
+                const userAgent = navigator.userAgent.substring(0, 200);
+                const ipHash = btoa(userAgent + (new Date().toDateString())).substring(0, 64);
+
+                await client.from('visites').insert([{
+                    user_id: currentUser ? currentUser.id : null,
+                    page: 'fil-actualite',
+                    user_agent: userAgent,
+                    ip_hash: ipHash
+                }]);
+            } catch (e) {
+                console.warn('Visite non enregistrée:', e);
+            }
+        }
+
+        // ============================================================
+        // NOTIFICATIONS
+        // ============================================================
+        async function chargerNotifications() {
+            const client = initialiserSupabase();
+            if (!client || !currentUser) return;
+
+            try {
+                const { data: msgData } = await client.rpc('compter_messages_non_lus');
+                const msgCount = msgData || 0;
+                const msgBadge = document.getElementById('notifMessages');
+                if (msgBadge) {
+                    if (msgCount > 0) {
+                        msgBadge.textContent = msgCount > 99 ? '99+' : msgCount;
+                        msgBadge.style.display = 'flex';
+                    } else {
+                        msgBadge.style.display = 'none';
+                    }
+                }
+
+                const { data: amiData } = await client.rpc('compter_demandes_amis');
+                const amiCount = amiData || 0;
+                const amiBadge = document.getElementById('notifFriends');
+                if (amiBadge) {
+                    if (amiCount > 0) {
+                        amiBadge.textContent = amiCount > 99 ? '99+' : amiCount;
+                        amiBadge.style.display = 'flex';
+                    } else {
+                        amiBadge.style.display = 'none';
+                    }
+                }
+            } catch (e) {}
+        }
+
         async function initialiser() {
             const client = initialiserSupabase();
             if (!client) return;
@@ -1253,23 +1482,25 @@
                 hello.textContent = '👋 ' + currentProfile.nom;
             }
 
-            // Si admin, activer le menu déroulant
             if (isAdmin) {
                 document.getElementById('createChevron').style.display = 'inline';
             }
 
             await chargerCartes();
+            await enregistrerVisite();
+
+            chargerNotifications();
+            setInterval(chargerNotifications, 15000);
         }
 
         // ============================================================
-        // GESTION DU BOUTON CRÉER (Admin a 2 choix)
+        // BOUTON CRÉER (Admin a 2 choix)
         // ============================================================
         const btnCreate = document.getElementById('btnCreate');
         const adminMenu = document.getElementById('adminCreateMenu');
 
         btnCreate.addEventListener('click', function(e) {
             e.stopPropagation();
-
             if (isAdmin) {
                 adminMenu.classList.toggle('show');
             } else {
@@ -1301,7 +1532,6 @@
                 document.getElementById('modalTitle').textContent = t('modal_demma_title');
                 document.getElementById('modalIcon').className = 'fas fa-shield-alt';
                 document.getElementById('cardTypeBadge').style.display = 'block';
-                // Pré-sélectionner "codée" par défaut pour les cartes Demma
                 document.getElementById('inputType').value = 'user_coded';
             } else {
                 document.getElementById('modalTitle').textContent = t('modal_title');
@@ -1387,33 +1617,32 @@
                 let noteColor = '#c0392b';
                 if (note >= 6) noteColor = '#1e5a2f';
                 else if (note >= 4) noteColor = '#8b5a00';
-                badgesHTML += `<span class="badge" style="background:${noteColor}15;color:${noteColor};font-weight:800;">⭐ ${note}/7</span>`;
+                badgesHTML += '<span class="badge" style="background:' + noteColor + '15;color:' + noteColor + ';font-weight:800;">⭐ ' + note + '/7</span>';
 
                 const avatarStyle = auteur.avatar_url
-                    ? `background-image:url('${auteur.avatar_url}');`
+                    ? "background-image:url('" + auteur.avatar_url + "');"
                     : '';
 
                 const cardEl = document.createElement('div');
                 cardEl.className = 'card';
-                cardEl.innerHTML = `
-                    <div class="card-badges">${badgesHTML}</div>
-                    <h3>${escapeHTML(card.titre)}</h3>
-                    <p class="detail">${escapeHTML(card.detail)}</p>
-                    <div class="meta">
-                        <div class="author">
-                            <div class="author-avatar" style="${avatarStyle}">${auteur.avatar_url ? '' : initial}</div>
-                            <span>${escapeHTML(auteur.nom || '—')}</span>
-                        </div>
-                        <div class="actions-buttons">
-                            <button class="btn-share" data-id="${card.id}" title="Partager">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
-                            <button class="btn-open" data-id="${card.id}">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
+                cardEl.innerHTML =
+                    '<div class="card-badges">' + badgesHTML + '</div>' +
+                    '<h3>' + escapeHTML(card.titre) + '</h3>' +
+                    '<p class="detail">' + escapeHTML(card.detail) + '</p>' +
+                    '<div class="meta">' +
+                        '<div class="author" onclick="afficherFicheProfil(\'' + card.user_id + '\')">' +
+                            '<div class="author-avatar" style="' + avatarStyle + '">' + (auteur.avatar_url ? '' : initial) + '</div>' +
+                            '<span>' + escapeHTML(auteur.nom || '—') + '</span>' +
+                        '</div>' +
+                        '<div class="actions-buttons">' +
+                            '<button class="btn-share" data-id="' + card.id + '" title="Partager">' +
+                                '<i class="fas fa-share-alt"></i>' +
+                            '</button>' +
+                            '<button class="btn-open" data-id="' + card.id + '">' +
+                                '<i class="fas fa-eye"></i>' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>';
                 grid.appendChild(cardEl);
             });
 
@@ -1455,82 +1684,74 @@
 
             const auteur = await getAuteur(card.user_id);
 
-            let html = `
-                <h2><i class="fas fa-book-open"></i> ${escapeHTML(card.titre)}</h2>
-                <div class="consult-badges">
-                    ${card.type === 'demma' ? '<span class="badge badge-demma">🛡️ Demma</span>' : ''}
-                    ${card.type === 'user_free' ? '<span class="badge badge-free">Libre</span>' : ''}
-                    ${card.type === 'user_coded' ? '<span class="badge badge-coded">🔒 Codée</span>' : ''}
-                    ${card.prix > 0 ? '<span class="badge badge-paid">' + card.prix + ' FCFA</span>' : ''}
-                    ${card.donation ? '<span class="badge badge-donation">Don</span>' : ''}
-                    <span class="badge badge-note">⭐ ${card.note || 0}/7</span>
-                </div>
-                <p style="color:var(--gris-texte);font-size:13px;margin-top:8px;">
-                    ${trad.consult_by} ${escapeHTML(auteur.nom)}
-                </p>
-            `;
+            let html = '<h2><i class="fas fa-book-open"></i> ' + escapeHTML(card.titre) + '</h2>' +
+                '<div class="consult-badges">' +
+                    (card.type === 'demma' ? '<span class="badge badge-demma">🛡️ Demma</span>' : '') +
+                    (card.type === 'user_free' ? '<span class="badge badge-free">Libre</span>' : '') +
+                    (card.type === 'user_coded' ? '<span class="badge badge-coded">🔒 Codée</span>' : '') +
+                    (card.prix > 0 ? '<span class="badge badge-paid">' + card.prix + ' FCFA</span>' : '') +
+                    (card.donation ? '<span class="badge badge-donation">Don</span>' : '') +
+                    '<span class="badge badge-note">⭐ ' + (card.note || 0) + '/7</span>' +
+                '</div>' +
+                '<p style="color:var(--gris-texte);font-size:13px;margin-top:8px;cursor:pointer;" onclick="afficherFicheProfil(\'' + card.user_id + '\')">' +
+                    trad.consult_by + ' <strong style="color:var(--rouge);text-decoration:underline;">' + escapeHTML(auteur.nom) + '</strong>' +
+                '</p>';
 
-            html += `
-                <div class="consult-section">
-                    <h4><i class="fas fa-align-left"></i> ${trad.consult_apercu}</h4>
-                    <div class="text-content">${escapeHTML(card.detail)}</div>
-                </div>
-            `;
+            html += '<div class="consult-section">' +
+                '<h4><i class="fas fa-align-left"></i> ' + trad.consult_apercu + '</h4>' +
+                '<div class="text-content">' + escapeHTML(card.detail) + '</div>' +
+                '</div>';
 
+            // Médias
             if ((card.images && card.images.length) ||
                 (card.videos && card.videos.length) ||
                 (card.audios && card.audios.length) ||
                 (card.documents && card.documents.length) ||
                 (card.urls && card.urls.length)) {
 
-                html += `<div class="consult-section">
-                    <h4><i class="fas fa-photo-video"></i> ${trad.consult_medias}</h4>`;
+                html += '<div class="consult-section"><h4><i class="fas fa-photo-video"></i> ' + trad.consult_medias + '</h4>';
 
                 if (card.images && card.images.length) {
-                    html += `<p style="font-size:13px;color:var(--gris-texte);margin-bottom:8px;"><strong>${trad.consult_images}</strong></p><div class="media-grid">`;
+                    html += '<p style="font-size:13px;color:var(--gris-texte);margin-bottom:8px;"><strong>' + trad.consult_images + '</strong></p><div class="media-grid">';
                     card.images.forEach(img => {
-                        html += `<a href="${img.url}" target="_blank"><img src="${img.url}" alt="" loading="lazy" /></a>`;
+                        html += '<a href="' + img.url + '" target="_blank"><img src="' + img.url + '" alt="" loading="lazy" /></a>';
                     });
-                    html += `</div><div style="height:12px;"></div>`;
+                    html += '</div><div style="height:12px;"></div>';
                 }
 
                 if (card.videos && card.videos.length) {
-                    html += `<p style="font-size:13px;color:var(--gris-texte);margin-bottom:8px;"><strong>${trad.consult_videos}</strong></p><div class="media-grid">`;
+                    html += '<p style="font-size:13px;color:var(--gris-texte);margin-bottom:8px;"><strong>' + trad.consult_videos + '</strong></p><div class="media-grid">';
                     card.videos.forEach(v => {
-                        html += `<video controls preload="metadata"><source src="${v.url}"></video>`;
+                        html += '<video controls preload="metadata"><source src="' + v.url + '"></video>';
                     });
-                    html += `</div><div style="height:12px;"></div>`;
+                    html += '</div><div style="height:12px;"></div>';
                 }
 
                 if (card.audios && card.audios.length) {
-                    html += `<p style="font-size:13px;color:var(--gris-texte);margin-bottom:8px;"><strong>${trad.consult_audios}</strong></p><div>`;
+                    html += '<p style="font-size:13px;color:var(--gris-texte);margin-bottom:8px;"><strong>' + trad.consult_audios + '</strong></p><div>';
                     card.audios.forEach(a => {
-                        html += `<audio controls preload="metadata" style="margin-bottom:8px;"><source src="${a.url}"></audio>`;
+                        html += '<audio controls preload="metadata" style="margin-bottom:8px; width:100%;"><source src="' + a.url + '"></audio>';
                     });
-                    html += `</div><div style="height:12px;"></div>`;
+                    html += '</div><div style="height:12px;"></div>';
                 }
 
                 if (card.documents && card.documents.length) {
-                    html += `<p style="font-size:13px;color:var(--gris-texte);margin-bottom:8px;"><strong>${trad.consult_docs}</strong></p><div>`;
+                    html += '<p style="font-size:13px;color:var(--gris-texte);margin-bottom:8px;"><strong>' + trad.consult_docs + '</strong></p><div>';
                     card.documents.forEach(d => {
-                        html += `<a href="${d.url}" target="_blank" class="media-link" style="margin-bottom:8px;">
-                            <i class="fas fa-file-alt"></i><span>${escapeHTML(d.name || 'Document')}</span>
-                        </a>`;
+                        html += '<a href="' + d.url + '" target="_blank" class="media-link"><i class="fas fa-file-alt"></i><span>' + escapeHTML(d.name || 'Document') + '</span></a>';
                     });
-                    html += `</div><div style="height:12px;"></div>`;
+                    html += '</div><div style="height:12px;"></div>';
                 }
 
                 if (card.urls && card.urls.length) {
-                    html += `<p style="font-size:13px;color:var(--gris-texte);margin-bottom:8px;"><strong>${trad.consult_urls}</strong></p><div>`;
+                    html += '<p style="font-size:13px;color:var(--gris-texte);margin-bottom:8px;"><strong>' + trad.consult_urls + '</strong></p><div>';
                     card.urls.forEach(u => {
-                        html += `<a href="${u.url}" target="_blank" class="media-link" style="margin-bottom:8px;">
-                            <i class="fas fa-link"></i><span>${escapeHTML(u.url)}</span>
-                        </a>`;
+                        html += '<a href="' + u.url + '" target="_blank" class="media-link"><i class="fas fa-link"></i><span>' + escapeHTML(u.url) + '</span></a>';
                     });
-                    html += `</div>`;
+                    html += '</div>';
                 }
 
-                html += `</div>`;
+                html += '</div>';
             }
 
             if (estProprietaire) {
@@ -1541,52 +1762,37 @@
                     .single();
 
                 if (fullData && fullData.contenu_complet) {
-                    html += `<div class="consult-section">
-                        <h4><i class="fas fa-file-alt"></i> ${trad.consult_contenu}</h4>
-                        <div class="text-content">${escapeHTML(fullData.contenu_complet)}</div>
-                    </div>`;
+                    html += '<div class="consult-section"><h4><i class="fas fa-file-alt"></i> ' + trad.consult_contenu + '</h4><div class="text-content">' + escapeHTML(fullData.contenu_complet) + '</div></div>';
                 }
 
                 const { data: cleData } = await client.rpc('obtenir_cle_carte', { p_card_id: card.id });
                 if (cleData) {
-                    html += `<div class="key-box">
-                        <div class="key-label">${trad.consult_key_label}</div>
-                        <div class="key-value">${cleData}</div>
-                        <button class="btn-copy" onclick="copierCle('${cleData}')">
-                            <i class="fas fa-copy"></i> ${trad.consult_key_copy}
-                        </button>
-                    </div>`;
+                    html += '<div class="key-box">' +
+                        '<div class="key-label">' + trad.consult_key_label + '</div>' +
+                        '<div class="key-value">' + cleData + '</div>' +
+                        '<button class="btn-copy" onclick="copierCle(\'' + cleData + '\')"><i class="fas fa-copy"></i> ' + trad.consult_key_copy + '</button>' +
+                        '</div>';
                 }
 
-                html += `<button class="btn-contact btn-modifier" onclick="modifierCarte('${card.id}')">
-                    <i class="fas fa-edit"></i> ${trad.consult_edit}
-                </button>`;
-
-                html += `<button class="btn-contact btn-partager" onclick="partagerCarte('${card.id}')">
-                    <i class="fas fa-share-alt"></i> ${trad.consult_share}
-                </button>`;
+                html += '<button class="btn-contact btn-modifier" onclick="modifierCarte(\'' + card.id + '\')"><i class="fas fa-edit"></i> ' + trad.consult_edit + '</button>';
+                html += '<button class="btn-contact btn-partager" onclick="partagerCarte(\'' + card.id + '\')"><i class="fas fa-share-alt"></i> ' + trad.consult_share + '</button>';
 
             } else if (estCodee) {
-                html += `<div class="consult-section" id="lockedSection">
-                    <div class="locked-message">
-                        <i class="fas fa-lock"></i>
-                        <strong>${trad.consult_locked}</strong>
-                        <p style="margin-top:8px;">${trad.consult_locked_msg}</p>
-                    </div>
-                    <div class="key-input-row">
-                        <input type="text" id="cleInput" placeholder="${trad.consult_key_input}" />
-                        <button id="btnValiderCle">${trad.consult_key_validate}</button>
-                    </div>
-                    <div id="keyResult" style="margin-top:10px;font-size:14px;"></div>
-                </div>`;
+                html += '<div class="consult-section" id="lockedSection">' +
+                    '<div class="locked-message">' +
+                        '<i class="fas fa-lock"></i>' +
+                        '<strong>' + trad.consult_locked + '</strong>' +
+                        '<p style="margin-top:8px;">' + trad.consult_locked_msg + '</p>' +
+                    '</div>' +
+                    '<div class="key-input-row">' +
+                        '<input type="text" id="cleInput" placeholder="' + trad.consult_key_input + '" />' +
+                        '<button id="btnValiderCle">' + trad.consult_key_validate + '</button>' +
+                    '</div>' +
+                    '<div id="keyResult" style="margin-top:10px;font-size:14px;"></div>' +
+                    '</div>';
 
-                html += `<button class="btn-contact btn-get-key" onclick="obtenirCle('${card.user_id}', '${card.id}')">
-                    <i class="fas fa-key"></i> ${trad.consult_get_key}
-                </button>`;
-
-                html += `<button class="btn-contact btn-partager" onclick="partagerCarte('${card.id}')">
-                    <i class="fas fa-share-alt"></i> ${trad.consult_share}
-                </button>`;
+                html += '<button class="btn-contact btn-get-key" onclick="obtenirCle(\'' + card.user_id + '\', \'' + card.id + '\')"><i class="fas fa-key"></i> ' + trad.consult_get_key + '</button>';
+                html += '<button class="btn-contact btn-partager" onclick="partagerCarte(\'' + card.id + '\')"><i class="fas fa-share-alt"></i> ' + trad.consult_share + '</button>';
 
             } else {
                 const { data: fullData } = await client
@@ -1596,15 +1802,10 @@
                     .single();
 
                 if (fullData && fullData.contenu_complet) {
-                    html += `<div class="consult-section">
-                        <h4><i class="fas fa-file-alt"></i> ${trad.consult_contenu}</h4>
-                        <div class="text-content">${escapeHTML(fullData.contenu_complet)}</div>
-                    </div>`;
+                    html += '<div class="consult-section"><h4><i class="fas fa-file-alt"></i> ' + trad.consult_contenu + '</h4><div class="text-content">' + escapeHTML(fullData.contenu_complet) + '</div></div>';
                 }
 
-                html += `<button class="btn-contact btn-partager" onclick="partagerCarte('${card.id}')">
-                    <i class="fas fa-share-alt"></i> ${trad.consult_share}
-                </button>`;
+                html += '<button class="btn-contact btn-partager" onclick="partagerCarte(\'' + card.id + '\')"><i class="fas fa-share-alt"></i> ' + trad.consult_share + '</button>';
             }
 
             consultContent.innerHTML = html;
@@ -1642,10 +1843,10 @@
                     result.style.color = '#1e5a2f';
                     result.textContent = '✅ ' + trad.consult_key_success;
 
-                    const contenuHTML = `<div class="consult-section" style="margin-top:16px;">
-                        <h4><i class="fas fa-file-alt"></i> ${trad.consult_contenu}</h4>
-                        <div class="text-content">${escapeHTML(data || '—')}</div>
-                    </div>`;
+                    const contenuHTML = '<div class="consult-section" style="margin-top:16px;">' +
+                        '<h4><i class="fas fa-file-alt"></i> ' + trad.consult_contenu + '</h4>' +
+                        '<div class="text-content">' + escapeHTML(data || '—') + '</div>' +
+                        '</div>';
                     document.getElementById('lockedSection').insertAdjacentHTML('afterend', contenuHTML);
                 });
             }
@@ -1653,7 +1854,7 @@
 
         function copierCle(cle) {
             navigator.clipboard.writeText(cle).then(() => {
-                alert('✅ ' + t('consult_key_copied') + ' : ' + cle);
+                afficherToast(t('consult_key_copied'), 'success');
             }).catch(() => {
                 alert('Clé : ' + cle);
             });
@@ -1679,13 +1880,13 @@
                 .single();
 
             if (error || !card) {
-                alert('Erreur : impossible de charger la carte');
+                afficherToast('Impossible de charger la carte', 'error');
                 return;
             }
 
             editingCardId = cardId;
-
             modalOverlay.classList.add('show');
+
             document.getElementById('modalTitle').textContent = t('modal_edit_title');
             document.getElementById('modalIcon').className = 'fas fa-edit';
             document.getElementById('cardTypeBadge').style.display = 'none';
@@ -1728,12 +1929,12 @@
 
                     let innerHTML = '';
                     if (type === 'images') {
-                        innerHTML = `<img src="${file.url}" alt="" />`;
+                        innerHTML = '<img src="' + file.url + '" alt="" />';
                     } else {
-                        innerHTML = `<i class="fas fa-${map[type].icon}" style="color:var(--rouge);"></i>`;
+                        innerHTML = '<i class="fas fa-' + map[type].icon + '" style="color:var(--rouge);"></i>';
                     }
-                    innerHTML += `<span class="name">${escapeHTML((file.name || '').substring(0, 15))}</span>`;
-                    innerHTML += `<button type="button" class="remove" data-type="${type}" data-url="${file.url}"><i class="fas fa-times"></i></button>`;
+                    innerHTML += '<span class="name">' + escapeHTML((file.name || '').substring(0, 15)) + '</span>';
+                    innerHTML += '<button type="button" class="remove" data-type="' + type + '" data-url="' + file.url + '"><i class="fas fa-times"></i></button>';
 
                     el.innerHTML = innerHTML;
                     container.appendChild(el);
@@ -1795,6 +1996,7 @@
             shareUrlInput.select();
             navigator.clipboard.writeText(shareUrlInput.value).then(() => {
                 this.textContent = '✅';
+                afficherToast(t('share_copied'), 'success');
                 setTimeout(() => { this.textContent = 'Copier'; }, 2000);
             }).catch(() => {
                 alert('Lien : ' + shareUrlInput.value);
@@ -1822,7 +2024,7 @@
         });
 
         // ============================================================
-        // FORMULAIRE
+        // FORMULAIRE CRÉATION / MODIFICATION
         // ============================================================
         const modalOverlay = document.getElementById('modalOverlay');
         const modalClose = document.getElementById('modalClose');
@@ -1842,7 +2044,10 @@
 
         async function uploaderFichiers(files, type) {
             const client = initialiserSupabase();
-            if (!client) return;
+            if (!client) {
+                afficherToast('Supabase non initialisé', 'error');
+                return;
+            }
 
             const previewId = {
                 images: 'previewImages',
@@ -1855,22 +2060,19 @@
 
             for (const file of files) {
                 if (file.size > MAX_SIZE) {
-                    alert('Fichier trop lourd : ' + file.name);
+                    afficherToast('Fichier trop lourd : ' + file.name, 'error');
                     continue;
                 }
 
                 const previewEl = document.createElement('div');
                 previewEl.className = 'preview-item';
-                previewEl.innerHTML = `
-                    <div class="loading"><i class="fas fa-spinner fa-spin"></i></div>
-                    <span class="name">${file.name.substring(0, 15)}</span>
-                `;
+                previewEl.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i></div><span class="name">' + file.name.substring(0, 15) + '</span>';
                 previewList.appendChild(previewEl);
 
                 try {
                     const ext = file.name.split('.').pop();
                     const cleanName = file.name.replace(/[^a-z0-9]/gi, '_').substring(0, 40);
-                    const path = `${currentUser.id}/${Date.now()}_${cleanName}.${ext}`;
+                    const path = currentUser.id + '/' + Date.now() + '_' + cleanName + '.' + ext;
 
                     const { error } = await client
                         .storage
@@ -1894,19 +2096,21 @@
                     });
 
                     let innerHTML = '';
-                    if (type === 'images') innerHTML = `<img src="${publicUrl}" alt="" />`;
-                    else if (type === 'videos') innerHTML = `<i class="fas fa-video" style="color:var(--rouge);"></i>`;
-                    else if (type === 'audios') innerHTML = `<i class="fas fa-music" style="color:var(--rouge);"></i>`;
-                    else innerHTML = `<i class="fas fa-file-alt" style="color:var(--rouge);"></i>`;
-                    innerHTML += `<span class="name">${file.name.substring(0, 15)}</span>`;
-                    innerHTML += `<button type="button" class="remove" data-type="${type}" data-url="${publicUrl}"><i class="fas fa-times"></i></button>`;
+                    if (type === 'images') innerHTML = '<img src="' + publicUrl + '" alt="" />';
+                    else if (type === 'videos') innerHTML = '<i class="fas fa-video" style="color:var(--rouge);"></i>';
+                    else if (type === 'audios') innerHTML = '<i class="fas fa-music" style="color:var(--rouge);"></i>';
+                    else innerHTML = '<i class="fas fa-file-alt" style="color:var(--rouge);"></i>';
+                    innerHTML += '<span class="name">' + file.name.substring(0, 15) + '</span>';
+                    innerHTML += '<button type="button" class="remove" data-type="' + type + '" data-url="' + publicUrl + '"><i class="fas fa-times"></i></button>';
 
                     previewEl.innerHTML = innerHTML;
 
+                    afficherToast(file.name.substring(0, 20) + ' envoyé !', 'success');
+
                 } catch (error) {
                     console.error('Erreur upload :', error);
-                    previewEl.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:var(--rouge);"></i>`;
-                    alert('Erreur : ' + error.message);
+                    previewEl.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:var(--rouge);"></i>';
+                    afficherToast('Erreur : ' + error.message, 'error');
                 }
             }
 
@@ -1943,10 +2147,8 @@
             urlsList.forEach((url, index) => {
                 const row = document.createElement('div');
                 row.className = 'url-input-row';
-                row.innerHTML = `
-                    <input type="url" placeholder="https://..." value="${url}" data-index="${index}" />
-                    <button type="button" data-index="${index}"><i class="fas fa-times"></i></button>
-                `;
+                row.innerHTML = '<input type="url" placeholder="https://..." value="' + url + '" data-index="' + index + '" />' +
+                    '<button type="button" data-index="' + index + '"><i class="fas fa-times"></i></button>';
                 container.appendChild(row);
             });
 
@@ -1983,7 +2185,6 @@
             const prix = parseInt(document.getElementById('inputPrix').value) || 0;
             const donation = document.getElementById('inputDonation').value === 'true';
 
-            // Déterminer le type final
             let finalType = typeInput;
             if (creationMode === 'demma' && !editingCardId) {
                 finalType = 'demma';
@@ -2038,7 +2239,6 @@
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + trad.msg_loading;
 
                     let cleAcces = null;
-                    // Carte codée OU carte Demma → clé générée
                     if (finalType === 'user_coded' || finalType === 'demma') {
                         cleAcces = 'DEM-' + Math.random().toString(36).substring(2, 6).toUpperCase() +
                                    '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -2088,13 +2288,15 @@
         });
 
         // ============================================================
-        // FEEDBACK
+        // FEEDBACK (CORRIGÉ AVEC SESSION CHECK)
         // ============================================================
         document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+
             const trad = TRADUCTIONS[langueActuelle];
             const msgBox = document.getElementById('feedbackMsg');
             const submitBtn = document.getElementById('feedbackSubmit');
+
             const type = document.getElementById('feedbackType').value;
             const contact = document.getElementById('feedbackContact').value.trim();
             const sujet = document.getElementById('feedbackSujet').value.trim();
@@ -2102,42 +2304,52 @@
 
             if (sujet.length < 3 || message.length < 10) {
                 msgBox.className = 'feedback-msg error';
-                msgBox.textContent = trad.feedback_err;
+                msgBox.textContent = 'Le sujet (min 3) et le message (min 10) sont obligatoires.';
                 return;
             }
 
+            msgBox.className = 'feedback-msg';
+            msgBox.textContent = '';
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + trad.feedback_sending;
 
             try {
                 const client = initialiserSupabase();
-                if (!client) throw new Error(trad.err_supabase);
+                if (!client) throw new Error('Supabase non initialisé');
+
+                // Vérifier la session
+                const { data: { session } } = await client.auth.getSession();
+                if (!session || !session.user) {
+                    throw new Error(trad.feedback_no_session);
+                }
 
                 const { error } = await client
                     .from('feedback')
                     .insert([{
-                        user_id: currentUser ? currentUser.id : null,
+                        user_id: session.user.id,
                         type: type,
                         sujet: sujet,
                         message: message,
-                        contact: contact || null
+                        contact: contact || null,
+                        traite: false
                     }]);
 
                 if (error) throw error;
 
                 msgBox.className = 'feedback-msg success';
                 msgBox.innerHTML = '<i class="fas fa-check-circle"></i> ' + trad.feedback_ok;
+
                 this.reset();
 
                 setTimeout(() => {
                     msgBox.className = 'feedback-msg';
                     msgBox.textContent = '';
-                }, 4000);
+                }, 5000);
 
             } catch (error) {
-                console.error(error);
+                console.error('Erreur feedback:', error);
                 msgBox.className = 'feedback-msg error';
-                msgBox.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + trad.feedback_err;
+                msgBox.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + (error.message || trad.feedback_err);
             }
 
             submitBtn.disabled = false;
@@ -2149,6 +2361,159 @@
             const msgBox = document.getElementById('feedbackMsg');
             msgBox.className = 'feedback-msg';
             msgBox.textContent = '';
+        });
+
+        // ============================================================
+        // FICHE PROFIL
+        // ============================================================
+        const profileOverlay = document.getElementById('profileOverlay');
+        const profileContent = document.getElementById('profileContent');
+        const profileClose = document.getElementById('profileClose');
+
+        profileClose.addEventListener('click', () => profileOverlay.classList.remove('show'));
+        profileOverlay.addEventListener('click', (e) => {
+            if (e.target === profileOverlay) profileOverlay.classList.remove('show');
+        });
+
+        async function afficherFicheProfil(userId) {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            profileContent.innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-spin" style="font-size:32px;color:var(--rouge);"></i></div>';
+            profileOverlay.classList.add('show');
+
+            const { data: profilData, error: profilError } = await client.rpc('obtenir_profil_public', { p_user_id: userId });
+            if (profilError || !profilData || !profilData[0]) {
+                profileContent.innerHTML = '<div style="text-align:center;padding:40px;color:var(--rouge);">Profil introuvable</div>';
+                return;
+            }
+
+            const profil = profilData[0];
+
+            const { data: statutData } = await client.rpc('statut_amitie', { p_other_user_id: userId });
+            const statut = statutData && statutData[0] ? statutData[0] : { status: null, direction: null, friendship_id: null };
+
+            const initial = (profil.nom || '?').charAt(0).toUpperCase();
+            const avatarStyle = profil.avatar_url ? "background-image:url('" + profil.avatar_url + "');" : '';
+            const dateInscription = new Date(profil.created_at).toLocaleDateString('fr-FR', {
+                day: '2-digit', month: 'long', year: 'numeric'
+            });
+
+            const estMoi = currentUser && currentUser.id === userId;
+
+            let html = '<div class="big-avatar" style="' + avatarStyle + '">' + (profil.avatar_url ? '' : initial) + '</div>';
+            html += '<h2>' + escapeHTML(profil.nom || '—') + '</h2>';
+            html += '<p class="subtitle">' + escapeHTML(profil.domaine || '—') + '</p>';
+
+            if (statut.status === 'accepted') {
+                html += '<span class="friend-badge accepted"><i class="fas fa-user-check"></i> Ami</span>';
+            } else if (statut.status === 'pending' && statut.direction === 'sent') {
+                html += '<span class="friend-badge pending-sent"><i class="fas fa-clock"></i> Demande envoyée</span>';
+            } else if (statut.status === 'pending' && statut.direction === 'received') {
+                html += '<span class="friend-badge pending-received"><i class="fas fa-user-plus"></i> Demande reçue</span>';
+            }
+
+            html += '<div class="profile-info-list">';
+
+            if (profil.sexe) {
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-venus-mars"></i> Sexe</span><span class="value">' + escapeHTML(profil.sexe) + '</span></div>';
+            }
+            if (profil.age) {
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-birthday-cake"></i> Âge</span><span class="value">' + profil.age + ' ans</span></div>';
+            }
+            if (profil.pays) {
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-globe-africa"></i> Pays</span><span class="value">' + escapeHTML(profil.pays) + '</span></div>';
+            }
+            if (profil.domaine) {
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-briefcase"></i> Domaine</span><span class="value">' + escapeHTML(profil.domaine) + '</span></div>';
+            }
+            if (profil.email) {
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-envelope"></i> Email</span><span class="value"><a href="mailto:' + profil.email + '">' + escapeHTML(profil.email) + '</a></span></div>';
+            }
+            if (profil.telephone) {
+                const telClean = profil.telephone.replace(/[^0-9+]/g, '');
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-phone"></i> Téléphone</span><span class="value"><a href="tel:' + telClean + '">' + escapeHTML(profil.telephone) + '</a></span></div>';
+            }
+            html += '<div class="profile-info-row"><span class="label"><i class="fas fa-calendar"></i> Inscription</span><span class="value">' + dateInscription + '</span></div>';
+            html += '</div>';
+
+            html += '<div class="profile-actions">';
+
+            if (estMoi) {
+                html += '<button class="btn-message-friend" onclick="window.location.href=\'profil.html\'"><i class="fas fa-user-edit"></i> Mon profil</button>';
+            } else {
+                if (!statut.status) {
+                    html += '<button class="btn-add-friend" onclick="envoyerDemandeAmi(\'' + userId + '\')"><i class="fas fa-user-plus"></i> Ajouter en ami</button>';
+                } else if (statut.status === 'pending' && statut.direction === 'received') {
+                    html += '<button class="btn-accept-friend" onclick="repondreAmi(\'' + statut.friendship_id + '\', true)"><i class="fas fa-check"></i> Accepter</button>';
+                    html += '<button class="btn-reject-friend" onclick="repondreAmi(\'' + statut.friendship_id + '\', false)"><i class="fas fa-times"></i> Refuser</button>';
+                } else if (statut.status === 'pending' && statut.direction === 'sent') {
+                    html += '<button class="btn-remove-friend" onclick="supprimerAmi(\'' + statut.friendship_id + '\')"><i class="fas fa-clock"></i> Annuler</button>';
+                } else if (statut.status === 'accepted') {
+                    html += '<button class="btn-remove-friend" onclick="supprimerAmi(\'' + statut.friendship_id + '\')"><i class="fas fa-user-minus"></i> Retirer</button>';
+                }
+                html += '<button class="btn-message-friend" onclick="ouvrirConversation(\'' + userId + '\')"><i class="fas fa-comments"></i> Message</button>';
+            }
+
+            html += '</div>';
+            profileContent.innerHTML = html;
+        }
+
+        function ouvrirConversation(userId) {
+            profileOverlay.classList.remove('show');
+            window.location.href = 'messagerie.html?user=' + userId;
+        }
+
+        async function envoyerDemandeAmi(userId) {
+            const client = initialiserSupabase();
+            if (!client) return;
+            const { data, error } = await client.rpc('ajouter_ami', { p_friend_id: userId });
+            if (error || !data) {
+                afficherToast('Impossible d\'envoyer la demande', 'error');
+                return;
+            }
+            afficherToast('Demande envoyée !', 'success');
+            await afficherFicheProfil(userId);
+        }
+
+        async function repondreAmi(friendshipId, accept) {
+            const client = initialiserSupabase();
+            if (!client) return;
+            const { data, error } = await client.rpc('repondre_demande_ami', {
+                p_friendship_id: friendshipId,
+                p_accept: accept
+            });
+            if (error || !data) {
+                afficherToast('Action impossible', 'error');
+                return;
+            }
+            afficherToast(accept ? 'Ami accepté !' : 'Demande refusée', 'success');
+            profileOverlay.classList.remove('show');
+        }
+
+        async function supprimerAmi(friendshipId) {
+            if (!confirm('Confirmer ?')) return;
+            const client = initialiserSupabase();
+            if (!client) return;
+            const { data, error } = await client.rpc('supprimer_ami', { p_friendship_id: friendshipId });
+            if (error || !data) {
+                afficherToast('Action impossible', 'error');
+                return;
+            }
+            afficherToast('Ami retiré', 'success');
+            profileOverlay.classList.remove('show');
+        }
+
+        // ============================================================
+        // FILTRES
+        // ============================================================
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                activeFilter = this.dataset.filter;
+                afficherCartes();
+            });
         });
 
         // ============================================================
