@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Demma · Mes amis</title>
+    <title>Demma · Administration</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,47 +15,106 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        .amis-container {
-            max-width: 800px;
+        .admin-container {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 30px 0 60px;
+            padding: 24px 0 60px;
         }
-        .amis-header {
+
+        .admin-header {
             background: linear-gradient(135deg, #0a1628, #1a2f4a);
             color: #fff;
             border-radius: 28px;
             padding: 28px 30px;
             margin-bottom: 24px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
             gap: 16px;
         }
-        .amis-header i {
-            font-size: 36px;
-            color: var(--rouge);
-        }
-        .amis-header h1 {
+        .admin-header h1 {
             font-size: 26px;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .amis-header p {
+        .admin-header h1 i { color: var(--rouge); }
+        .admin-header p {
             color: #a0b8d4;
             font-size: 14px;
             margin-top: 4px;
         }
+        .admin-header .admin-badge {
+            background: var(--rouge);
+            color: #fff;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-        .tabs-amis {
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 22px;
+            padding: 22px 20px;
+            border: 1px solid #e8eef6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            transition: 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+        }
+        .stat-card .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .stat-card .value {
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--noir);
+            line-height: 1.1;
+        }
+        .stat-card .label {
+            font-size: 13px;
+            color: var(--gris-texte);
+            margin-top: 4px;
+        }
+
+        /* ---- ONGLETS DÉFILABLES ---- */
+        .tabs {
             display: flex;
             gap: 8px;
             margin-bottom: 24px;
             overflow-x: auto;
-            padding-bottom: 4px;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
-        .tab-amis {
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+        .tab-btn {
             background: #fff;
             border: 1.5px solid var(--gris-clair);
             border-radius: 40px;
-            padding: 12px 22px;
+            padding: 12px 24px;
             font-size: 14px;
             font-weight: 600;
             color: var(--noir);
@@ -66,90 +125,122 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-shrink: 0;
         }
-        .tab-amis:hover { border-color: #aab8cc; background: #fafcff; }
-        .tab-amis.active { background: var(--noir); color: #fff; border-color: var(--noir); }
-        .tab-amis .count {
-            background: var(--rouge);
+        .tab-btn:hover { border-color: #aab8cc; background: #fafcff; }
+        .tab-btn.active {
+            background: var(--noir);
             color: #fff;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
+            border-color: var(--noir);
         }
-        .tab-amis.active .count {
-            background: #fff;
-            color: var(--rouge);
-        }
+        .tab-btn i { font-size: 14px; }
 
-        .panel-amis {
+        .panel {
             display: none;
             background: #fff;
             border-radius: 28px;
-            padding: 24px;
+            padding: 28px 24px;
             border: 1px solid #e8eef6;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         }
-        .panel-amis.active { display: block; }
-
-        .ami-item {
+        .panel.active { display: block; }
+        .panel h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--noir);
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 16px;
-            background: #fafdff;
-            border-radius: 18px;
-            border: 1px solid #e8eef6;
-            margin-bottom: 10px;
+            gap: 10px;
+        }
+        .panel h2 i { color: var(--rouge); }
+
+        .panel-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .panel-filter-btn {
+            background: #f5f8ff;
+            border: 1px solid var(--gris-clair);
+            border-radius: 30px;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--noir);
+            cursor: pointer;
+            font-family: inherit;
             transition: 0.15s;
         }
-        .ami-item:hover {
+        .panel-filter-btn.active {
+            background: var(--rouge);
+            color: #fff;
+            border-color: var(--rouge);
+        }
+
+        .admin-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .admin-item {
+            background: #fafdff;
+            border: 1px solid #e8eef6;
+            border-radius: 18px;
+            padding: 18px 20px;
+            transition: 0.15s;
+        }
+        .admin-item:hover {
             border-color: #bccfdf;
             background: #f5f9ff;
         }
-        .ami-avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: var(--noir);
-            color: #fff;
+        .admin-item.treated {
+            opacity: 0.6;
+            background: #f0f5f0;
+        }
+        .admin-item .item-header {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 20px;
-            flex-shrink: 0;
-            background-size: cover;
-            background-position: center;
-        }
-        .ami-info {
-            flex: 1;
-            min-width: 0;
-        }
-        .ami-name {
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--noir);
-            margin-bottom: 2px;
-        }
-        .ami-sub {
-            font-size: 13px;
-            color: var(--gris-texte);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .ami-actions {
-            display: flex;
-            gap: 6px;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
         }
-        .ami-actions button {
-            border: none;
-            padding: 8px 14px;
+        .admin-item .item-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--noir);
+            flex: 1;
+            min-width: 200px;
+        }
+        .admin-item .item-meta {
+            font-size: 12px;
+            color: var(--gris-texte);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .admin-item .item-body {
+            font-size: 14px;
+            color: #3a4f6a;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+        }
+        .admin-item .item-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .admin-item .item-actions button {
+            background: transparent;
+            border: 1.5px solid var(--gris-clair);
+            padding: 6px 14px;
             border-radius: 30px;
             font-size: 12px;
             font-weight: 600;
+            color: var(--noir);
             cursor: pointer;
             font-family: inherit;
             transition: 0.15s;
@@ -157,220 +248,204 @@
             align-items: center;
             gap: 5px;
         }
-        .btn-msg {
-            background: var(--noir);
-            color: #fff;
+        .admin-item .item-actions button:hover {
+            background: #f0f4fc;
+            border-color: #aab8cc;
         }
-        .btn-msg:hover { background: var(--noir-clair); }
-        .btn-accept {
-            background: #e8f5e9;
-            color: #1e5a2f;
-            border: 1.5px solid #a5d6a7 !important;
-        }
-        .btn-accept:hover { background: #1e5a2f; color: #fff; }
-        .btn-reject {
-            background: #fdecea;
+        .admin-item .item-actions button.btn-danger {
             color: var(--rouge);
-            border: 1.5px solid #f5c6c6 !important;
+            border-color: #f5c6c6;
         }
-        .btn-reject:hover { background: var(--rouge); color: #fff; }
-        .btn-remove {
-            background: #f0f2f5;
-            color: var(--gris-texte);
+        .admin-item .item-actions button.btn-danger:hover {
+            background: #fdecea;
+            border-color: var(--rouge);
         }
-        .btn-remove:hover { background: #fdecea; color: var(--rouge); }
-        .btn-profile {
-            background: #e8f0fa;
-            color: #1a4a7a;
-            border: 1.5px solid #c5d6e8 !important;
+        .admin-item .item-actions button.btn-success {
+            color: #1e5a2f;
+            border-color: #a5d6a7;
         }
-        .btn-profile:hover { background: #1a4a7a; color: #fff; }
+        .admin-item .item-actions button.btn-success:hover {
+            background: #e8f5e9;
+            border-color: #1e5a2f;
+        }
 
-        .empty-amis {
+        .badge-type {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-reco { background: #e8f0fa; color: #1a4a7a; }
+        .badge-demande { background: #fff4e0; color: #8b5a00; }
+        .badge-traite { background: #e8f5e9; color: #1e5a2f; }
+        .badge-non-traite { background: #fdecea; color: var(--rouge); }
+        .badge-live { background: #e8f5e9; color: #1e5a2f; }
+        .badge-admin { background: #e8f0fa; color: #1a4a7a; }
+
+        .empty-admin {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: var(--gris-texte);
         }
-        .empty-amis i {
-            font-size: 52px;
+        .empty-admin i {
+            font-size: 42px;
             color: #c5d2e0;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             display: block;
         }
-        .empty-amis h3 {
-            color: var(--noir);
-            font-size: 18px;
-            margin-bottom: 6px;
-        }
-        .empty-amis p {
-            font-size: 14px;
-        }
 
-        .loading-amis {
+        .loading-admin {
             text-align: center;
             padding: 40px;
             color: var(--gris-texte);
         }
-        .loading-amis i {
+        .loading-admin i {
             font-size: 28px;
             color: var(--rouge);
             margin-bottom: 10px;
             display: block;
         }
 
-        /* ---- Fiche profil ---- */
-        .profile-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 22, 40, 0.7);
-            z-index: 3000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .profile-overlay.show { display: flex; }
-        .profile-box {
-            background: #fff;
-            border-radius: 32px;
-            padding: 32px 28px;
-            max-width: 500px;
-            width: 100%;
-            position: relative;
-            text-align: center;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .profile-box .close-btn {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: #f5f0f0;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 18px;
-            color: var(--rouge);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .profile-box .big-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--noir);
+        /* Visiteurs en direct */
+        .live-box {
+            background: linear-gradient(135deg, #0a1628, #1a2f4a);
             color: #fff;
+            border-radius: 24px;
+            padding: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .live-box::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 120px;
+            height: 120px;
+            background: rgba(192, 57, 43, 0.15);
+            border-radius: 50%;
+        }
+        .live-box .live-dot {
+            width: 12px;
+            height: 12px;
+            background: #4ade80;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: livePulse 1.5s infinite;
+            vertical-align: middle;
+        }
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        .live-box .live-label {
+            font-size: 14px;
+            color: #a0b8d4;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            font-weight: 700;
-            margin: 0 auto 16px;
-            background-size: cover;
-            background-position: center;
-            border: 4px solid #f0f2f5;
         }
-        .profile-box h2 {
-            font-size: 22px;
+        .live-box .live-count {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .live-box .live-sub {
+            font-size: 13px;
+            color: #a0b8d4;
+        }
+        .live-box .refresh-info {
+            font-size: 11px;
+            color: #6b8aad;
+            margin-top: 16px;
+        }
+
+        /* Bilan mensuel */
+        .bilan-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .bilan-mois {
+            background: #fafdff;
+            border: 1px solid #e8eef6;
+            border-radius: 20px;
+            padding: 18px 20px;
+        }
+        .bilan-mois .mois-titre {
+            font-size: 16px;
             font-weight: 700;
             color: var(--noir);
-            margin-bottom: 4px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .profile-box .subtitle {
+        .bilan-mois .mois-titre i { color: var(--rouge); }
+        .bilan-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 10px;
+        }
+        .bilan-stat {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px 10px;
+            text-align: center;
+            border: 1px solid #eef3f9;
+        }
+        .bilan-stat .v {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--noir);
+            line-height: 1;
+        }
+        .bilan-stat .l {
+            font-size: 11px;
             color: var(--gris-texte);
-            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .access-denied {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        .access-denied i {
+            font-size: 64px;
+            color: var(--rouge);
+            margin-bottom: 20px;
+            display: block;
+        }
+        .access-denied h2 {
+            font-size: 24px;
+            color: var(--noir);
+            margin-bottom: 10px;
+        }
+        .access-denied p {
+            color: var(--gris-texte);
             margin-bottom: 24px;
         }
-        .profile-info-list {
-            text-align: left;
-            background: #fafdff;
-            border-radius: 16px;
-            padding: 16px 20px;
-            margin-bottom: 16px;
-            border: 1px solid #e8eef6;
-        }
-        .profile-info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eef3f9;
-            font-size: 14px;
-        }
-        .profile-info-row:last-child { border-bottom: none; }
-        .profile-info-row .label {
-            color: var(--gris-texte);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .profile-info-row .label i { color: var(--rouge); width: 18px; }
-        .profile-info-row .value {
-            color: var(--noir);
-            font-weight: 600;
-            text-align: right;
-            max-width: 60%;
-            word-break: break-word;
-        }
-        .profile-info-row .value a { color: var(--rouge); text-decoration: none; }
-        .profile-info-row .value a:hover { text-decoration: underline; }
-
-        .profile-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .profile-actions button {
-            flex: 1;
-            padding: 14px 20px;
-            border-radius: 60px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: 0.15s;
-            min-width: 130px;
-        }
-        .btn-add-friend { background: var(--noir); color: #fff; }
-        .btn-add-friend:hover { background: var(--noir-clair); }
-        .btn-accept-friend {
-            background: #e8f5e9; color: #1e5a2f;
-            border: 1.5px solid #a5d6a7 !important;
-        }
-        .btn-accept-friend:hover { background: #1e5a2f; color: #fff; }
-        .btn-reject-friend {
-            background: #fdecea; color: var(--rouge);
-            border: 1.5px solid #f5c6c6 !important;
-        }
-        .btn-reject-friend:hover { background: var(--rouge); color: #fff; }
-        .btn-remove-friend { background: #f0f2f5; color: var(--gris-texte); }
-        .btn-remove-friend:hover { background: #fdecea; color: var(--rouge); }
-        .btn-message-friend { background: var(--rouge); color: #fff; }
-        .btn-message-friend:hover { background: #a03020; }
-
-        .friend-badge {
+        .access-denied a {
             display: inline-block;
-            padding: 4px 14px;
-            border-radius: 30px;
-            font-size: 12px;
+            background: var(--noir);
+            color: #fff;
+            padding: 14px 32px;
+            border-radius: 60px;
+            text-decoration: none;
             font-weight: 700;
-            margin-bottom: 16px;
+            transition: 0.2s;
         }
-        .friend-badge.accepted { background: #e8f5e9; color: #1e5a2f; }
-        .friend-badge.pending-sent { background: #fff4e0; color: #8b5a00; }
-        .friend-badge.pending-received { background: #e8f0fa; color: #1a4a7a; }
+        .access-denied a:hover { background: var(--noir-clair); }
 
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -394,11 +469,11 @@
         .toast.success { background: #1e5a2f; }
 
         @media (max-width: 520px) {
-            .amis-header { padding: 22px 20px; }
-            .amis-header h1 { font-size: 20px; }
-            .ami-item { flex-wrap: wrap; }
-            .ami-actions { width: 100%; justify-content: flex-end; }
-            .profile-box { padding: 24px 20px; }
+            .admin-header { padding: 22px 20px; }
+            .admin-header h1 { font-size: 20px; }
+            .panel { padding: 20px 16px; }
+            .stat-card .value { font-size: 24px; }
+            .live-box .live-count { font-size: 48px; }
         }
     </style>
 </head>
@@ -414,70 +489,166 @@
             <div class="nav-right">
                 <a href="fil-actualite.html" class="btn-outline">
                     <i class="fas fa-arrow-left"></i>
-                    <span>Fil d'actualité</span>
-                </a>
-                <a href="messagerie.html" class="btn-outline">
-                    <i class="fas fa-comments"></i>
-                    <span>Messages</span>
-                </a>
-                <a href="profil.html" class="btn-outline">
-                    <i class="fas fa-user"></i>
-                    <span>Mon profil</span>
+                    <span>Retour au fil</span>
                 </a>
             </div>
         </nav>
 
-        <div class="amis-container">
+        <div class="access-denied" id="accessDenied" style="display:none;">
+            <i class="fas fa-lock"></i>
+            <h2>Accès refusé</h2>
+            <p>Vous n'avez pas les droits d'administration.</p>
+            <a href="fil-actualite.html">Retour au fil d'actualité</a>
+        </div>
 
-            <div class="amis-header">
-                <i class="fas fa-users"></i>
+        <div class="loading-admin" id="loadingAdmin">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Vérification des droits...</p>
+        </div>
+
+        <div class="admin-container" id="adminContent" style="display:none;">
+
+            <div class="admin-header">
                 <div>
-                    <h1>Mes amis</h1>
-                    <p>Gérez vos amis et vos demandes</p>
+                    <h1><i class="fas fa-shield-halved"></i> Administration Demma</h1>
+                    <p>Tableau de bord et gestion de la plateforme</p>
+                </div>
+                <div class="admin-badge">
+                    <i class="fas fa-crown"></i> Admin
                 </div>
             </div>
 
-            <div class="tabs-amis">
-                <button class="tab-amis active" data-tab="friends">
-                    <i class="fas fa-user-friends"></i> Amis
-                    <span class="count" id="countFriends">0</span>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon" style="background:#e8f5e9;color:#1e5a2f;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="value" id="statUsers">—</div>
+                    <div class="label">Utilisateurs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon" style="background:#e8f0fa;color:#1a4a7a;">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="value" id="statCards">—</div>
+                    <div class="label">Cartes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon" style="background:#fff4e0;color:#8b5a00;">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="value" id="statFeedbacks">—</div>
+                    <div class="label">Feedbacks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon" style="background:#fdecea;color:#c0392b;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="value" id="statPending">—</div>
+                    <div class="label">En attente</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon" style="background:#e8f5e9;color:#1e5a2f;">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="value" id="statLive">—</div>
+                    <div class="label">Visiteurs actifs</div>
+                </div>
+            </div>
+
+            <!-- ONGLETS DÉFILABLES -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="feedback">
+                    <i class="fas fa-comment-dots"></i> Feedbacks
                 </button>
-                <button class="tab-amis" data-tab="received">
-                    <i class="fas fa-user-plus"></i> Demandes reçues
-                    <span class="count" id="countReceived">0</span>
+                <button class="tab-btn" data-tab="users">
+                    <i class="fas fa-users"></i> Utilisateurs
                 </button>
-                <button class="tab-amis" data-tab="sent">
-                    <i class="fas fa-paper-plane"></i> Demandes envoyées
-                    <span class="count" id="countSent">0</span>
+                <button class="tab-btn" data-tab="cards">
+                    <i class="fas fa-layer-group"></i> Cartes
+                </button>
+                <button class="tab-btn" data-tab="visitors">
+                    <i class="fas fa-eye"></i> Visiteurs
+                </button>
+                <button class="tab-btn" data-tab="bilan">
+                    <i class="fas fa-chart-line"></i> Bilan mensuel
                 </button>
             </div>
 
-            <div class="panel-amis active" id="panelFriends">
-                <div class="loading-amis"><i class="fas fa-spinner fa-spin"></i><p>Chargement...</p></div>
+            <!-- PANEL FEEDBACKS -->
+            <div class="panel active" id="panelFeedback">
+                <h2><i class="fas fa-comment-dots"></i> Recommandations et demandes</h2>
+                <div class="panel-filters">
+                    <button class="panel-filter-btn active" data-fb-filter="all">Tous</button>
+                    <button class="panel-filter-btn" data-fb-filter="recommandation">Recommandations</button>
+                    <button class="panel-filter-btn" data-fb-filter="demande">Demandes</button>
+                    <button class="panel-filter-btn" data-fb-filter="pending">Non traités</button>
+                    <button class="panel-filter-btn" data-fb-filter="treated">Traités</button>
+                </div>
+                <div class="admin-list" id="feedbackList">
+                    <div class="loading-admin">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Chargement...</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="panel-amis" id="panelReceived">
-                <div class="loading-amis"><i class="fas fa-spinner fa-spin"></i><p>Chargement...</p></div>
+            <!-- PANEL UTILISATEURS -->
+            <div class="panel" id="panelUsers">
+                <h2><i class="fas fa-users"></i> Liste des utilisateurs</h2>
+                <div class="admin-list" id="usersList">
+                    <div class="loading-admin">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Chargement...</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="panel-amis" id="panelSent">
-                <div class="loading-amis"><i class="fas fa-spinner fa-spin"></i><p>Chargement...</p></div>
+            <!-- PANEL CARTES -->
+            <div class="panel" id="panelCards">
+                <h2><i class="fas fa-layer-group"></i> Liste des cartes</h2>
+                <div class="admin-list" id="cardsList">
+                    <div class="loading-admin">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Chargement...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL VISITEURS -->
+            <div class="panel" id="panelVisitors">
+                <h2><i class="fas fa-eye"></i> Visiteurs en direct</h2>
+                <div class="live-box">
+                    <div class="live-label">
+                        <span class="live-dot"></span> En ligne actuellement
+                    </div>
+                    <div class="live-count" id="liveCount">0</div>
+                    <div class="live-sub">Visiteurs uniques sur les 15 dernières minutes</div>
+                    <div class="refresh-info">
+                        <i class="fas fa-sync-alt"></i> Actualisation auto toutes les 30 secondes
+                    </div>
+                </div>
+                <div class="admin-list" id="visitorsList">
+                    <div class="loading-admin">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Chargement des visites récentes...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL BILAN MENSUEL -->
+            <div class="panel" id="panelBilan">
+                <h2><i class="fas fa-chart-line"></i> Bilan mensuel</h2>
+                <div class="bilan-grid" id="bilanList">
+                    <div class="loading-admin">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Chargement du bilan...</p>
+                    </div>
+                </div>
             </div>
 
         </div>
 
-        <footer class="footer">
-            <div>&copy; 2026 <strong>Demma</strong> · Réseau social d'échange</div>
-        </footer>
-
-    </div>
-
-    <!-- MODALE FICHE PROFIL -->
-    <div class="profile-overlay" id="profileOverlay">
-        <div class="profile-box" id="profileBox">
-            <button class="close-btn" id="profileClose"><i class="fas fa-times"></i></button>
-            <div id="profileContent"></div>
-        </div>
     </div>
 
     <div class="toast" id="toast"></div>
@@ -487,17 +658,11 @@
     <script>
         let currentUser = null;
         let currentProfile = null;
-        let friendsList = [];
-        let receivedList = [];
-        let sentList = [];
-        let currentProfileUserId = null;
-
-        function escapeHTML(str) {
-            if (!str) return '';
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
+        let allFeedbacks = [];
+        let allUsers = [];
+        let allCardsData = [];
+        let fbFilter = 'all';
+        let liveInterval = null;
 
         function afficherToast(texte, type) {
             try {
@@ -517,9 +682,19 @@
             }
         }
 
+        function escapeHTML(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
         async function initialiser() {
             const client = initialiserSupabase();
-            if (!client) return;
+            if (!client) {
+                afficherRefus();
+                return;
+            }
 
             const { data: { session } } = await client.auth.getSession();
             if (!session) {
@@ -528,387 +703,389 @@
             }
             currentUser = session.user;
 
-            const { data: profileData } = await client
+            const { data: profile, error } = await client
                 .from('profiles')
                 .select('*')
                 .eq('id', currentUser.id)
                 .single();
-            currentProfile = profileData;
 
-            await chargerTout();
+            if (error || !profile || !profile.is_admin) {
+                afficherRefus();
+                return;
+            }
+
+            currentProfile = profile;
+
+            document.getElementById('loadingAdmin').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+
+            await chargerStats();
+            await chargerFeedbacks();
+            await chargerUsers();
+            await chargerCartes();
+            await chargerVisiteurs();
+            await chargerBilan();
+
+            // Actualisation auto des visiteurs toutes les 30s
+            if (liveInterval) clearInterval(liveInterval);
+            liveInterval = setInterval(async function() {
+                await chargerVisiteurs();
+                await chargerStats();
+            }, 30000);
         }
 
-        async function chargerTout() {
-            await Promise.all([
-                chargerAmis(),
-                chargerDemandesRecues(),
-                chargerDemandesEnvoyees()
-            ]);
-            mettreAJourCompteurs();
+        function afficherRefus() {
+            document.getElementById('loadingAdmin').style.display = 'none';
+            document.getElementById('accessDenied').style.display = 'block';
         }
 
-        async function chargerAmis() {
+        async function chargerStats() {
             const client = initialiserSupabase();
             if (!client) return;
 
-            const { data, error } = await client.rpc('lister_amis');
+            const { count: usersCount } = await client
+                .from('profiles')
+                .select('*', { count: 'exact', head: true });
 
-            if (error) {
-                console.error('Erreur lister_amis:', error);
-                document.getElementById('panelFriends').innerHTML =
-                    '<div class="empty-amis"><i class="fas fa-exclamation-triangle"></i><h3>Erreur de chargement</h3></div>';
-                return;
-            }
+            const { count: cardsCount } = await client
+                .from('cards')
+                .select('*', { count: 'exact', head: true });
 
-            // Déduplication
-            const map = {};
-            (data || []).forEach(function(item) { map[item.friend_id] = item; });
-            friendsList = Object.values(map);
+            const { count: fbCount } = await client
+                .from('feedback')
+                .select('*', { count: 'exact', head: true });
 
-            afficherAmis();
-        }
+            const { count: pendingCount } = await client
+                .from('feedback')
+                .select('*', { count: 'exact', head: true })
+                .eq('traite', false);
 
-        function afficherAmis() {
-            const container = document.getElementById('panelFriends');
-            container.innerHTML = '';
+            const { data: liveData } = await client.rpc('compter_visiteurs_actuels');
 
-            if (friendsList.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-amis">
-                        <i class="fas fa-user-friends"></i>
-                        <h3>Aucun ami pour l'instant</h3>
-                        <p>Ajoutez des amis depuis leurs profils ou depuis une carte.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            friendsList.forEach(ami => {
-                const initial = (ami.nom || '?').charAt(0).toUpperCase();
-                const avatarStyle = ami.avatar_url ? "background-image:url('" + ami.avatar_url + "');" : '';
-
-                const item = document.createElement('div');
-                item.className = 'ami-item';
-                item.innerHTML =
-                    '<div class="ami-avatar" style="' + avatarStyle + '">' + (ami.avatar_url ? '' : initial) + '</div>' +
-                    '<div class="ami-info">' +
-                        '<div class="ami-name">' + escapeHTML(ami.nom) + '</div>' +
-                        '<div class="ami-sub">' + escapeHTML(ami.domaine || '') + (ami.pays ? ' · ' + escapeHTML(ami.pays) : '') + '</div>' +
-                    '</div>' +
-                    '<div class="ami-actions">' +
-                        '<button class="btn-profile" onclick="afficherFicheProfil(\'' + ami.friend_id + '\')">' +
-                            '<i class="fas fa-user"></i> Profil' +
-                        '</button>' +
-                        '<button class="btn-msg" onclick="ouvrirConversation(\'' + ami.friend_id + '\')">' +
-                            '<i class="fas fa-comments"></i> Message' +
-                        '</button>' +
-                        '<button class="btn-remove" onclick="retirerAmi(\'' + ami.friendship_id + '\')">' +
-                            '<i class="fas fa-user-minus"></i>' +
-                        '</button>' +
-                    '</div>';
-                container.appendChild(item);
-            });
-        }
-
-        async function chargerDemandesRecues() {
-            const client = initialiserSupabase();
-            if (!client) return;
-
-            const { data, error } = await client.rpc('lister_demandes_recues');
-            if (error) {
-                console.error('Erreur lister_demandes_recues:', error);
-                return;
-            }
-
-            // Déduplication
-            const map = {};
-            (data || []).forEach(function(item) { map[item.friendship_id] = item; });
-            receivedList = Object.values(map);
-
-            afficherDemandesRecues();
-        }
-
-        function afficherDemandesRecues() {
-            const container = document.getElementById('panelReceived');
-            container.innerHTML = '';
-
-            if (receivedList.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-amis">
-                        <i class="fas fa-inbox"></i>
-                        <h3>Aucune demande reçue</h3>
-                    </div>
-                `;
-                return;
-            }
-
-            receivedList.forEach(demande => {
-                const initial = (demande.nom || '?').charAt(0).toUpperCase();
-                const avatarStyle = demande.avatar_url ? "background-image:url('" + demande.avatar_url + "');" : '';
-
-                const item = document.createElement('div');
-                item.className = 'ami-item';
-                item.innerHTML =
-                    '<div class="ami-avatar" style="' + avatarStyle + '">' + (demande.avatar_url ? '' : initial) + '</div>' +
-                    '<div class="ami-info">' +
-                        '<div class="ami-name">' + escapeHTML(demande.nom) + '</div>' +
-                        '<div class="ami-sub">' + escapeHTML(demande.domaine || '') + '</div>' +
-                    '</div>' +
-                    '<div class="ami-actions">' +
-                        '<button class="btn-accept" onclick="repondreDemande(\'' + demande.friendship_id + '\', true)">' +
-                            '<i class="fas fa-check"></i> Accepter' +
-                        '</button>' +
-                        '<button class="btn-reject" onclick="repondreDemande(\'' + demande.friendship_id + '\', false)">' +
-                            '<i class="fas fa-times"></i> Refuser' +
-                        '</button>' +
-                    '</div>';
-                container.appendChild(item);
-            });
-        }
-
-        async function chargerDemandesEnvoyees() {
-            const client = initialiserSupabase();
-            if (!client) return;
-
-            const { data, error } = await client.rpc('lister_demandes_envoyees');
-            if (error) {
-                console.error('Erreur lister_demandes_envoyees:', error);
-                return;
-            }
-
-            // Déduplication
-            const map = {};
-            (data || []).forEach(function(item) { map[item.friendship_id] = item; });
-            sentList = Object.values(map);
-
-            afficherDemandesEnvoyees();
-        }
-
-        function afficherDemandesEnvoyees() {
-            const container = document.getElementById('panelSent');
-            container.innerHTML = '';
-
-            if (sentList.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-amis">
-                        <i class="fas fa-paper-plane"></i>
-                        <h3>Aucune demande envoyée</h3>
-                    </div>
-                `;
-                return;
-            }
-
-            sentList.forEach(demande => {
-                const initial = (demande.nom || '?').charAt(0).toUpperCase();
-                const avatarStyle = demande.avatar_url ? "background-image:url('" + demande.avatar_url + "');" : '';
-
-                const item = document.createElement('div');
-                item.className = 'ami-item';
-                item.innerHTML =
-                    '<div class="ami-avatar" style="' + avatarStyle + '">' + (demande.avatar_url ? '' : initial) + '</div>' +
-                    '<div class="ami-info">' +
-                        '<div class="ami-name">' + escapeHTML(demande.nom) + '</div>' +
-                        '<div class="ami-sub">⏳ En attente · ' + escapeHTML(demande.domaine || '') + '</div>' +
-                    '</div>' +
-                    '<div class="ami-actions">' +
-                        '<button class="btn-remove" onclick="annulerDemande(\'' + demande.friendship_id + '\')">' +
-                            '<i class="fas fa-times"></i> Annuler' +
-                        '</button>' +
-                    '</div>';
-                container.appendChild(item);
-            });
-        }
-
-        function mettreAJourCompteurs() {
-            const cFriends = document.getElementById('countFriends');
-            const cReceived = document.getElementById('countReceived');
-            const cSent = document.getElementById('countSent');
-
-            cFriends.textContent = friendsList.length;
-            cReceived.textContent = receivedList.length;
-            cSent.textContent = sentList.length;
-
-            cFriends.style.display = friendsList.length === 0 ? 'none' : 'inline-block';
-            cReceived.style.display = receivedList.length === 0 ? 'none' : 'inline-block';
-            cSent.style.display = sentList.length === 0 ? 'none' : 'inline-block';
+            document.getElementById('statUsers').textContent = usersCount || 0;
+            document.getElementById('statCards').textContent = cardsCount || 0;
+            document.getElementById('statFeedbacks').textContent = fbCount || 0;
+            document.getElementById('statPending').textContent = pendingCount || 0;
+            document.getElementById('statLive').textContent = liveData || 0;
         }
 
         // ============================================================
-        // FICHE PROFIL (ouvre dans une modale)
+        // FEEDBACKS
         // ============================================================
-        const profileOverlay = document.getElementById('profileOverlay');
-        const profileContent = document.getElementById('profileContent');
-        const profileClose = document.getElementById('profileClose');
-
-        profileClose.addEventListener('click', function() {
-            profileOverlay.classList.remove('show');
-            currentProfileUserId = null;
-        });
-        profileOverlay.addEventListener('click', function(e) {
-            if (e.target === profileOverlay) {
-                profileOverlay.classList.remove('show');
-                currentProfileUserId = null;
-            }
-        });
-
-        async function afficherFicheProfil(userId) {
+        async function chargerFeedbacks() {
             const client = initialiserSupabase();
             if (!client) return;
 
-            currentProfileUserId = userId;
+            const { data, error } = await client
+                .from('feedback')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-            profileContent.innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-spin" style="font-size:32px;color:var(--rouge);"></i></div>';
-            profileOverlay.classList.add('show');
-
-            const { data: profilData, error: profilError } = await client.rpc('obtenir_profil_public', { p_user_id: userId });
-            if (profilError || !profilData || !profilData[0]) {
-                profileContent.innerHTML = '<div style="text-align:center;padding:40px;color:var(--rouge);">Profil introuvable</div>';
+            if (error) {
+                console.error(error);
+                document.getElementById('feedbackList').innerHTML =
+                    '<div class="empty-admin"><i class="fas fa-exclamation-triangle"></i><p>Erreur de chargement</p></div>';
                 return;
             }
 
-            const profil = profilData[0];
+            allFeedbacks = data || [];
+            afficherFeedbacks();
+        }
 
-            const { data: statutData } = await client.rpc('statut_amitie', { p_other_user_id: userId });
-            const statut = statutData && statutData[0] ? statutData[0] : { status: null, direction: null, friendship_id: null };
+        function afficherFeedbacks() {
+            const container = document.getElementById('feedbackList');
+            let filtered = allFeedbacks;
 
-            const initial = (profil.nom || '?').charAt(0).toUpperCase();
-            const avatarStyle = profil.avatar_url ? "background-image:url('" + profil.avatar_url + "');" : '';
-            const dateInscription = new Date(profil.created_at).toLocaleDateString('fr-FR', {
-                day: '2-digit', month: 'long', year: 'numeric'
+            if (fbFilter === 'recommandation' || fbFilter === 'demande') {
+                filtered = allFeedbacks.filter(f => f.type === fbFilter);
+            } else if (fbFilter === 'pending') {
+                filtered = allFeedbacks.filter(f => !f.traite);
+            } else if (fbFilter === 'treated') {
+                filtered = allFeedbacks.filter(f => f.traite);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-admin"><i class="fas fa-inbox"></i><p>Aucun feedback</p></div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            filtered.forEach(fb => {
+                const date = new Date(fb.created_at).toLocaleDateString('fr-FR', {
+                    day: '2-digit', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+                const item = document.createElement('div');
+                item.className = 'admin-item' + (fb.traite ? ' treated' : '');
+                item.innerHTML =
+                    '<div class="item-header">' +
+                        '<div class="item-title">' + escapeHTML(fb.sujet) + '</div>' +
+                        '<div class="item-meta">' +
+                            '<span class="badge-type ' + (fb.type === 'recommandation' ? 'badge-reco' : 'badge-demande') + '">' + fb.type + '</span>' +
+                            '<span class="badge-type ' + (fb.traite ? 'badge-traite' : 'badge-non-traite') + '">' + (fb.traite ? '✓ Traité' : '⏳ En attente') + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="item-body">' + escapeHTML(fb.message) + '</div>' +
+                    '<div class="item-meta" style="margin-bottom:12px;">' +
+                        '<span><i class="fas fa-calendar"></i> ' + date + '</span>' +
+                        (fb.contact ? '<span><i class="fas fa-phone"></i> ' + escapeHTML(fb.contact) + '</span>' : '') +
+                    '</div>' +
+                    '<div class="item-actions">' +
+                        (!fb.traite
+                            ? '<button class="btn-success" onclick="marquerTraite(\'' + fb.id + '\', true)"><i class="fas fa-check"></i> Marquer traité</button>'
+                            : '<button onclick="marquerTraite(\'' + fb.id + '\', false)"><i class="fas fa-undo"></i> Remettre en attente</button>') +
+                        '<button class="btn-danger" onclick="supprimerFeedback(\'' + fb.id + '\')"><i class="fas fa-trash"></i> Supprimer</button>' +
+                    '</div>';
+                container.appendChild(item);
             });
-
-            const estMoi = currentUser && currentUser.id === userId;
-
-            let html = '<div class="big-avatar" style="' + avatarStyle + '">' + (profil.avatar_url ? '' : initial) + '</div>';
-            html += '<h2>' + escapeHTML(profil.nom || '—') + '</h2>';
-            html += '<p class="subtitle">' + escapeHTML(profil.domaine || '—') + '</p>';
-
-            if (statut.status === 'accepted') {
-                html += '<span class="friend-badge accepted"><i class="fas fa-user-check"></i> Ami</span>';
-            } else if (statut.status === 'pending' && statut.direction === 'sent') {
-                html += '<span class="friend-badge pending-sent"><i class="fas fa-clock"></i> Demande envoyée</span>';
-            } else if (statut.status === 'pending' && statut.direction === 'received') {
-                html += '<span class="friend-badge pending-received"><i class="fas fa-user-plus"></i> Demande reçue</span>';
-            }
-
-            html += '<div class="profile-info-list">';
-
-            if (profil.sexe) {
-                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-venus-mars"></i> Sexe</span><span class="value">' + escapeHTML(profil.sexe) + '</span></div>';
-            }
-            if (profil.age) {
-                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-birthday-cake"></i> Âge</span><span class="value">' + profil.age + ' ans</span></div>';
-            }
-            if (profil.pays) {
-                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-globe-africa"></i> Pays</span><span class="value">' + escapeHTML(profil.pays) + '</span></div>';
-            }
-            if (profil.domaine) {
-                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-briefcase"></i> Domaine</span><span class="value">' + escapeHTML(profil.domaine) + '</span></div>';
-            }
-            if (profil.email) {
-                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-envelope"></i> Email</span><span class="value"><a href="mailto:' + profil.email + '">' + escapeHTML(profil.email) + '</a></span></div>';
-            }
-            if (profil.telephone) {
-                const telClean = profil.telephone.replace(/[^0-9+]/g, '');
-                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-phone"></i> Téléphone</span><span class="value"><a href="tel:' + telClean + '">' + escapeHTML(profil.telephone) + '</a></span></div>';
-            }
-            html += '<div class="profile-info-row"><span class="label"><i class="fas fa-calendar"></i> Inscription</span><span class="value">' + dateInscription + '</span></div>';
-            html += '</div>';
-
-            html += '<div class="profile-actions">';
-
-            if (estMoi) {
-                html += '<button class="btn-message-friend" onclick="window.location.href=\'profil.html\'"><i class="fas fa-user-edit"></i> Mon profil</button>';
-            } else {
-                if (!statut.status) {
-                    html += '<button class="btn-add-friend" onclick="envoyerDemandeAmi(\'' + userId + '\')"><i class="fas fa-user-plus"></i> Ajouter en ami</button>';
-                } else if (statut.status === 'pending' && statut.direction === 'received') {
-                    html += '<button class="btn-accept-friend" onclick="repondreAmi(\'' + statut.friendship_id + '\', true)"><i class="fas fa-check"></i> Accepter</button>';
-                    html += '<button class="btn-reject-friend" onclick="repondreAmi(\'' + statut.friendship_id + '\', false)"><i class="fas fa-times"></i> Refuser</button>';
-                } else if (statut.status === 'pending' && statut.direction === 'sent') {
-                    html += '<button class="btn-remove-friend" onclick="supprimerAmi(\'' + statut.friendship_id + '\')"><i class="fas fa-clock"></i> Annuler</button>';
-                } else if (statut.status === 'accepted') {
-                    html += '<button class="btn-remove-friend" onclick="supprimerAmi(\'' + statut.friendship_id + '\')"><i class="fas fa-user-minus"></i> Retirer</button>';
-                }
-                html += '<button class="btn-message-friend" onclick="ouvrirConversation(\'' + userId + '\')"><i class="fas fa-comments"></i> Message</button>';
-            }
-
-            html += '</div>';
-            profileContent.innerHTML = html;
         }
 
-        async function envoyerDemandeAmi(userId) {
+        async function marquerTraite(id, traite) {
             const client = initialiserSupabase();
             if (!client) return;
-            const { data, error } = await client.rpc('ajouter_ami', { p_friend_id: userId });
-            if (error || !data) {
-                afficherToast('Impossible d\'envoyer la demande', 'error');
+            const { error } = await client.from('feedback').update({ traite: traite }).eq('id', id);
+            if (error) { afficherToast('Erreur', 'error'); return; }
+            await chargerStats();
+            await chargerFeedbacks();
+        }
+
+        async function supprimerFeedback(id) {
+            if (!confirm('Supprimer ce feedback ?')) return;
+            const client = initialiserSupabase();
+            if (!client) return;
+            const { error } = await client.from('feedback').delete().eq('id', id);
+            if (error) { afficherToast('Erreur', 'error'); return; }
+            await chargerStats();
+            await chargerFeedbacks();
+        }
+
+        // ============================================================
+        // UTILISATEURS
+        // ============================================================
+        async function chargerUsers() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client
+                .from('profiles')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                document.getElementById('usersList').innerHTML =
+                    '<div class="empty-admin"><i class="fas fa-exclamation-triangle"></i><p>Erreur de chargement</p></div>';
                 return;
             }
-            afficherToast('Demande envoyée !', 'success');
-            await afficherFicheProfil(userId);
-            await chargerTout();
+
+            allUsers = data || [];
+            afficherUsers();
         }
 
-        async function repondreAmi(friendshipId, accept) {
-            const client = initialiserSupabase();
-            if (!client) return;
-            const { data, error } = await client.rpc('repondre_demande_ami', {
-                p_friendship_id: friendshipId,
-                p_accept: accept
+        function afficherUsers() {
+            const container = document.getElementById('usersList');
+
+            if (allUsers.length === 0) {
+                container.innerHTML = '<div class="empty-admin"><i class="fas fa-users"></i><p>Aucun utilisateur</p></div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            allUsers.forEach(u => {
+                const date = new Date(u.created_at).toLocaleDateString('fr-FR', {
+                    day: '2-digit', month: 'short', year: 'numeric'
+                });
+                const initial = (u.nom || '?').charAt(0).toUpperCase();
+                const avatarStyle = u.avatar_url ? "background-image:url('" + u.avatar_url + "');" : '';
+                const item = document.createElement('div');
+                item.className = 'admin-item';
+                item.innerHTML =
+                    '<div class="item-header">' +
+                        '<div style="display:flex;align-items:center;gap:12px;">' +
+                            '<div class="author-avatar" style="width:40px;height:40px;font-size:16px;' + avatarStyle + '">' + (u.avatar_url ? '' : initial) + '</div>' +
+                            '<div>' +
+                                '<div class="item-title">' + escapeHTML(u.nom || '—') + '</div>' +
+                                '<div class="item-meta">' + escapeHTML(u.email || '—') + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="item-meta">' +
+                            (u.is_admin ? '<span class="badge-type badge-admin">Admin</span>' : '') +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="item-meta" style="gap:16px;">' +
+                        '<span><i class="fas fa-globe-africa"></i> ' + escapeHTML(u.pays || '—') + '</span>' +
+                        '<span><i class="fas fa-briefcase"></i> ' + escapeHTML(u.domaine || '—') + '</span>' +
+                        '<span><i class="fas fa-venus-mars"></i> ' + escapeHTML(u.sexe || '—') + '</span>' +
+                        '<span><i class="fas fa-calendar"></i> ' + date + '</span>' +
+                    '</div>';
+                container.appendChild(item);
             });
-            if (error || !data) {
-                afficherToast('Action impossible', 'error');
-                return;
-            }
-            afficherToast(accept ? 'Ami accepté !' : 'Demande refusée', 'success');
-
-            if (currentProfileUserId) {
-                await afficherFicheProfil(currentProfileUserId);
-            }
-            await chargerTout();
         }
 
-        async function repondreDemande(friendshipId, accept) {
-            await repondreAmi(friendshipId, accept);
-        }
-
-        async function supprimerAmi(friendshipId) {
-            if (!confirm('Confirmer ?')) return;
+        // ============================================================
+        // CARTES
+        // ============================================================
+        async function chargerCartes() {
             const client = initialiserSupabase();
             if (!client) return;
-            const { data, error } = await client.rpc('supprimer_ami', { p_friendship_id: friendshipId });
-            if (error || !data) {
-                afficherToast('Action impossible', 'error');
+
+            const { data, error } = await client
+                .from('cards')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                document.getElementById('cardsList').innerHTML =
+                    '<div class="empty-admin"><i class="fas fa-exclamation-triangle"></i><p>Erreur de chargement</p></div>';
                 return;
             }
-            afficherToast('Ami retiré', 'success');
 
-            if (currentProfileUserId) {
-                await afficherFicheProfil(currentProfileUserId);
+            allCardsData = data || [];
+            afficherCards();
+        }
+
+        function afficherCards() {
+            const container = document.getElementById('cardsList');
+
+            if (allCardsData.length === 0) {
+                container.innerHTML = '<div class="empty-admin"><i class="fas fa-layer-group"></i><p>Aucune carte</p></div>';
+                return;
             }
-            await chargerTout();
+
+            container.innerHTML = '';
+            allCardsData.forEach(card => {
+                const date = new Date(card.created_at).toLocaleDateString('fr-FR', {
+                    day: '2-digit', month: 'short', year: 'numeric'
+                });
+                const item = document.createElement('div');
+                item.className = 'admin-item';
+                item.innerHTML =
+                    '<div class="item-header">' +
+                        '<div class="item-title">' + escapeHTML(card.titre) + '</div>' +
+                        '<div class="item-meta">' +
+                            '<span class="badge-type ' + (card.type === 'demma' ? 'badge-reco' : card.type === 'user_free' ? 'badge-traite' : 'badge-demande') + '">' + card.type + '</span>' +
+                            '<span class="badge-type badge-non-traite">⭐ ' + (card.note || 0) + '/7</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="item-meta" style="margin-bottom:8px;">' +
+                        '<span><i class="fas fa-calendar"></i> ' + date + '</span>' +
+                        (card.prix > 0 ? '<span><i class="fas fa-coins"></i> ' + card.prix + ' FCFA</span>' : '') +
+                        (card.donation ? '<span><i class="fas fa-gift"></i> Don</span>' : '') +
+                        (card.cle_acces ? '<span><i class="fas fa-key"></i> ' + card.cle_acces + '</span>' : '') +
+                    '</div>' +
+                    '<div class="item-actions">' +
+                        '<button class="btn-danger" onclick="supprimerCarte(\'' + card.id + '\')"><i class="fas fa-trash"></i> Supprimer</button>' +
+                    '</div>';
+                container.appendChild(list);
+            });
         }
 
-        async function retirerAmi(friendshipId) {
-            await supprimerAmi(friendshipId);
+        async function supprimerCarte(id) {
+            if (!confirm('Supprimer cette carte ?')) return;
+            const client = initialiserSupabase();
+            if (!client) return;
+            const { error } = await client.from('cards').delete().eq('id', id);
+            if (error) { afficherToast('Erreur', 'error'); return; }
+            await chargerStats();
+            await chargerCartes();
         }
 
-        async function annulerDemande(friendshipId) {
-            if (!confirm('Annuler cette demande ?')) return;
-            await supprimerAmi(friendshipId);
+        // ============================================================
+        // VISITEURS
+        // ============================================================
+        async function chargerVisiteurs() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data: liveData } = await client.rpc('compter_visiteurs_actuels');
+            document.getElementById('liveCount').textContent = liveData || 0;
+
+            const { data, error } = await client
+                .from('visites')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(20);
+
+            const container = document.getElementById('visitorsList');
+
+            if (error) {
+                container.innerHTML = '<div class="empty-admin"><i class="fas fa-exclamation-triangle"></i><p>Erreur de chargement</p></div>';
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="empty-admin"><i class="fas fa-eye-slash"></i><p>Aucune visite enregistrée</p></div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach(v => {
+                const date = new Date(v.created_at).toLocaleDateString('fr-FR', {
+                    day: '2-digit', month: 'short',
+                    hour: '2-digit', minute: '2-digit'
+                });
+                const item = document.createElement('div');
+                item.className = 'admin-item';
+                item.innerHTML =
+                    '<div class="item-header">' +
+                        '<div class="item-title">' + escapeHTML(v.page || 'Page inconnue') + '</div>' +
+                        '<div class="item-meta">' +
+                            (v.user_id ? '<span class="badge-type badge-live">👤 Connecté</span>' : '<span class="badge-type badge-non-traite">👻 Anonyme</span>') +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="item-meta">' +
+                        '<span><i class="fas fa-clock"></i> ' + date + '</span>' +
+                        (v.user_agent ? '<span><i class="fas fa-mobile-alt"></i> ' + escapeHTML(v.user_agent.substring(0, 40)) + '...</span>' : '') +
+                    '</div>';
+                container.appendChild(item);
+            });
         }
 
-        function ouvrirConversation(userId) {
-            profileOverlay.classList.remove('show');
-            window.location.href = 'messagerie.html?user=' + userId;
+        // ============================================================
+        // BILAN MENSUEL
+        // ============================================================
+        async function chargerBilan() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client.rpc('bilan_mensuel');
+
+            const container = document.getElementById('bilanList');
+
+            if (error) {
+                container.innerHTML = '<div class="empty-admin"><i class="fas fa-exclamation-triangle"></i><p>Erreur de chargement</p></div>';
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="empty-admin"><i class="fas fa-chart-line"></i><p>Aucune donnée disponible</p></div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach(b => {
+                const mois = b.mois || '—';
+                const item = document.createElement('div');
+                item.className = 'bilan-mois';
+                item.innerHTML =
+                    '<div class="mois-titre"><i class="fas fa-calendar-alt"></i> ' + mois + '</div>' +
+                    '<div class="bilan-stats">' +
+                        '<div class="bilan-stat"><div class="v">' + (b.nb_visites || 0) + '</div><div class="l">Visites</div></div>' +
+                        '<div class="bilan-stat"><div class="v">' + (b.nb_visiteurs_uniques || 0) + '</div><div class="l">Visiteurs</div></div>' +
+                        '<div class="bilan-stat"><div class="v">' + (b.nb_nouveaux_utilisateurs || 0) + '</div><div class="l">Nouveaux</div></div>' +
+                        '<div class="bilan-stat"><div class="v">' + (b.nb_nouvelles_cartes || 0) + '</div><div class="l">Cartes</div></div>' +
+                        '<div class="bilan-stat"><div class="v">' + (b.nb_feedbacks || 0) + '</div><div class="l">Feedbacks</div></div>' +
+                    '</div>';
+                container.appendChild(item);
+            });
         }
 
-        // Onglets
-        document.querySelectorAll('.tab-amis').forEach(function(btn) {
+        // ============================================================
+        // ONGLETS (défilables)
+        // ============================================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.querySelectorAll('.tab-amis').forEach(function(b) { b.classList.remove('active'); });
-                document.querySelectorAll('.panel-amis').forEach(function(p) { p.classList.remove('active'); });
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
                 this.classList.add('active');
                 const tabName = this.dataset.tab;
                 const panelId = 'panel' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
@@ -916,7 +1093,16 @@
             });
         });
 
-        initialiser().catch(function(err) { console.error('Erreur amis :', err); });
+        document.querySelectorAll('.panel-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.panel-filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                fbFilter = this.dataset.fbFilter;
+                afficherFeedbacks();
+            });
+        });
+
+        initialiser().catch(function(err) { console.error('Erreur admin :', err); });
     </script>
 
 </body>
