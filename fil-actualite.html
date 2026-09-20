@@ -2347,10 +2347,12 @@
                 }, 5000);
 
             } catch (error) {
-                console.error('Erreur feedback:', error);
-                msgBox.className = 'feedback-msg error';
-                msgBox.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + (error.message || trad.feedback_err);
-            }
+    console.error('Erreur feedback:', error);
+    alert('ERREUR DÉTAIL : ' + JSON.stringify(error, null, 2));
+    msgBox.className = 'feedback-msg error';
+    msgBox.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + (error.message || trad.feedback_err);
+}
+            
 
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> ' + trad.feedback_send;
