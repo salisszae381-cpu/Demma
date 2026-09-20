@@ -216,49 +216,28 @@
             gap: 6px;
             padding: 10px 14px;
         }
-        .msg-bubble img {
-            max-width: 100%;
-            border-radius: 12px;
-            display: block;
-        }
-        .msg-bubble video {
-            max-width: 100%;
-            border-radius: 12px;
-            display: block;
-        }
-        .msg-bubble audio {
-            max-width: 100%;
-            width: 220px;
-        }
+        .msg-bubble img { max-width: 100%; border-radius: 12px; display: block; }
+        .msg-bubble video { max-width: 100%; border-radius: 12px; display: block; }
+        .msg-bubble audio { max-width: 100%; width: 220px; }
         .msg-bubble .file-link {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            color: inherit;
+            display: flex; align-items: center; gap: 8px;
+            text-decoration: none; color: inherit;
         }
         .msg-bubble .file-link i { font-size: 20px; }
         .msg-time {
-            font-size: 10px;
-            color: var(--gris-texte);
-            margin-top: 4px;
+            font-size: 10px; color: var(--gris-texte); margin-top: 4px;
         }
         .msg-row.me .msg-time {
-            color: #a0b8d4;
-            text-align: right;
+            color: #a0b8d4; text-align: right;
         }
 
         .chat-empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--gris-texte);
-            font-size: 14px;
+            text-align: center; padding: 60px 20px;
+            color: var(--gris-texte); font-size: 14px;
         }
         .chat-empty i {
-            font-size: 48px;
-            color: #c5d2e0;
-            margin-bottom: 12px;
-            display: block;
+            font-size: 48px; color: #c5d2e0;
+            margin-bottom: 12px; display: block;
         }
 
         .chat-input {
@@ -283,17 +262,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            text-decoration: none;
         }
         .chat-input .btn-icon:hover {
             background: var(--noir);
             color: #fff;
         }
-        .chat-input .btn-icon.recording {
-            background: var(--rouge);
+        .chat-input .btn-send {
+            background: var(--noir);
             color: #fff;
-            animation: pulse 1s infinite;
         }
+        .chat-input .btn-send:hover { background: var(--noir-clair); }
         .chat-input input[type="text"] {
             flex: 1;
             padding: 12px 18px;
@@ -310,11 +288,41 @@
             border-color: var(--rouge);
             background: #fff;
         }
-        .chat-input .btn-send {
+
+        /* Input file invisible par-dessus le bouton */
+        .file-input-wrapper {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+        }
+        .file-input-wrapper .btn-visual {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #f0f4fc;
+            color: var(--noir);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.15s;
+            pointer-events: none;
+        }
+        .file-input-wrapper:hover .btn-visual {
             background: var(--noir);
             color: #fff;
         }
-        .chat-input .btn-send:hover { background: var(--noir-clair); }
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
 
         .recording-overlay {
             display: none;
@@ -334,58 +342,39 @@
             color: var(--rouge);
             animation: pulse 1s infinite;
         }
-        .recording-overlay p {
-            font-size: 18px;
-            font-weight: 600;
-        }
+        .recording-overlay p { font-size: 18px; font-weight: 600; }
         .recording-overlay .timer {
-            font-size: 32px;
-            font-weight: 700;
+            font-size: 32px; font-weight: 700;
             font-family: monospace;
         }
         .recording-overlay .actions {
-            display: flex;
-            gap: 16px;
-            margin-top: 20px;
+            display: flex; gap: 16px; margin-top: 20px;
         }
         .recording-overlay .actions button {
             padding: 12px 28px;
-            border: none;
-            border-radius: 30px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
+            border: none; border-radius: 30px;
+            font-size: 15px; font-weight: 700;
+            cursor: pointer; font-family: inherit;
         }
         .recording-overlay .actions .cancel {
-            background: transparent;
-            color: #fff;
+            background: transparent; color: #fff;
             border: 2px solid #fff;
         }
         .recording-overlay .actions .send {
-            background: var(--rouge);
-            color: #fff;
+            background: var(--rouge); color: #fff;
         }
 
         .no-chat-selected {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--gris-texte);
-            text-align: center;
-            padding: 40px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100%; color: var(--gris-texte);
+            text-align: center; padding: 40px;
         }
         .no-chat-selected i {
-            font-size: 64px;
-            color: #c5d2e0;
-            margin-bottom: 16px;
+            font-size: 64px; color: #c5d2e0; margin-bottom: 16px;
         }
         .no-chat-selected h3 {
-            color: var(--noir);
-            font-size: 20px;
-            margin-bottom: 6px;
+            color: var(--noir); font-size: 20px; margin-bottom: 6px;
         }
 
         .notif-badge {
@@ -406,128 +395,79 @@
             border: 2px solid #f0f2f5;
         }
 
-        /* Fiche profil */
         .profile-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 22, 40, 0.7);
-            z-index: 3000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
+            display: none; position: fixed; inset: 0;
+            background: rgba(10, 22, 40, 0.7); z-index: 3000;
+            align-items: center; justify-content: center;
+            padding: 20px; overflow-y: auto;
         }
         .profile-overlay.show { display: flex; }
         .profile-box {
-            background: #fff;
-            border-radius: 32px;
-            padding: 32px 28px;
-            max-width: 500px;
-            width: 100%;
-            position: relative;
-            text-align: center;
-            max-height: 90vh;
-            overflow-y: auto;
+            background: #fff; border-radius: 32px;
+            padding: 32px 28px; max-width: 500px; width: 100%;
+            position: relative; text-align: center;
+            max-height: 90vh; overflow-y: auto;
         }
         .profile-box .close-btn {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: #f5f0f0;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 18px;
-            color: var(--rouge);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; top: 16px; right: 16px;
+            background: #f5f0f0; border: none;
+            width: 40px; height: 40px; border-radius: 50%;
+            font-size: 18px; color: var(--rouge);
+            cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
         }
         .profile-box .big-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--noir);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            font-weight: 700;
+            width: 100px; height: 100px; border-radius: 50%;
+            background: var(--noir); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px; font-weight: 700;
             margin: 0 auto 16px;
-            background-size: cover;
-            background-position: center;
+            background-size: cover; background-position: center;
             border: 4px solid #f0f2f5;
         }
         .profile-box h2 {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--noir);
-            margin-bottom: 4px;
+            font-size: 22px; font-weight: 700;
+            color: var(--noir); margin-bottom: 4px;
         }
         .profile-box .subtitle {
-            color: var(--gris-texte);
-            font-size: 14px;
+            color: var(--gris-texte); font-size: 14px;
             margin-bottom: 24px;
         }
         .profile-info-list {
-            text-align: left;
-            background: #fafdff;
-            border-radius: 16px;
-            padding: 16px 20px;
-            margin-bottom: 16px;
-            border: 1px solid #e8eef6;
+            text-align: left; background: #fafdff;
+            border-radius: 16px; padding: 16px 20px;
+            margin-bottom: 16px; border: 1px solid #e8eef6;
         }
         .profile-info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eef3f9;
+            display: flex; justify-content: space-between;
+            padding: 10px 0; border-bottom: 1px solid #eef3f9;
             font-size: 14px;
         }
         .profile-info-row:last-child { border-bottom: none; }
         .profile-info-row .label {
-            color: var(--gris-texte);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            color: var(--gris-texte); font-weight: 500;
+            display: flex; align-items: center; gap: 8px;
         }
         .profile-info-row .label i { color: var(--rouge); width: 18px; }
         .profile-info-row .value {
-            color: var(--noir);
-            font-weight: 600;
-            text-align: right;
-            max-width: 60%;
-            word-break: break-word;
+            color: var(--noir); font-weight: 600;
+            text-align: right; max-width: 60%; word-break: break-word;
         }
         .profile-info-row .value a { color: var(--rouge); text-decoration: none; }
         .profile-info-row .value a:hover { text-decoration: underline; }
 
         .profile-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+            display: flex; gap: 10px;
+            margin-top: 20px; flex-wrap: wrap;
         }
         .profile-actions button {
-            flex: 1;
-            padding: 14px 20px;
-            border-radius: 60px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: 0.15s;
-            min-width: 130px;
+            flex: 1; padding: 14px 20px;
+            border-radius: 60px; font-size: 14px;
+            font-weight: 700; cursor: pointer;
+            font-family: inherit; border: none;
+            display: inline-flex; align-items: center;
+            justify-content: center; gap: 8px;
+            transition: 0.15s; min-width: 130px;
         }
         .btn-add-friend { background: var(--noir); color: #fff; }
         .btn-add-friend:hover { background: var(--noir-clair); }
@@ -541,24 +481,42 @@
             border: 1.5px solid #f5c6c6 !important;
         }
         .btn-reject-friend:hover { background: var(--rouge); color: #fff; }
-        .btn-remove-friend {
-            background: #f0f2f5; color: var(--gris-texte);
-        }
+        .btn-remove-friend { background: #f0f2f5; color: var(--gris-texte); }
         .btn-remove-friend:hover { background: #fdecea; color: var(--rouge); }
         .btn-message-friend { background: var(--rouge); color: #fff; }
         .btn-message-friend:hover { background: #a03020; }
 
         .friend-badge {
-            display: inline-block;
-            padding: 4px 14px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 16px;
+            display: inline-block; padding: 4px 14px;
+            border-radius: 30px; font-size: 12px;
+            font-weight: 700; margin-bottom: 16px;
         }
         .friend-badge.accepted { background: #e8f5e9; color: #1e5a2f; }
         .friend-badge.pending-sent { background: #fff4e0; color: #8b5a00; }
         .friend-badge.pending-received { background: #e8f0fa; color: #1a4a7a; }
+
+        /* TOAST visuel en bas */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--noir);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            max-width: 90%;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        .toast.show { display: flex; }
+        .toast.error { background: var(--rouge); }
+        .toast.success { background: #1e5a2f; }
 
         @media (max-width: 768px) {
             .messaging-container {
@@ -642,17 +600,19 @@
                     <div class="chat-messages" id="chatMessages"></div>
 
                     <div class="chat-input">
-                        <button type="button" id="btnAttach" class="btn-icon" title="Joindre un fichier">
-                            <i class="fas fa-paperclip"></i>
-                        </button>
-                        <input type="file" id="fileInput" style="position:absolute; left:-9999px;" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" />
+                        <div class="file-input-wrapper">
+                            <div class="btn-visual">
+                                <i class="fas fa-paperclip"></i>
+                            </div>
+                            <input type="file" id="fileInput" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" />
+                        </div>
 
                         <input type="text" id="msgInput" placeholder="Votre message..." />
 
-                        <button id="btnRecord" class="btn-icon" title="Enregistrer un vocal">
+                        <button type="button" id="btnRecord" class="btn-icon" title="Enregistrer un vocal">
                             <i class="fas fa-microphone"></i>
                         </button>
-                        <button id="btnSend" class="btn-icon btn-send" title="Envoyer">
+                        <button type="button" id="btnSend" class="btn-icon btn-send" title="Envoyer">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -668,18 +628,19 @@
         <p>Enregistrement en cours...</p>
         <div class="timer" id="recordTimer">0:00</div>
         <div class="actions">
-            <button class="cancel" id="btnCancelRecord">Annuler</button>
-            <button class="send" id="btnSendRecord">Envoyer</button>
+            <button type="button" class="cancel" id="btnCancelRecord">Annuler</button>
+            <button type="button" class="send" id="btnSendRecord">Envoyer</button>
         </div>
     </div>
 
-    <!-- MODALE FICHE PROFIL -->
     <div class="profile-overlay" id="profileOverlay">
         <div class="profile-box" id="profileBox">
             <button class="close-btn" id="profileClose"><i class="fas fa-times"></i></button>
             <div id="profileContent"></div>
         </div>
     </div>
+
+    <div class="toast" id="toast"></div>
 
     <script src="js/supabase.js"></script>
 
@@ -697,6 +658,25 @@
         let recordInterval = null;
         let recordStartTime = 0;
         let notifInterval = null;
+        let audioBlobFinal = null;
+
+        function afficherToast(texte, type) {
+            try {
+                const toast = document.getElementById('toast');
+                if (!toast) { alert(texte); return; }
+                toast.className = 'toast show' + (type === 'error' ? ' error' : (type === 'success' ? ' success' : ''));
+                let icon = 'fa-info-circle';
+                if (type === 'error') icon = 'fa-exclamation-triangle';
+                if (type === 'success') icon = 'fa-check-circle';
+                toast.innerHTML = '<i class="fas ' + icon + '"></i> ' + texte;
+                clearTimeout(window._toastTimer);
+                window._toastTimer = setTimeout(function() {
+                    toast.classList.remove('show');
+                }, 4000);
+            } catch (e) {
+                alert(texte);
+            }
+        }
 
         function escapeHTML(str) {
             if (!str) return '';
@@ -771,13 +751,9 @@
             }
         }
 
-        // ============================================================
-        // NOTIFICATIONS
-        // ============================================================
         async function chargerNotifications() {
             const client = initialiserSupabase();
             if (!client || !currentUser) return;
-
             try {
                 const { data: amiData } = await client.rpc('compter_demandes_amis');
                 const amiCount = amiData || 0;
@@ -790,14 +766,9 @@
                         amiBadge.style.display = 'none';
                     }
                 }
-            } catch (e) {
-                console.warn('Erreur notifications:', e);
-            }
+            } catch (e) {}
         }
 
-        // ============================================================
-        // CONVERSATIONS
-        // ============================================================
         async function chargerConversations() {
             const client = initialiserSupabase();
             if (!client) return;
@@ -808,11 +779,7 @@
                 .or(`user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`)
                 .order('updated_at', { ascending: false });
 
-            if (error) {
-                console.error('Erreur chargement conversations:', error);
-                return;
-            }
-
+            if (error) { console.error(error); return; }
             allConversations = data || [];
             await afficherConversations();
         }
@@ -821,13 +788,7 @@
             const container = document.getElementById('convList');
 
             if (allConversations.length === 0) {
-                container.innerHTML = `
-                    <div class="conv-empty">
-                        <i class="fas fa-comment-slash"></i>
-                        <p>Aucune conversation</p>
-                        <p style="font-size:12px;margin-top:6px;">Commencez une discussion depuis une carte</p>
-                    </div>
-                `;
+                container.innerHTML = '<div class="conv-empty"><i class="fas fa-comment-slash"></i><p>Aucune conversation</p></div>';
                 return;
             }
 
@@ -839,20 +800,18 @@
 
                 const auteur = await getAuteur(otherId);
                 const initial = (auteur.nom || '?').charAt(0).toUpperCase();
-                const avatarStyle = auteur.avatar_url ? `background-image:url('${auteur.avatar_url}');` : '';
+                const avatarStyle = auteur.avatar_url ? "background-image:url('" + auteur.avatar_url + "');" : '';
 
                 const item = document.createElement('div');
                 item.className = 'conv-item';
                 if (conv.id === currentConversationId) item.classList.add('active');
-                item.dataset.convId = conv.id;
-                item.innerHTML = `
-                    <div class="conv-avatar" style="${avatarStyle}">${auteur.avatar_url ? '' : initial}</div>
-                    <div class="conv-info">
-                        <div class="conv-name">${escapeHTML(auteur.nom)}</div>
-                        <div class="conv-last">${escapeHTML(conv.last_message || '...')}</div>
-                    </div>
-                `;
-                item.addEventListener('click', () => ouvrirConversation(conv.id));
+                item.innerHTML =
+                    '<div class="conv-avatar" style="' + avatarStyle + '">' + (auteur.avatar_url ? '' : initial) + '</div>' +
+                    '<div class="conv-info">' +
+                        '<div class="conv-name">' + escapeHTML(auteur.nom) + '</div>' +
+                        '<div class="conv-last">' + escapeHTML(conv.last_message || '...') + '</div>' +
+                    '</div>';
+                item.addEventListener('click', function() { ouvrirConversation(conv.id); });
                 container.appendChild(item);
             }
         }
@@ -868,10 +827,7 @@
                 await chargerConversations();
                 conv = allConversations.find(c => c.id === convId);
             }
-            if (!conv) {
-                console.error('Conversation non trouvée:', convId);
-                return;
-            }
+            if (!conv) return;
 
             currentConversationId = convId;
 
@@ -879,13 +835,13 @@
             if (!otherId) return;
 
             const auteur = await getAuteur(otherId);
-            currentOtherUser = { id: otherId, ...auteur };
+            currentOtherUser = { id: otherId, nom: auteur.nom, avatar_url: auteur.avatar_url };
 
             const initial = (auteur.nom || '?').charAt(0).toUpperCase();
-            const avatarStyle = auteur.avatar_url ? `background-image:url('${auteur.avatar_url}');` : '';
+            const avatarStyle = auteur.avatar_url ? "background-image:url('" + auteur.avatar_url + "');" : '';
             const avatar = document.getElementById('chatAvatar');
             avatar.textContent = auteur.avatar_url ? '' : initial;
-            avatar.style.backgroundImage = auteur.avatar_url ? `url('${auteur.avatar_url}')` : '';
+            avatar.style.backgroundImage = auteur.avatar_url ? "url('" + auteur.avatar_url + "')" : '';
             document.getElementById('chatName').textContent = auteur.nom || '—';
 
             document.getElementById('noChatSelected').style.display = 'none';
@@ -907,20 +863,12 @@
                 .eq('conversation_id', currentConversationId)
                 .order('created_at', { ascending: true });
 
-            if (error) {
-                console.error(error);
-                return;
-            }
+            if (error) { console.error(error); return; }
 
             const container = document.getElementById('chatMessages');
 
             if (!data || data.length === 0) {
-                container.innerHTML = `
-                    <div class="chat-empty">
-                        <i class="fas fa-comment-dots"></i>
-                        <p>Commencez la discussion</p>
-                    </div>
-                `;
+                container.innerHTML = '<div class="chat-empty"><i class="fas fa-comment-dots"></i><p>Commencez la discussion</p></div>';
                 return;
             }
 
@@ -946,24 +894,15 @@
             let bubbleContent = '';
 
             if (msg.type === 'text') {
-                bubbleContent = `<div class="msg-bubble">${escapeHTML(msg.content || '')}<div class="msg-time">${formatTime(msg.created_at)}</div></div>`;
+                bubbleContent = '<div class="msg-bubble">' + escapeHTML(msg.content || '') + '<div class="msg-time">' + formatTime(msg.created_at) + '</div></div>';
             } else if (msg.type === 'audio') {
-                bubbleContent = `<div class="msg-bubble audio">
-                    <audio controls preload="metadata" src="${msg.media_url}"></audio>
-                    <div class="msg-time">${formatTime(msg.created_at)}</div>
-                </div>`;
+                bubbleContent = '<div class="msg-bubble audio"><audio controls preload="metadata" src="' + msg.media_url + '"></audio><div class="msg-time">' + formatTime(msg.created_at) + '</div></div>';
             } else if (msg.type === 'image') {
-                bubbleContent = `<div class="msg-bubble"><img src="${msg.media_url}" alt="" loading="lazy" /><div class="msg-time">${formatTime(msg.created_at)}</div></div>`;
+                bubbleContent = '<div class="msg-bubble"><img src="' + msg.media_url + '" alt="" loading="lazy" /><div class="msg-time">' + formatTime(msg.created_at) + '</div></div>';
             } else if (msg.type === 'video') {
-                bubbleContent = `<div class="msg-bubble"><video controls preload="metadata" src="${msg.media_url}"></video><div class="msg-time">${formatTime(msg.created_at)}</div></div>`;
+                bubbleContent = '<div class="msg-bubble"><video controls preload="metadata" src="' + msg.media_url + '"></video><div class="msg-time">' + formatTime(msg.created_at) + '</div></div>';
             } else if (msg.type === 'document') {
-                bubbleContent = `<div class="msg-bubble">
-                    <a href="${msg.media_url}" target="_blank" class="file-link">
-                        <i class="fas fa-file-alt"></i>
-                        <span>${escapeHTML(msg.content || 'Document')}</span>
-                    </a>
-                    <div class="msg-time">${formatTime(msg.created_at)}</div>
-                </div>`;
+                bubbleContent = '<div class="msg-bubble"><a href="' + msg.media_url + '" target="_blank" class="file-link"><i class="fas fa-file-alt"></i><span>' + escapeHTML(msg.content || 'Document') + '</span></a><div class="msg-time">' + formatTime(msg.created_at) + '</div></div>';
             }
 
             row.innerHTML = bubbleContent;
@@ -990,13 +929,12 @@
             if (!currentConversationId) return;
             signalerTyping(true);
             clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => signalerTyping(false), 2000);
+            typingTimeout = setTimeout(function() { signalerTyping(false); }, 2000);
         });
 
         async function signalerTyping(isTyping) {
             const client = initialiserSupabase();
             if (!client || !currentConversationId) return;
-
             try {
                 if (isTyping) {
                     await client.from('typing_indicators').upsert({
@@ -1032,38 +970,35 @@
             }]);
 
             if (error) {
-                console.error(error);
-                alert('Erreur d\'envoi');
+                afficherToast('Erreur d\'envoi : ' + error.message, 'error');
             }
         }
 
         // ============================================================
-        // PIÈCE JOINTE — méthode robuste avec onclick direct
+        // PIÈCE JOINTE
         // ============================================================
-        document.getElementById('btnAttach').addEventListener('click', function() {
-            const input = document.getElementById('fileInput');
-            input.click();
-        });
-
         document.getElementById('fileInput').addEventListener('change', async function() {
             const file = this.files[0];
             if (!file) return;
 
+            afficherToast('Envoi de ' + file.name.substring(0, 20) + '...', 'info');
+
             const client = initialiserSupabase();
             if (!client || !currentConversationId) {
+                afficherToast('Erreur : conversation non sélectionnée', 'error');
                 this.value = '';
                 return;
             }
 
             let type = 'document';
-            if (file.type.startsWith('image/')) type = 'image';
-            else if (file.type.startsWith('video/')) type = 'video';
-            else if (file.type.startsWith('audio/')) type = 'audio';
+            if (file.type.indexOf('image/') === 0) type = 'image';
+            else if (file.type.indexOf('video/') === 0) type = 'video';
+            else if (file.type.indexOf('audio/') === 0) type = 'audio';
 
             try {
                 const ext = file.name.split('.').pop();
                 const cleanName = file.name.replace(/[^a-z0-9]/gi, '_').substring(0, 40);
-                const path = `${currentUser.id}/chat_${Date.now()}_${cleanName}.${ext}`;
+                const path = currentUser.id + '/chat_' + Date.now() + '_' + cleanName + '.' + ext;
 
                 const { error: uploadError } = await client
                     .storage
@@ -1077,7 +1012,7 @@
                     .from('cards-media')
                     .getPublicUrl(path);
 
-                await client.from('messages').insert([{
+                const { error: insertError } = await client.from('messages').insert([{
                     conversation_id: currentConversationId,
                     sender_id: currentUser.id,
                     content: file.name,
@@ -1085,48 +1020,52 @@
                     media_url: urlData.publicUrl
                 }]);
 
+                if (insertError) throw insertError;
+
+                afficherToast('Fichier envoyé !', 'success');
+
             } catch (error) {
                 console.error(error);
-                alert('Erreur d\'upload : ' + error.message);
+                afficherToast('Erreur : ' + error.message, 'error');
             }
 
             this.value = '';
         });
 
         // ============================================================
-        // VOCAL — méthode robuste
+        // VOCAL — approche ultra-simplifiée
         // ============================================================
         document.getElementById('btnRecord').addEventListener('click', async function() {
             if (!currentConversationId) {
-                alert('Sélectionnez d\'abord une conversation');
+                afficherToast('Sélectionnez d\'abord une conversation', 'error');
                 return;
             }
 
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-                // Essayer plusieurs formats
-                let mimeType = 'audio/webm';
-                if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-                    mimeType = 'audio/webm;codecs=opus';
-                } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-                    mimeType = 'audio/mp4';
-                } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
-                    mimeType = 'audio/ogg';
-                }
-
-                mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
+                mediaRecorder = new MediaRecorder(stream);
                 audioChunks = [];
+                audioBlobFinal = null;
 
-                mediaRecorder.ondataavailable = e => {
-                    if (e.data.size > 0) audioChunks.push(e.data);
+                mediaRecorder.ondataavailable = function(e) {
+                    if (e.data && e.data.size > 0) {
+                        audioChunks.push(e.data);
+                    }
+                };
+
+                mediaRecorder.onstop = function() {
+                    if (audioChunks.length > 0) {
+                        audioBlobFinal = new Blob(audioChunks, { type: 'audio/webm' });
+                    }
                 };
 
                 mediaRecorder.start();
                 ouvrirOverlayEnregistrement();
+
             } catch (error) {
                 console.error(error);
-                alert('Impossible d\'enregistrer : ' + error.message);
+                afficherToast('Impossible d\'enregistrer : ' + error.message, 'error');
             }
         });
 
@@ -1136,71 +1075,91 @@
             recordStartTime = Date.now();
             document.getElementById('recordTimer').textContent = '0:00';
 
-            recordInterval = setInterval(() => {
+            recordInterval = setInterval(function() {
                 const elapsed = Math.floor((Date.now() - recordStartTime) / 1000);
                 const min = Math.floor(elapsed / 60);
                 const sec = String(elapsed % 60).padStart(2, '0');
-                document.getElementById('recordTimer').textContent = `${min}:${sec}`;
+                document.getElementById('recordTimer').textContent = min + ':' + sec;
             }, 1000);
         }
 
         function fermerOverlayEnregistrement() {
             document.getElementById('recordingOverlay').classList.remove('show');
             clearInterval(recordInterval);
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-                mediaRecorder.stream.getTracks().forEach(t => t.stop());
-            }
         }
 
         document.getElementById('btnCancelRecord').addEventListener('click', function() {
             audioChunks = [];
+            audioBlobFinal = null;
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                try { mediaRecorder.stop(); } catch (e) {}
+                if (mediaRecorder.stream) {
+                    mediaRecorder.stream.getTracks().forEach(function(t) { t.stop(); });
+                }
+            }
             fermerOverlayEnregistrement();
+            afficherToast('Enregistrement annulé', 'info');
         });
 
         document.getElementById('btnSendRecord').addEventListener('click', function() {
-            if (!mediaRecorder || audioChunks.length === 0) {
-                fermerOverlayEnregistrement();
-                return;
-            }
+            // On affiche un toast TOUT DE SUITE
+            afficherToast('Traitement du vocal...', 'info');
 
-            const mimeType = mediaRecorder.mimeType || 'audio/webm';
-            const extension = mimeType.includes('mp4') ? 'mp4' : (mimeType.includes('ogg') ? 'ogg' : 'webm');
-
-            const finaliser = () => {
-                const blob = new Blob(audioChunks, { type: mimeType });
-                envoyerAudio(blob, extension);
-            };
-
-            if (mediaRecorder.state === 'recording') {
-                mediaRecorder.onstop = finaliser;
-                try {
-                    mediaRecorder.stop();
-                } catch(e) {}
-                if (mediaRecorder.stream) {
-                    mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            // On attend 100ms pour laisser le toast s'afficher
+            setTimeout(function() {
+                if (!mediaRecorder) {
+                    afficherToast('Aucun enregistrement en cours', 'error');
+                    fermerOverlayEnregistrement();
+                    return;
                 }
-            } else {
-                finaliser();
-            }
 
-            fermerOverlayEnregistrement();
+                if (mediaRecorder.state === 'recording') {
+                    // Arrêter l'enregistrement
+                    try {
+                        mediaRecorder.stop();
+                    } catch (e) {
+                        console.error('Erreur stop:', e);
+                    }
+                    if (mediaRecorder.stream) {
+                        mediaRecorder.stream.getTracks().forEach(function(t) { t.stop(); });
+                    }
+                }
+
+                // Attendre un peu que onstop se déclenche
+                setTimeout(function() {
+                    fermerOverlayEnregistrement();
+
+                    if (audioChunks.length === 0) {
+                        afficherToast('Aucun audio enregistré', 'error');
+                        return;
+                    }
+
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    envoyerAudio(blob);
+                }, 300);
+            }, 100);
         });
 
-        async function envoyerAudio(blob, extension) {
+        async function envoyerAudio(blob) {
+            afficherToast('Envoi du vocal (' + Math.round(blob.size / 1024) + ' Ko)...', 'info');
+
             const client = initialiserSupabase();
-            if (!client || !currentConversationId) {
-                alert('Erreur : conversation non trouvée');
+            if (!client) {
+                afficherToast('Erreur : Supabase non initialisé', 'error');
+                return;
+            }
+            if (!currentConversationId) {
+                afficherToast('Erreur : aucune conversation', 'error');
                 return;
             }
 
             try {
-                const path = `${currentUser.id}/audio_${Date.now()}.${extension}`;
+                const path = currentUser.id + '/audio_' + Date.now() + '.webm';
 
                 const { error: uploadError } = await client
                     .storage
                     .from('cards-media')
-                    .upload(path, blob, { contentType: blob.type, upsert: false });
+                    .upload(path, blob, { contentType: 'audio/webm', upsert: false });
 
                 if (uploadError) throw uploadError;
 
@@ -1219,14 +1178,16 @@
 
                 if (insertError) throw insertError;
 
+                afficherToast('Vocal envoyé !', 'success');
+
             } catch (error) {
-                console.error('Erreur vocal :', error);
-                alert('Erreur d\'envoi du vocal : ' + error.message);
+                console.error('Erreur vocal:', error);
+                afficherToast('Erreur : ' + (error.message || 'Inconnue'), 'error');
             }
         }
 
         // ============================================================
-        // APPELS (simulés)
+        // APPELS
         // ============================================================
         document.getElementById('btnCallAudio').addEventListener('click', function() {
             alert('📞 Bientôt disponible : Appel audio');
@@ -1251,8 +1212,8 @@
                     event: 'INSERT',
                     schema: 'public',
                     table: 'messages',
-                    filter: `conversation_id=eq.${convId}`
-                }, async (payload) => {
+                    filter: 'conversation_id=eq.' + convId
+                }, async function(payload) {
                     afficherMessage(payload.new);
                     scrollChatBottom();
 
@@ -1273,8 +1234,8 @@
                     event: '*',
                     schema: 'public',
                     table: 'typing_indicators',
-                    filter: `conversation_id=eq.${convId}`
-                }, (payload) => {
+                    filter: 'conversation_id=eq.' + convId
+                }, function(payload) {
                     const status = document.getElementById('chatStatus');
                     const txt = document.getElementById('chatStatusText');
 
@@ -1296,21 +1257,21 @@
         // ============================================================
         document.getElementById('convSearch').addEventListener('input', function() {
             const q = this.value.toLowerCase();
-            document.querySelectorAll('.conv-item').forEach(item => {
+            document.querySelectorAll('.conv-item').forEach(function(item) {
                 const name = item.querySelector('.conv-name').textContent.toLowerCase();
-                item.style.display = name.includes(q) ? 'flex' : 'none';
+                item.style.display = name.indexOf(q) !== -1 ? 'flex' : 'none';
             });
         });
 
         // ============================================================
-        // FICHE PROFIL (conservée)
+        // FICHE PROFIL
         // ============================================================
         const profileOverlay = document.getElementById('profileOverlay');
         const profileContent = document.getElementById('profileContent');
         const profileClose = document.getElementById('profileClose');
 
-        profileClose.addEventListener('click', () => profileOverlay.classList.remove('show'));
-        profileOverlay.addEventListener('click', (e) => {
+        profileClose.addEventListener('click', function() { profileOverlay.classList.remove('show'); });
+        profileOverlay.addEventListener('click', function(e) {
             if (e.target === profileOverlay) profileOverlay.classList.remove('show');
         });
 
@@ -1338,158 +1299,112 @@
             const statut = statutData && statutData[0] ? statutData[0] : { status: null, direction: null, friendship_id: null };
 
             const initial = (profil.nom || '?').charAt(0).toUpperCase();
-            const avatarStyle = profil.avatar_url ? `background-image:url('${profil.avatar_url}');` : '';
+            const avatarStyle = profil.avatar_url ? "background-image:url('" + profil.avatar_url + "');" : '';
             const dateInscription = new Date(profil.created_at).toLocaleDateString('fr-FR', {
                 day: '2-digit', month: 'long', year: 'numeric'
             });
 
             const estMoi = currentUser && currentUser.id === userId;
 
-            let html = `
-                <div class="big-avatar" style="${avatarStyle}">${profil.avatar_url ? '' : initial}</div>
-                <h2>${escapeHTML(profil.nom || '—')}</h2>
-                <p class="subtitle">${escapeHTML(profil.domaine || '—')}</p>
-            `;
+            let html = '<div class="big-avatar" style="' + avatarStyle + '">' + (profil.avatar_url ? '' : initial) + '</div>';
+            html += '<h2>' + escapeHTML(profil.nom || '—') + '</h2>';
+            html += '<p class="subtitle">' + escapeHTML(profil.domaine || '—') + '</p>';
 
             if (statut.status === 'accepted') {
-                html += `<span class="friend-badge accepted"><i class="fas fa-user-check"></i> Ami</span>`;
+                html += '<span class="friend-badge accepted"><i class="fas fa-user-check"></i> Ami</span>';
             } else if (statut.status === 'pending' && statut.direction === 'sent') {
-                html += `<span class="friend-badge pending-sent"><i class="fas fa-clock"></i> Demande envoyée</span>`;
+                html += '<span class="friend-badge pending-sent"><i class="fas fa-clock"></i> Demande envoyée</span>';
             } else if (statut.status === 'pending' && statut.direction === 'received') {
-                html += `<span class="friend-badge pending-received"><i class="fas fa-user-plus"></i> Demande reçue</span>`;
+                html += '<span class="friend-badge pending-received"><i class="fas fa-user-plus"></i> Demande reçue</span>';
             }
 
-            html += `<div class="profile-info-list">`;
+            html += '<div class="profile-info-list">';
 
             if (profil.sexe) {
-                html += `<div class="profile-info-row">
-                    <span class="label"><i class="fas fa-venus-mars"></i> Sexe</span>
-                    <span class="value">${escapeHTML(profil.sexe)}</span>
-                </div>`;
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-venus-mars"></i> Sexe</span><span class="value">' + escapeHTML(profil.sexe) + '</span></div>';
             }
             if (profil.age) {
-                html += `<div class="profile-info-row">
-                    <span class="label"><i class="fas fa-birthday-cake"></i> Âge</span>
-                    <span class="value">${profil.age} ans</span>
-                </div>`;
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-birthday-cake"></i> Âge</span><span class="value">' + profil.age + ' ans</span></div>';
             }
             if (profil.pays) {
-                html += `<div class="profile-info-row">
-                    <span class="label"><i class="fas fa-globe-africa"></i> Pays</span>
-                    <span class="value">${escapeHTML(profil.pays)}</span>
-                </div>`;
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-globe-africa"></i> Pays</span><span class="value">' + escapeHTML(profil.pays) + '</span></div>';
             }
             if (profil.domaine) {
-                html += `<div class="profile-info-row">
-                    <span class="label"><i class="fas fa-briefcase"></i> Domaine</span>
-                    <span class="value">${escapeHTML(profil.domaine)}</span>
-                </div>`;
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-briefcase"></i> Domaine</span><span class="value">' + escapeHTML(profil.domaine) + '</span></div>';
             }
             if (profil.email) {
-                html += `<div class="profile-info-row">
-                    <span class="label"><i class="fas fa-envelope"></i> Email</span>
-                    <span class="value"><a href="mailto:${profil.email}">${escapeHTML(profil.email)}</a></span>
-                </div>`;
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-envelope"></i> Email</span><span class="value"><a href="mailto:' + profil.email + '">' + escapeHTML(profil.email) + '</a></span></div>';
             }
             if (profil.telephone) {
                 const telClean = profil.telephone.replace(/[^0-9+]/g, '');
-                html += `<div class="profile-info-row">
-                    <span class="label"><i class="fas fa-phone"></i> Téléphone</span>
-                    <span class="value"><a href="tel:${telClean}">${escapeHTML(profil.telephone)}</a></span>
-                </div>`;
+                html += '<div class="profile-info-row"><span class="label"><i class="fas fa-phone"></i> Téléphone</span><span class="value"><a href="tel:' + telClean + '">' + escapeHTML(profil.telephone) + '</a></span></div>';
             }
-            html += `<div class="profile-info-row">
-                <span class="label"><i class="fas fa-calendar"></i> Inscription</span>
-                <span class="value">${dateInscription}</span>
-            </div>`;
-            html += `</div>`;
+            html += '<div class="profile-info-row"><span class="label"><i class="fas fa-calendar"></i> Inscription</span><span class="value">' + dateInscription + '</span></div>';
+            html += '</div>';
 
-            html += `<div class="profile-actions">`;
+            html += '<div class="profile-actions">';
 
             if (estMoi) {
-                html += `<button class="btn-message-friend" onclick="window.location.href='profil.html'">
-                    <i class="fas fa-user-edit"></i> Mon profil
-                </button>`;
+                html += '<button class="btn-message-friend" onclick="window.location.href=\'profil.html\'"><i class="fas fa-user-edit"></i> Mon profil</button>';
             } else {
                 if (!statut.status) {
-                    html += `<button class="btn-add-friend" onclick="envoyerDemandeAmi('${userId}')">
-                        <i class="fas fa-user-plus"></i> Ajouter en ami
-                    </button>`;
+                    html += '<button class="btn-add-friend" onclick="envoyerDemandeAmi(\'' + userId + '\')"><i class="fas fa-user-plus"></i> Ajouter en ami</button>';
                 } else if (statut.status === 'pending' && statut.direction === 'received') {
-                    html += `<button class="btn-accept-friend" onclick="repondreAmi('${statut.friendship_id}', true)">
-                        <i class="fas fa-check"></i> Accepter
-                    </button>`;
-                    html += `<button class="btn-reject-friend" onclick="repondreAmi('${statut.friendship_id}', false)">
-                        <i class="fas fa-times"></i> Refuser
-                    </button>`;
+                    html += '<button class="btn-accept-friend" onclick="repondreAmi(\'' + statut.friendship_id + '\', true)"><i class="fas fa-check"></i> Accepter</button>';
+                    html += '<button class="btn-reject-friend" onclick="repondreAmi(\'' + statut.friendship_id + '\', false)"><i class="fas fa-times"></i> Refuser</button>';
                 } else if (statut.status === 'pending' && statut.direction === 'sent') {
-                    html += `<button class="btn-remove-friend" onclick="supprimerAmi('${statut.friendship_id}')">
-                        <i class="fas fa-clock"></i> Annuler
-                    </button>`;
+                    html += '<button class="btn-remove-friend" onclick="supprimerAmi(\'' + statut.friendship_id + '\')"><i class="fas fa-clock"></i> Annuler</button>';
                 } else if (statut.status === 'accepted') {
-                    html += `<button class="btn-remove-friend" onclick="supprimerAmi('${statut.friendship_id}')">
-                        <i class="fas fa-user-minus"></i> Retirer
-                    </button>`;
+                    html += '<button class="btn-remove-friend" onclick="supprimerAmi(\'' + statut.friendship_id + '\')"><i class="fas fa-user-minus"></i> Retirer</button>';
                 }
-
-                html += `<button class="btn-message-friend" onclick="profileOverlay.classList.remove('show')">
-                    <i class="fas fa-comments"></i> Message
-                </button>`;
+                html += '<button class="btn-message-friend" onclick="profileOverlay.classList.remove(\'show\')"><i class="fas fa-comments"></i> Message</button>';
             }
 
-            html += `</div>`;
+            html += '</div>';
             profileContent.innerHTML = html;
         }
 
         async function envoyerDemandeAmi(userId) {
             const client = initialiserSupabase();
             if (!client) return;
-
             const { data, error } = await client.rpc('ajouter_ami', { p_friend_id: userId });
             if (error || !data) {
-                alert('Erreur : impossible d\'envoyer la demande');
+                afficherToast('Impossible d\'envoyer la demande', 'error');
                 return;
             }
-
+            afficherToast('Demande envoyée !', 'success');
             await afficherFicheProfil(userId);
         }
 
         async function repondreAmi(friendshipId, accept) {
             const client = initialiserSupabase();
             if (!client) return;
-
             const { data, error } = await client.rpc('repondre_demande_ami', {
                 p_friendship_id: friendshipId,
                 p_accept: accept
             });
-
             if (error || !data) {
-                alert('Erreur : action impossible');
+                afficherToast('Action impossible', 'error');
                 return;
             }
-
+            afficherToast(accept ? 'Ami accepté !' : 'Demande refusée', 'success');
             await afficherFicheProfil(currentOtherUser.id);
         }
 
         async function supprimerAmi(friendshipId) {
             if (!confirm('Confirmer ?')) return;
-
             const client = initialiserSupabase();
             if (!client) return;
-
             const { data, error } = await client.rpc('supprimer_ami', { p_friendship_id: friendshipId });
             if (error || !data) {
-                alert('Erreur : action impossible');
+                afficherToast('Action impossible', 'error');
                 return;
             }
-
+            afficherToast('Ami retiré', 'success');
             await afficherFicheProfil(currentOtherUser.id);
         }
 
-        // ============================================================
-        // LANCEMENT
-        // ============================================================
-        initialiser().catch(err => console.error('Erreur messagerie :', err));
+        initialiser().catch(function(err) { console.error('Erreur messagerie :', err); });
     </script>
 
 </body>
