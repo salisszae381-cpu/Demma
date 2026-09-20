@@ -128,10 +128,13 @@
             line-height: 1.5; color: var(--noir);
             word-wrap: break-word;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-            cursor: pointer; transition: 0.15s;
-            position: relative;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            transition: 0.15s;
         }
-        .msg-bubble:hover { opacity: 0.9; }
+        .msg-bubble:active { transform: scale(0.98); }
         .msg-row.me .msg-bubble {
             background: var(--noir); color: #fff; border-color: var(--noir);
         }
@@ -139,7 +142,7 @@
             display: flex; flex-direction: column;
             gap: 6px; padding: 10px 14px;
         }
-        .msg-bubble img { max-width: 100%; border-radius: 12px; display: block; }
+        .msg-bubble img { max-width: 100%; border-radius: 12px; display: block; pointer-events: none; }
         .msg-bubble video { max-width: 100%; border-radius: 12px; display: block; }
         .msg-bubble audio { max-width: 100%; width: 220px; }
         .msg-bubble .file-link {
@@ -151,25 +154,6 @@
             font-size: 10px; color: var(--gris-texte); margin-top: 4px;
         }
         .msg-row.me .msg-time { color: #a0b8d4; text-align: right; }
-
-        .msg-bubble .btn-delete-msg {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--rouge);
-            color: #fff;
-            border: 2px solid #fff;
-            font-size: 11px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 5;
-        }
-        .msg-bubble.owner:hover .btn-delete-msg { display: flex; }
 
         .chat-empty {
             text-align: center; padding: 60px 20px;
@@ -205,7 +189,6 @@
             outline: none; border-color: var(--rouge); background: #fff;
         }
 
-        /* Input file — méthode double (bouton + input) */
         .file-input-wrapper {
             position: relative; width: 42px; height: 42px;
             flex-shrink: 0; cursor: pointer;
@@ -382,6 +365,71 @@
         .toast.error { background: var(--rouge); }
         .toast.success { background: #1e5a2f; }
 
+        /* ---- Menu contextuel (appui long) ---- */
+        .context-menu-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 22, 40, 0.6);
+            z-index: 4000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .context-menu-overlay.show { display: flex; }
+        .context-menu-box {
+            background: #fff;
+            border-radius: 24px;
+            padding: 12px;
+            max-width: 320px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: popIn 0.2s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .context-menu-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gris-texte);
+            text-align: center;
+            padding: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #eef3f9;
+            margin-bottom: 6px;
+        }
+        .context-menu-box button {
+            width: 100%;
+            padding: 14px 18px;
+            border: none;
+            background: transparent;
+            text-align: left;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--noir);
+            cursor: pointer;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: 0.15s;
+            margin-bottom: 2px;
+        }
+        .context-menu-box button:hover { background: #f5f8ff; }
+        .context-menu-box button i {
+            width: 22px;
+            font-size: 16px;
+            color: var(--gris-texte);
+            text-align: center;
+        }
+        .context-menu-box button.danger { color: var(--rouge); }
+        .context-menu-box button.danger i { color: var(--rouge); }
+        .context-menu-box button.danger:hover { background: #fdecea; }
+
         @media (max-width: 768px) {
             .messaging-container {
                 grid-template-columns: 1fr; height: auto;
@@ -500,6 +548,17 @@
         </div>
     </div>
 
+    <!-- MENU CONTEXTUEL (appui long) -->
+    <div class="context-menu-overlay" id="contextMenuOverlay">
+        <div class="context-menu-box">
+            <div class="context-menu-title">Options du message</div>
+            <button id="ctxCopy"><i class="fas fa-copy"></i> Copier</button>
+            <button id="ctxDownload"><i class="fas fa-download"></i> Télécharger</button>
+            <button id="ctxDelete" class="danger"><i class="fas fa-trash"></i> Supprimer</button>
+            <button id="ctxCancel"><i class="fas fa-times"></i> Annuler</button>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script src="js/supabase.js"></script>
@@ -519,6 +578,7 @@
         let recordStartTime = 0;
         let notifInterval = null;
         let allMessages = [];
+        let msgContexte = null;
 
         function afficherToast(texte, type) {
             try {
@@ -756,37 +816,158 @@
             let bubbleContent = '';
 
             if (msg.type === 'text') {
-                bubbleContent = '<div class="msg-bubble ' + (isMe ? 'owner' : '') + '" data-msg-id="' + msg.id + '">' + escapeHTML(msg.content || '') + '<div class="msg-time">' + formatTime(msg.created_at) + '</div>' + (isMe ? '<button class="btn-delete-msg" onclick="supprimerMessage(\'' + msg.id + '\')"><i class="fas fa-times"></i></button>' : '') + '</div>';
+                bubbleContent = '<div class="msg-bubble" data-msg-id="' + msg.id + '">' + escapeHTML(msg.content || '') + '<div class="msg-time">' + formatTime(msg.created_at) + '</div></div>';
             } else if (msg.type === 'audio') {
-                bubbleContent = '<div class="msg-bubble audio ' + (isMe ? 'owner' : '') + '" data-msg-id="' + msg.id + '"><audio controls preload="metadata" src="' + msg.media_url + '"></audio><div class="msg-time">' + formatTime(msg.created_at) + '</div>' + (isMe ? '<button class="btn-delete-msg" onclick="supprimerMessage(\'' + msg.id + '\')"><i class="fas fa-times"></i></button>' : '') + '</div>';
+                bubbleContent = '<div class="msg-bubble audio" data-msg-id="' + msg.id + '"><audio controls preload="metadata" src="' + msg.media_url + '"></audio><div class="msg-time">' + formatTime(msg.created_at) + '</div></div>';
             } else if (msg.type === 'image') {
-                bubbleContent = '<div class="msg-bubble ' + (isMe ? 'owner' : '') + '" data-msg-id="' + msg.id + '"><img src="' + msg.media_url + '" alt="" loading="lazy" /><div class="msg-time">' + formatTime(msg.created_at) + '</div>' + (isMe ? '<button class="btn-delete-msg" onclick="supprimerMessage(\'' + msg.id + '\')"><i class="fas fa-times"></i></button>' : '') + '</div>';
+                bubbleContent = '<div class="msg-bubble" data-msg-id="' + msg.id + '"><img src="' + msg.media_url + '" alt="" loading="lazy" /><div class="msg-time">' + formatTime(msg.created_at) + '</div></div>';
             } else if (msg.type === 'video') {
-                bubbleContent = '<div class="msg-bubble ' + (isMe ? 'owner' : '') + '" data-msg-id="' + msg.id + '"><video controls preload="metadata" src="' + msg.media_url + '"></video><div class="msg-time">' + formatTime(msg.created_at) + '</div>' + (isMe ? '<button class="btn-delete-msg" onclick="supprimerMessage(\'' + msg.id + '\')"><i class="fas fa-times"></i></button>' : '') + '</div>';
+                bubbleContent = '<div class="msg-bubble" data-msg-id="' + msg.id + '"><video controls preload="metadata" src="' + msg.media_url + '"></video><div class="msg-time">' + formatTime(msg.created_at) + '</div></div>';
             } else if (msg.type === 'document') {
-                bubbleContent = '<div class="msg-bubble ' + (isMe ? 'owner' : '') + '" data-msg-id="' + msg.id + '"><a href="' + msg.media_url + '" target="_blank" class="file-link"><i class="fas fa-file-alt"></i><span>' + escapeHTML(msg.content || 'Document') + '</span></a><div class="msg-time">' + formatTime(msg.created_at) + '</div>' + (isMe ? '<button class="btn-delete-msg" onclick="supprimerMessage(\'' + msg.id + '\')"><i class="fas fa-times"></i></button>' : '') + '</div>';
+                bubbleContent = '<div class="msg-bubble" data-msg-id="' + msg.id + '"><a href="' + msg.media_url + '" target="_blank" class="file-link"><i class="fas fa-file-alt"></i><span>' + escapeHTML(msg.content || 'Document') + '</span></a><div class="msg-time">' + formatTime(msg.created_at) + '</div></div>';
             }
 
             row.innerHTML = bubbleContent;
             container.appendChild(row);
+
+            // ==== ÉVÉNEMENTS APPUI LONG ====
+            const bubble = row.querySelector('.msg-bubble');
+            if (bubble) {
+                // Pour les médias audio/video, on attache l'événement à la bulle (pas aux contrôles)
+                let pressTimer = null;
+
+                const startPress = function(e) {
+                    // Ne pas déclencher si on touche les contrôles audio/video
+                    if (e.target.tagName === 'AUDIO' || e.target.tagName === 'VIDEO' || e.target.tagName === 'A' || e.target.tagName === 'IMG') {
+                        // Pour audio/video, on laisse le comportement natif MAIS on ajoute un long press sur la zone "msg-time" de la bulle
+                        return;
+                    }
+
+                    pressTimer = setTimeout(function() {
+                        ouvrirMenuContextuel(msg, isMe);
+                        if (navigator.vibrate) {
+                            try { navigator.vibrate(50); } catch (e) {}
+                        }
+                    }, 600);
+                };
+
+                const cancelPress = function() {
+                    if (pressTimer) {
+                        clearTimeout(pressTimer);
+                        pressTimer = null;
+                    }
+                };
+
+                // Sur la bulle entière
+                bubble.addEventListener('touchstart', startPress, { passive: true });
+                bubble.addEventListener('touchend', cancelPress);
+                bubble.addEventListener('touchmove', cancelPress);
+                bubble.addEventListener('touchcancel', cancelPress);
+                bubble.addEventListener('mousedown', startPress);
+                bubble.addEventListener('mouseup', cancelPress);
+                bubble.addEventListener('mouseleave', cancelPress);
+
+                // Clic droit (desktop)
+                bubble.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    ouvrirMenuContextuel(msg, isMe);
+                });
+
+                // Pour audio/video : attacher un bouton invisible qui couvre la zone temps
+                const timeEl = bubble.querySelector('.msg-time');
+                if (timeEl) {
+                    timeEl.style.cursor = 'pointer';
+                    timeEl.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        ouvrirMenuContextuel(msg, isMe);
+                    });
+                }
+            }
         }
 
         // ============================================================
-        // SUPPRESSION DE MESSAGE
+        // MENU CONTEXTUEL
         // ============================================================
-        async function supprimerMessage(msgId) {
-            if (!confirm('Supprimer ce message ?')) return;
+        function ouvrirMenuContextuel(msg, isMe) {
+            msgContexte = msg;
+
+            const overlay = document.getElementById('contextMenuOverlay');
+            const btnDelete = document.getElementById('ctxDelete');
+            const btnCopy = document.getElementById('ctxCopy');
+            const btnDownload = document.getElementById('ctxDownload');
+
+            // Afficher/cacher le bouton Supprimer
+            if (isMe) {
+                btnDelete.style.display = 'flex';
+            } else {
+                btnDelete.style.display = 'none';
+            }
+
+            // Afficher/cacher le bouton Copier (seulement pour les textes)
+            if (msg.type === 'text' && msg.content) {
+                btnCopy.style.display = 'flex';
+            } else {
+                btnCopy.style.display = 'none';
+            }
+
+            // Afficher/cacher le bouton Télécharger (seulement pour les médias)
+            if (msg.media_url) {
+                btnDownload.style.display = 'flex';
+            } else {
+                btnDownload.style.display = 'none';
+            }
+
+            overlay.classList.add('show');
+        }
+
+        document.getElementById('ctxCancel').addEventListener('click', function() {
+            document.getElementById('contextMenuOverlay').classList.remove('show');
+            msgContexte = null;
+        });
+
+        document.getElementById('contextMenuOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+                msgContexte = null;
+            }
+        });
+
+        document.getElementById('ctxCopy').addEventListener('click', function() {
+            if (!msgContexte || !msgContexte.content) return;
+            navigator.clipboard.writeText(msgContexte.content).then(function() {
+                afficherToast('Texte copié !', 'success');
+            }).catch(function() {
+                afficherToast('Impossible de copier', 'error');
+            });
+            document.getElementById('contextMenuOverlay').classList.remove('show');
+            msgContexte = null;
+        });
+
+        document.getElementById('ctxDownload').addEventListener('click', function() {
+            if (!msgContexte || !msgContexte.media_url) return;
+            window.open(msgContexte.media_url, '_blank');
+            document.getElementById('contextMenuOverlay').classList.remove('show');
+            msgContexte = null;
+        });
+
+        document.getElementById('ctxDelete').addEventListener('click', async function() {
+            if (!msgContexte) return;
+            const msgId = msgContexte.id;
+            const mediaUrl = msgContexte.media_url;
+            document.getElementById('contextMenuOverlay').classList.remove('show');
+
+            if (!confirm('Supprimer ce message ?')) {
+                msgContexte = null;
+                return;
+            }
 
             const client = initialiserSupabase();
             if (!client) return;
 
             try {
-                // Récupérer l'URL du média si présent
-                const msg = allMessages.find(m => m.id === msgId);
-                if (msg && msg.media_url) {
-                    // Extraire le chemin du fichier depuis l'URL publique
-                    // URL: https://xxx.supabase.co/storage/v1/object/public/cards-media/USER_ID/FILE
-                    const urlParts = msg.media_url.split('/cards-media/');
+                // Supprimer le fichier média si présent
+                if (mediaUrl) {
+                    const urlParts = mediaUrl.split('/cards-media/');
                     if (urlParts.length > 1) {
                         const filePath = urlParts[1].split('?')[0];
                         try {
@@ -809,7 +990,9 @@
                 console.error(error);
                 afficherToast('Erreur : ' + error.message, 'error');
             }
-        }
+
+            msgContexte = null;
+        });
 
         function scrollChatBottom() {
             const c = document.getElementById('chatMessages');
@@ -877,16 +1060,14 @@
         }
 
         // ============================================================
-        // PIÈCE JOINTE — DOUBLE DÉCLENCHEUR
+        // PIÈCE JOINTE
         // ============================================================
-        // 1. Le wrapper entier déclenche le clic
         document.getElementById('fileWrapper').addEventListener('click', function(e) {
             if (e.target.tagName !== 'INPUT') {
                 document.getElementById('fileInput').click();
             }
         });
 
-        // 2. L'input transparent gère aussi directement
         document.getElementById('fileInput').addEventListener('change', async function() {
             const file = this.files[0];
             if (!file) return;
@@ -1113,7 +1294,6 @@
                             await client.from('messages').update({ read: true }).eq('id', payload.new.id);
                         }
                     } else if (payload.eventType === 'DELETE') {
-                        // Retirer le message supprimé du DOM
                         const row = document.querySelector('[data-msg-id="' + payload.old.id + '"]');
                         if (row) row.remove();
                     }
