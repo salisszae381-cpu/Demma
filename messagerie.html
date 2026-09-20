@@ -51,10 +51,7 @@
             background: #fafcff;
             color: var(--noir);
         }
-        .conv-search:focus {
-            outline: none;
-            border-color: var(--rouge);
-        }
+        .conv-search:focus { outline: none; border-color: var(--rouge); }
         .conv-item {
             display: flex;
             align-items: center;
@@ -66,10 +63,7 @@
             margin-bottom: 4px;
         }
         .conv-item:hover { background: #f5f8ff; }
-        .conv-item.active {
-            background: var(--noir);
-            color: #fff;
-        }
+        .conv-item.active { background: var(--noir); color: #fff; }
         .conv-item.active .conv-name,
         .conv-item.active .conv-last { color: #fff; }
         .conv-avatar {
@@ -218,9 +212,9 @@
         }
         .msg-bubble.audio {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
+            flex-direction: column;
+            gap: 6px;
+            padding: 10px 14px;
         }
         .msg-bubble img {
             max-width: 100%;
@@ -232,7 +226,10 @@
             border-radius: 12px;
             display: block;
         }
-        .msg-bubble audio { max-width: 220px; }
+        .msg-bubble audio {
+            max-width: 100%;
+            width: 220px;
+        }
         .msg-bubble .file-link {
             display: flex;
             align-items: center;
@@ -292,27 +289,11 @@
             background: var(--noir);
             color: #fff;
         }
-        .chat-input .btn-attach-label {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            border: none;
-            background: #f0f4fc;
-            color: var(--noir);
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.15s;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-        }
-        .chat-input .btn-attach-label:hover {
-            background: var(--noir);
+        .chat-input .btn-icon.recording {
+            background: var(--rouge);
             color: #fff;
+            animation: pulse 1s infinite;
         }
-        .chat-input .btn-attach-label:active { transform: scale(0.95); }
         .chat-input input[type="text"] {
             flex: 1;
             padding: 12px 18px;
@@ -348,7 +329,7 @@
             gap: 20px;
         }
         .recording-overlay.show { display: flex; }
-        .recording-overlay i {
+        .recording-overlay .mic-icon {
             font-size: 64px;
             color: var(--rouge);
             animation: pulse 1s infinite;
@@ -407,7 +388,25 @@
             margin-bottom: 6px;
         }
 
-        /* ---- Fiche profil ---- */
+        .notif-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--rouge);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #f0f2f5;
+        }
+
+        /* Fiche profil */
         .profile-overlay {
             display: none;
             position: fixed;
@@ -497,10 +496,7 @@
             align-items: center;
             gap: 8px;
         }
-        .profile-info-row .label i {
-            color: var(--rouge);
-            width: 18px;
-        }
+        .profile-info-row .label i { color: var(--rouge); width: 18px; }
         .profile-info-row .value {
             color: var(--noir);
             font-weight: 600;
@@ -508,10 +504,7 @@
             max-width: 60%;
             word-break: break-word;
         }
-        .profile-info-row .value a {
-            color: var(--rouge);
-            text-decoration: none;
-        }
+        .profile-info-row .value a { color: var(--rouge); text-decoration: none; }
         .profile-info-row .value a:hover { text-decoration: underline; }
 
         .profile-actions {
@@ -536,32 +529,23 @@
             transition: 0.15s;
             min-width: 130px;
         }
-        .btn-add-friend {
-            background: var(--noir);
-            color: #fff;
-        }
+        .btn-add-friend { background: var(--noir); color: #fff; }
         .btn-add-friend:hover { background: var(--noir-clair); }
         .btn-accept-friend {
-            background: #e8f5e9;
-            color: #1e5a2f;
+            background: #e8f5e9; color: #1e5a2f;
             border: 1.5px solid #a5d6a7 !important;
         }
         .btn-accept-friend:hover { background: #1e5a2f; color: #fff; }
         .btn-reject-friend {
-            background: #fdecea;
-            color: var(--rouge);
+            background: #fdecea; color: var(--rouge);
             border: 1.5px solid #f5c6c6 !important;
         }
         .btn-reject-friend:hover { background: var(--rouge); color: #fff; }
         .btn-remove-friend {
-            background: #f0f2f5;
-            color: var(--gris-texte);
+            background: #f0f2f5; color: var(--gris-texte);
         }
         .btn-remove-friend:hover { background: #fdecea; color: var(--rouge); }
-        .btn-message-friend {
-            background: var(--rouge);
-            color: #fff;
-        }
+        .btn-message-friend { background: var(--rouge); color: #fff; }
         .btn-message-friend:hover { background: #a03020; }
 
         .friend-badge {
@@ -606,6 +590,13 @@
                     <i class="fas fa-arrow-left"></i>
                     <span>Fil d'actualité</span>
                 </a>
+
+                <a href="amis.html" class="btn-outline" style="position:relative;">
+                    <i class="fas fa-users"></i>
+                    <span>Amis</span>
+                    <span class="notif-badge" id="notifFriends" style="display:none;">0</span>
+                </a>
+
                 <a href="profil.html" class="btn-outline">
                     <i class="fas fa-user"></i>
                     <span>Mon profil</span>
@@ -651,10 +642,10 @@
                     <div class="chat-messages" id="chatMessages"></div>
 
                     <div class="chat-input">
-                        <label for="fileInput" class="btn-attach-label" title="Joindre un fichier">
+                        <button type="button" id="btnAttach" class="btn-icon" title="Joindre un fichier">
                             <i class="fas fa-paperclip"></i>
-                        </label>
-                        <input type="file" id="fileInput" style="display:none;" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" />
+                        </button>
+                        <input type="file" id="fileInput" style="position:absolute; left:-9999px;" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" />
 
                         <input type="text" id="msgInput" placeholder="Votre message..." />
 
@@ -673,7 +664,7 @@
     </div>
 
     <div class="recording-overlay" id="recordingOverlay">
-        <i class="fas fa-microphone"></i>
+        <i class="fas fa-microphone mic-icon"></i>
         <p>Enregistrement en cours...</p>
         <div class="timer" id="recordTimer">0:00</div>
         <div class="actions">
@@ -705,6 +696,7 @@
         let audioChunks = [];
         let recordInterval = null;
         let recordStartTime = 0;
+        let notifInterval = null;
 
         function escapeHTML(str) {
             if (!str) return '';
@@ -756,6 +748,9 @@
             currentProfile = profileData;
 
             await chargerConversations();
+            chargerNotifications();
+            if (notifInterval) clearInterval(notifInterval);
+            notifInterval = setInterval(chargerNotifications, 15000);
 
             const params = new URLSearchParams(window.location.search);
             const convId = params.get('conv');
@@ -776,6 +771,33 @@
             }
         }
 
+        // ============================================================
+        // NOTIFICATIONS
+        // ============================================================
+        async function chargerNotifications() {
+            const client = initialiserSupabase();
+            if (!client || !currentUser) return;
+
+            try {
+                const { data: amiData } = await client.rpc('compter_demandes_amis');
+                const amiCount = amiData || 0;
+                const amiBadge = document.getElementById('notifFriends');
+                if (amiBadge) {
+                    if (amiCount > 0) {
+                        amiBadge.textContent = amiCount > 99 ? '99+' : amiCount;
+                        amiBadge.style.display = 'flex';
+                    } else {
+                        amiBadge.style.display = 'none';
+                    }
+                }
+            } catch (e) {
+                console.warn('Erreur notifications:', e);
+            }
+        }
+
+        // ============================================================
+        // CONVERSATIONS
+        // ============================================================
         async function chargerConversations() {
             const client = initialiserSupabase();
             if (!client) return;
@@ -953,6 +975,9 @@
             if (c) c.scrollTop = c.scrollHeight;
         }
 
+        // ============================================================
+        // ENVOI TEXTE
+        // ============================================================
         document.getElementById('btnSend').addEventListener('click', envoyerMessageTexte);
         document.getElementById('msgInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -972,18 +997,20 @@
             const client = initialiserSupabase();
             if (!client || !currentConversationId) return;
 
-            if (isTyping) {
-                await client.from('typing_indicators').upsert({
-                    conversation_id: currentConversationId,
-                    user_id: currentUser.id,
-                    updated_at: new Date().toISOString()
-                });
-            } else {
-                await client.from('typing_indicators')
-                    .delete()
-                    .eq('conversation_id', currentConversationId)
-                    .eq('user_id', currentUser.id);
-            }
+            try {
+                if (isTyping) {
+                    await client.from('typing_indicators').upsert({
+                        conversation_id: currentConversationId,
+                        user_id: currentUser.id,
+                        updated_at: new Date().toISOString()
+                    });
+                } else {
+                    await client.from('typing_indicators')
+                        .delete()
+                        .eq('conversation_id', currentConversationId)
+                        .eq('user_id', currentUser.id);
+                }
+            } catch (e) {}
         }
 
         async function envoyerMessageTexte() {
@@ -1009,6 +1036,14 @@
                 alert('Erreur d\'envoi');
             }
         }
+
+        // ============================================================
+        // PIÈCE JOINTE — méthode robuste avec onclick direct
+        // ============================================================
+        document.getElementById('btnAttach').addEventListener('click', function() {
+            const input = document.getElementById('fileInput');
+            input.click();
+        });
 
         document.getElementById('fileInput').addEventListener('change', async function() {
             const file = this.files[0];
@@ -1058,10 +1093,29 @@
             this.value = '';
         });
 
+        // ============================================================
+        // VOCAL — méthode robuste
+        // ============================================================
         document.getElementById('btnRecord').addEventListener('click', async function() {
+            if (!currentConversationId) {
+                alert('Sélectionnez d\'abord une conversation');
+                return;
+            }
+
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
+
+                // Essayer plusieurs formats
+                let mimeType = 'audio/webm';
+                if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+                    mimeType = 'audio/webm;codecs=opus';
+                } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                    mimeType = 'audio/mp4';
+                } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+                    mimeType = 'audio/ogg';
+                }
+
+                mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
                 audioChunks = [];
 
                 mediaRecorder.ondataavailable = e => {
@@ -1072,7 +1126,7 @@
                 ouvrirOverlayEnregistrement();
             } catch (error) {
                 console.error(error);
-                alert('Impossible d\'enregistrer');
+                alert('Impossible d\'enregistrer : ' + error.message);
             }
         });
 
@@ -1104,21 +1158,28 @@
             fermerOverlayEnregistrement();
         });
 
-        document.getElementById('btnSendRecord').addEventListener('click', async function() {
+        document.getElementById('btnSendRecord').addEventListener('click', function() {
             if (!mediaRecorder || audioChunks.length === 0) {
                 fermerOverlayEnregistrement();
                 return;
             }
 
+            const mimeType = mediaRecorder.mimeType || 'audio/webm';
+            const extension = mimeType.includes('mp4') ? 'mp4' : (mimeType.includes('ogg') ? 'ogg' : 'webm');
+
             const finaliser = () => {
-                const blob = new Blob(audioChunks, { type: 'audio/webm' });
-                envoyerAudio(blob);
+                const blob = new Blob(audioChunks, { type: mimeType });
+                envoyerAudio(blob, extension);
             };
 
             if (mediaRecorder.state === 'recording') {
                 mediaRecorder.onstop = finaliser;
-                mediaRecorder.stop();
-                mediaRecorder.stream.getTracks().forEach(t => t.stop());
+                try {
+                    mediaRecorder.stop();
+                } catch(e) {}
+                if (mediaRecorder.stream) {
+                    mediaRecorder.stream.getTracks().forEach(t => t.stop());
+                }
             } else {
                 finaliser();
             }
@@ -1126,16 +1187,20 @@
             fermerOverlayEnregistrement();
         });
 
-        async function envoyerAudio(blob) {
+        async function envoyerAudio(blob, extension) {
             const client = initialiserSupabase();
-            if (!client || !currentConversationId) return;
+            if (!client || !currentConversationId) {
+                alert('Erreur : conversation non trouvée');
+                return;
+            }
 
             try {
-                const path = `${currentUser.id}/audio_${Date.now()}.webm`;
+                const path = `${currentUser.id}/audio_${Date.now()}.${extension}`;
+
                 const { error: uploadError } = await client
                     .storage
                     .from('cards-media')
-                    .upload(path, blob, { contentType: 'audio/webm' });
+                    .upload(path, blob, { contentType: blob.type, upsert: false });
 
                 if (uploadError) throw uploadError;
 
@@ -1144,7 +1209,7 @@
                     .from('cards-media')
                     .getPublicUrl(path);
 
-                await client.from('messages').insert([{
+                const { error: insertError } = await client.from('messages').insert([{
                     conversation_id: currentConversationId,
                     sender_id: currentUser.id,
                     content: '🎤 Message vocal',
@@ -1152,11 +1217,17 @@
                     media_url: urlData.publicUrl
                 }]);
 
+                if (insertError) throw insertError;
+
             } catch (error) {
-                console.error(error);
+                console.error('Erreur vocal :', error);
+                alert('Erreur d\'envoi du vocal : ' + error.message);
             }
         }
 
+        // ============================================================
+        // APPELS (simulés)
+        // ============================================================
         document.getElementById('btnCallAudio').addEventListener('click', function() {
             alert('📞 Bientôt disponible : Appel audio');
         });
@@ -1164,6 +1235,9 @@
             alert('🎥 Bientôt disponible : Appel vidéo');
         });
 
+        // ============================================================
+        // REALTIME
+        // ============================================================
         function souscrireRealtime(convId) {
             const client = initialiserSupabase();
             if (!client) return;
@@ -1217,6 +1291,9 @@
                 .subscribe();
         }
 
+        // ============================================================
+        // RECHERCHE
+        // ============================================================
         document.getElementById('convSearch').addEventListener('input', function() {
             const q = this.value.toLowerCase();
             document.querySelectorAll('.conv-item').forEach(item => {
@@ -1226,7 +1303,7 @@
         });
 
         // ============================================================
-        // FICHE PROFIL
+        // FICHE PROFIL (conservée)
         // ============================================================
         const profileOverlay = document.getElementById('profileOverlay');
         const profileContent = document.getElementById('profileContent');
