@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Demma · Mes amis</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        .amis-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 0 60px;
+        }
+        .amis-header {
+            background: linear-gradient(135deg, #0a1628, #1a2f4a);
+            color: #fff;
+            border-radius: 28px;
+            padding: 28px 30px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .amis-header i {
+            font-size: 36px;
+            color: var(--rouge);
+        }
+        .amis-header h1 {
+            font-size: 26px;
+            font-weight: 700;
+        }
+        .amis-header p {
+            color: #a0b8d4;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .tabs-amis {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .tab-amis {
+            background: #fff;
+            border: 1.5px solid var(--gris-clair);
+            border-radius: 40px;
+            padding: 12px 22px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--noir);
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: inherit;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tab-amis:hover { border-color: #aab8cc; background: #fafcff; }
+        .tab-amis.active { background: var(--noir); color: #fff; border-color: var(--noir); }
+        .tab-amis .count {
+            background: var(--rouge);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .tab-amis.active .count {
+            background: #fff;
+            color: var(--rouge);
+        }
+
+        .panel-amis {
+            display: none;
+            background: #fff;
+            border-radius: 28px;
+            padding: 24px;
+            border: 1px solid #e8eef6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+        .panel-amis.active { display: block; }
+
+        .ami-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: #fafdff;
+            border-radius: 18px;
+            border: 1px solid #e8eef6;
+            margin-bottom: 10px;
+            transition: 0.15s;
+        }
+        .ami-item:hover {
+            border-color: #bccfdf;
+            background: #f5f9ff;
+        }
+        .ami-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--noir);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            flex-shrink: 0;
+            background-size: cover;
+            background-position: center;
+        }
+        .ami-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .ami-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--noir);
+            margin-bottom: 2px;
+        }
+        .ami-sub {
+            font-size: 13px;
+            color: var(--gris-texte);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ami-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .ami-actions button {
+            border: none;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-msg {
+            background: var(--noir);
+            color: #fff;
+        }
+        .btn-msg:hover { background: var(--noir-clair); }
+        .btn-accept {
+            background: #e8f5e9;
+            color: #1e5a2f;
+            border: 1.5px solid #a5d6a7 !important;
+        }
+        .btn-accept:hover { background: #1e5a2f; color: #fff; }
+        .btn-reject {
+            background: #fdecea;
+            color: var(--rouge);
+            border: 1.5px solid #f5c6c6 !important;
+        }
+        .btn-reject:hover { background: var(--rouge); color: #fff; }
+        .btn-remove {
+            background: #f0f2f5;
+            color: var(--gris-texte);
+        }
+        .btn-remove:hover { background: #fdecea; color: var(--rouge); }
+        .btn-profile {
+            background: #e8f0fa;
+            color: #1a4a7a;
+            border: 1.5px solid #c5d6e8 !important;
+        }
+        .btn-profile:hover { background: #1a4a7a; color: #fff; }
+
+        .empty-amis {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gris-texte);
+        }
+        .empty-amis i {
+            font-size: 52px;
+            color: #c5d2e0;
+            margin-bottom: 14px;
+            display: block;
+        }
+        .empty-amis h3 {
+            color: var(--noir);
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+        .empty-amis p {
+            font-size: 14px;
+        }
+
+        .loading-amis {
+            text-align: center;
+            padding: 40px;
+            color: var(--gris-texte);
+        }
+        .loading-amis i {
+            font-size: 28px;
+            color: var(--rouge);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        @media (max-width: 520px) {
+            .amis-header { padding: 22px 20px; }
+            .amis-header h1 { font-size: 20px; }
+            .ami-item { flex-wrap: wrap; }
+            .ami-actions { width: 100%; justify-content: flex-end; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-arrows-rotate"></i>
+                <a href="index.html"><h1>Demma<span>.</span></h1></a>
+            </div>
+            <div class="nav-right">
+                <a href="fil-actualite.html" class="btn-outline">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Fil d'actualité</span>
+                </a>
+                <a href="messagerie.html" class="btn-outline">
+                    <i class="fas fa-comments"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="profil.html" class="btn-outline">
+                    <i class="fas fa-user"></i>
+                    <span>Mon profil</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="amis-container">
+
+            <div class="amis-header">
+                <i class="fas fa-users"></i>
+                <div>
+                    <h1>Mes amis</h1>
+                    <p>Gérez vos amis et vos demandes</p>
+                </div>
+            </div>
+
+            <div class="tabs-amis">
+                <button class="tab-amis active" data-tab="friends">
+                    <i class="fas fa-user-friends"></i> Amis
+                    <span class="count" id="countFriends">0</span>
+                </button>
+                <button class="tab-amis" data-tab="received">
+                    <i class="fas fa-user-plus"></i> Demandes reçues
+                    <span class="count" id="countReceived">0</span>
+                </button>
+                <button class="tab-amis" data-tab="sent">
+                    <i class="fas fa-paper-plane"></i> Demandes envoyées
+                    <span class="count" id="countSent">0</span>
+                </button>
+            </div>
+
+            <div class="panel-amis active" id="panelFriends">
+                <div class="loading-amis"><i class="fas fa-spinner fa-spin"></i><p>Chargement...</p></div>
+            </div>
+
+            <div class="panel-amis" id="panelReceived">
+                <div class="loading-amis"><i class="fas fa-spinner fa-spin"></i><p>Chargement...</p></div>
+            </div>
+
+            <div class="panel-amis" id="panelSent">
+                <div class="loading-amis"><i class="fas fa-spinner fa-spin"></i><p>Chargement...</p></div>
+            </div>
+
+        </div>
+
+        <footer class="footer">
+            <div>&copy; 2026 <strong>Demma</strong> · Réseau social d'échange</div>
+        </footer>
+
+    </div>
+
+    <script src="js/supabase.js"></script>
+
+    <script>
+        let currentUser = null;
+        let currentProfile = null;
+        let friendsList = [];
+        let receivedList = [];
+        let sentList = [];
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        async function initialiser() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data: { session } } = await client.auth.getSession();
+            if (!session) {
+                window.location.href = 'connexion.html';
+                return;
+            }
+            currentUser = session.user;
+
+            const { data: profileData } = await client
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+            currentProfile = profileData;
+
+            await chargerTout();
+        }
+
+        async function chargerTout() {
+            await Promise.all([
+                chargerAmis(),
+                chargerDemandesRecues(),
+                chargerDemandesEnvoyees()
+            ]);
+            mettreAJourCompteurs();
+        }
+
+        async function chargerAmis() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client.rpc('lister_amis');
+
+            if (error) {
+                console.error('Erreur lister_amis:', error);
+                document.getElementById('panelFriends').innerHTML =
+                    '<div class="empty-amis"><i class="fas fa-exclamation-triangle"></i><h3>Erreur de chargement</h3><p>' + escapeHTML(error.message) + '</p></div>';
+                return;
+            }
+
+            friendsList = data || [];
+            afficherAmis();
+        }
+
+        function afficherAmis() {
+            const container = document.getElementById('panelFriends');
+
+            if (friendsList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-amis">
+                        <i class="fas fa-user-friends"></i>
+                        <h3>Aucun ami pour l'instant</h3>
+                        <p>Ajoutez des amis depuis leurs profils ou depuis une carte.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            friendsList.forEach(ami => {
+                const initial = (ami.nom || '?').charAt(0).toUpperCase();
+                const avatarStyle = ami.avatar_url ? `background-image:url('${ami.avatar_url}');` : '';
+
+                const item = document.createElement('div');
+                item.className = 'ami-item';
+                item.innerHTML = `
+                    <div class="ami-avatar" style="${avatarStyle}">${ami.avatar_url ? '' : initial}</div>
+                    <div class="ami-info">
+                        <div class="ami-name">${escapeHTML(ami.nom)}</div>
+                        <div class="ami-sub">${escapeHTML(ami.domaine || '')} ${ami.pays ? '· ' + escapeHTML(ami.pays) : ''}</div>
+                    </div>
+                    <div class="ami-actions">
+                        <button class="btn-profile" onclick="voirProfil('${ami.friend_id}')">
+                            <i class="fas fa-user"></i> Profil
+                        </button>
+                        <button class="btn-msg" onclick="ouvrirConversation('${ami.friend_id}')">
+                            <i class="fas fa-comments"></i> Message
+                        </button>
+                        <button class="btn-remove" onclick="retirerAmi('${ami.friendship_id}')">
+                            <i class="fas fa-user-minus"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        async function chargerDemandesRecues() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client.rpc('lister_demandes_recues');
+            if (error) {
+                console.error('Erreur lister_demandes_recues:', error);
+                return;
+            }
+
+            receivedList = data || [];
+            afficherDemandesRecues();
+        }
+
+        function afficherDemandesRecues() {
+            const container = document.getElementById('panelReceived');
+
+            if (receivedList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-amis">
+                        <i class="fas fa-inbox"></i>
+                        <h3>Aucune demande reçue</h3>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            receivedList.forEach(demande => {
+                const initial = (demande.nom || '?').charAt(0).toUpperCase();
+                const avatarStyle = demande.avatar_url ? `background-image:url('${demande.avatar_url}');` : '';
+
+                const item = document.createElement('div');
+                item.className = 'ami-item';
+                item.innerHTML = `
+                    <div class="ami-avatar" style="${avatarStyle}">${demande.avatar_url ? '' : initial}</div>
+                    <div class="ami-info">
+                        <div class="ami-name">${escapeHTML(demande.nom)}</div>
+                        <div class="ami-sub">${escapeHTML(demande.domaine || '')}</div>
+                    </div>
+                    <div class="ami-actions">
+                        <button class="btn-accept" onclick="repondreDemande('${demande.friendship_id}', true)">
+                            <i class="fas fa-check"></i> Accepter
+                        </button>
+                        <button class="btn-reject" onclick="repondreDemande('${demande.friendship_id}', false)">
+                            <i class="fas fa-times"></i> Refuser
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        async function chargerDemandesEnvoyees() {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client.rpc('lister_demandes_envoyees');
+            if (error) {
+                console.error('Erreur lister_demandes_envoyees:', error);
+                return;
+            }
+
+            sentList = data || [];
+            afficherDemandesEnvoyees();
+        }
+
+        function afficherDemandesEnvoyees() {
+            const container = document.getElementById('panelSent');
+
+            if (sentList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-amis">
+                        <i class="fas fa-paper-plane"></i>
+                        <h3>Aucune demande envoyée</h3>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            sentList.forEach(demande => {
+                const initial = (demande.nom || '?').charAt(0).toUpperCase();
+                const avatarStyle = demande.avatar_url ? `background-image:url('${demande.avatar_url}');` : '';
+
+                const item = document.createElement('div');
+                item.className = 'ami-item';
+                item.innerHTML = `
+                    <div class="ami-avatar" style="${avatarStyle}">${demande.avatar_url ? '' : initial}</div>
+                    <div class="ami-info">
+                        <div class="ami-name">${escapeHTML(demande.nom)}</div>
+                        <div class="ami-sub">⏳ En attente · ${escapeHTML(demande.domaine || '')}</div>
+                    </div>
+                    <div class="ami-actions">
+                        <button class="btn-remove" onclick="annulerDemande('${demande.friendship_id}')">
+                            <i class="fas fa-times"></i> Annuler
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function mettreAJourCompteurs() {
+            const cFriends = document.getElementById('countFriends');
+            const cReceived = document.getElementById('countReceived');
+            const cSent = document.getElementById('countSent');
+
+            cFriends.textContent = friendsList.length;
+            cReceived.textContent = receivedList.length;
+            cSent.textContent = sentList.length;
+
+            cFriends.style.display = friendsList.length === 0 ? 'none' : 'inline-block';
+            cReceived.style.display = receivedList.length === 0 ? 'none' : 'inline-block';
+            cSent.style.display = sentList.length === 0 ? 'none' : 'inline-block';
+        }
+
+        async function repondreDemande(friendshipId, accept) {
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client.rpc('repondre_demande_ami', {
+                p_friendship_id: friendshipId,
+                p_accept: accept
+            });
+
+            if (error || !data) {
+                alert('Erreur : ' + (error ? error.message : 'Action impossible'));
+                return;
+            }
+
+            await chargerTout();
+        }
+
+        async function retirerAmi(friendshipId) {
+            if (!confirm('Retirer cet ami ?')) return;
+
+            const client = initialiserSupabase();
+            if (!client) return;
+
+            const { data, error } = await client.rpc('supprimer_ami', { p_friendship_id: friendshipId });
+            if (error || !data) {
+                alert('Erreur');
+                return;
+            }
+
+            await chargerTout();
+        }
+
+        async function annulerDemande(friendshipId) {
+            if (!confirm('Annuler cette demande ?')) return;
+            await retirerAmi(friendshipId);
+        }
+
+        function ouvrirConversation(userId) {
+            window.location.href = 'messagerie.html?user=' + userId;
+        }
+
+        function voirProfil(userId) {
+            // Rediriger vers le fil avec le profil à ouvrir
+            window.location.href = 'fil-actualite.html?profil=' + userId;
+        }
+
+        document.querySelectorAll('.tab-amis').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-amis').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.panel-amis').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('panel' + this.dataset.tab.charAt(0).toUpperCase() + this.dataset.tab.slice(1)).classList.add('active');
+            });
+        });
+
+        initialiser().catch(err => console.error('Erreur amis :', err));
+    </script>
+
+</body>
+</html>
