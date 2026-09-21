@@ -106,9 +106,7 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
-        .tabs::-webkit-scrollbar {
-            display: none;
-        }
+        .tabs::-webkit-scrollbar { display: none; }
         .tab-btn {
             background: #fff;
             border: 1.5px solid var(--gris-clair);
@@ -266,6 +264,22 @@
         .admin-item .item-actions button.btn-success:hover {
             background: #e8f5e9;
             border-color: #1e5a2f;
+        }
+
+        .user-avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #0a1628;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
         }
 
         .badge-type {
@@ -891,7 +905,7 @@
                 item.innerHTML =
                     '<div class="item-header">' +
                         '<div style="display:flex;align-items:center;gap:12px;">' +
-                            '<div style="width:40px;height:40px;border-radius:50%;background:#0a1628;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;background-size:cover;background-position:center;' + avatarStyle + '">' + (u.avatar_url ? '' : initial) + '</div>' +
+                            '<div class="user-avatar-circle" style="' + avatarStyle + '">' + (u.avatar_url ? '' : initial) + '</div>' +
                             '<div>' +
                                 '<div class="item-title">' + escapeHTML(u.nom || '—') + '</div>' +
                                 '<div class="item-meta">' + escapeHTML(u.email || '—') + '</div>' +
@@ -965,7 +979,7 @@
                     '<div class="item-actions">' +
                         '<button class="btn-danger" onclick="supprimerCarte(\'' + card.id + '\')"><i class="fas fa-trash"></i> Supprimer</button>' +
                     '</div>';
-                container.appendChild(item);
+                container.appendChild(item);  /* ✅ CORRIGÉ : item au lieu de list */
             });
         }
 
@@ -1062,15 +1076,11 @@
                         '<div class="bilan-stat"><div class="v">' + (b.nb_visites || 0) + '</div><div class="l">Visites</div></div>' +
                         '<div class="bilan-stat"><div class="v">' + (b.nb_visiteurs_uniques || 0) + '</div><div class="l">Visiteurs</div></div>' +
                         '<div class="bilan-stat"><div class="v">' + (b.nb_nouveaux_utilisateurs || 0) + '</div><div class="l">Nouveaux</div></div>' +
-                        '<div class="bilan-stat"><div class="v">' + (nb_nouvelles_cartes_val(b)) + '</div><div class="l">Cartes</div></div>' +
+                        '<div class="bilan-stat"><div class="v">' + (b.nb_nouvelles_cartes || 0) + '</div><div class="l">Cartes</div></div>' +
                         '<div class="bilan-stat"><div class="v">' + (b.nb_feedbacks || 0) + '</div><div class="l">Feedbacks</div></div>' +
                     '</div>';
                 container.appendChild(item);
             });
-        }
-
-        function nb_nouvelles_cartes_val(b) {
-            return b.nb_nouvelles_cartes || 0;
         }
 
         // ============================================================
