@@ -36,6 +36,28 @@
             font-size: 15px;
         }
 
+        /* ---- Section titres ---- */
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--noir);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title i { color: var(--rouge); }
+
+        /* ---- VIDÉOS EN VEDETTE (juste après la navbar) ---- */
+        .featured-section {
+            margin: 24px 0 32px;
+        }
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
         /* ---- Barre de recherche ---- */
         .search-section {
             background: #fff;
@@ -44,7 +66,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 28px;
+            margin-bottom: 32px;
             border: 1px solid #e8eef6;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
         }
@@ -115,52 +137,10 @@
             line-height: 1.6;
         }
 
-        /* ---- Section vidéos ---- */
+        /* ---- TOUTES LES AUTRES VIDÉOS (en bas) ---- */
         .videos-section {
             margin-bottom: 40px;
         }
-        .videos-section .section-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--noir);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-align: left;
-        }
-        .videos-section .section-title i {
-            color: var(--rouge);
-        }
-
-        /* Lecteur principal (en haut) */
-        .main-player {
-            background: #000;
-            border-radius: 24px;
-            overflow: hidden;
-            margin-bottom: 24px;
-            position: relative;
-            aspect-ratio: 16 / 9;
-            width: 100%;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        }
-        .main-player iframe {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Grille des vidéos en vedette */
-        .featured-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        /* Grille des vidéos en bas */
         .videos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -181,10 +161,6 @@
             transform: translateY(-4px);
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
             border-color: #bccfdf;
-        }
-        .video-card.active {
-            border-color: var(--rouge);
-            box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.15);
         }
 
         .video-thumb {
@@ -264,25 +240,12 @@
         }
 
         @media (max-width: 520px) {
-            .decouvrir-header {
-                padding: 24px 20px;
-            }
-            .decouvrir-header h1 {
-                font-size: 24px;
-            }
-            .search-section {
-                padding: 6px 6px 6px 18px;
-            }
-            .category-card {
-                padding: 24px 20px;
-            }
-            .category-card h4 {
-                font-size: 19px;
-            }
-            .featured-grid,
-            .videos-grid {
-                grid-template-columns: 1fr;
-            }
+            .decouvrir-header { padding: 24px 20px; }
+            .decouvrir-header h1 { font-size: 24px; }
+            .search-section { padding: 6px 6px 6px 18px; }
+            .category-card { padding: 24px 20px; }
+            .category-card h4 { font-size: 19px; }
+            .featured-grid, .videos-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -323,24 +286,30 @@
             </div>
         </nav>
 
-        <!-- EN-TÊTE -->
-        <div class="decouvrir-header">
-            <h1>Découvrir <span>Demma</span></h1>
-            <p>Explorez nos valeurs à travers nos vidéos</p>
+        <!-- ============================================================
+             3 VIDÉOS EN VEDETTE (juste après la navbar)
+             ============================================================ -->
+        <div class="featured-section">
+            <div class="section-title">
+                <i class="fas fa-star"></i> À découvrir
+            </div>
+            <div class="featured-grid" id="featuredGrid"></div>
         </div>
 
-        <!-- BARRE DE RECHERCHE -->
+        <!-- BARRE DE RECHERCHE (cherche tout) -->
         <div class="search-section">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Rechercher une vidéo..." />
+            <input type="text" id="searchInput" placeholder="Rechercher une vidéo, une info, un thème..." />
         </div>
 
-        <!-- 4 GRANDES CARTES (filtres cliquables) -->
+        <!-- ============================================================
+             4 GRANDES CARTES
+             ============================================================ -->
         <div class="categories-grid" id="categoriesGrid">
             <div class="category-card active" data-filter="all">
                 <i class="fas fa-th-large icon"></i>
                 <h4>Tous</h4>
-                <p>Voir toutes les vidéos de la plateforme sans filtre.</p>
+                <p>Voir tout le contenu de la plateforme sans filtre.</p>
             </div>
 
             <div class="category-card" data-filter="echanges">
@@ -368,23 +337,9 @@
             </div>
         </div>
 
-        <!-- LECTEUR PRINCIPAL -->
-        <div class="videos-section">
-            <div class="section-title">
-                <i class="fas fa-play-circle"></i> Vidéo à la une
-            </div>
-            <div class="main-player" id="mainPlayer"></div>
-        </div>
-
-        <!-- VIDÉOS EN VEDETTE -->
-        <div class="videos-section">
-            <div class="section-title">
-                <i class="fas fa-star"></i> À découvrir
-            </div>
-            <div class="featured-grid" id="featuredGrid"></div>
-        </div>
-
-        <!-- TOUTES LES VIDÉOS -->
+        <!-- ============================================================
+             TOUTES LES AUTRES VIDÉOS (en bas)
+             ============================================================ -->
         <div class="videos-section">
             <div class="section-title">
                 <i class="fas fa-film"></i> Toutes nos vidéos
@@ -392,7 +347,7 @@
             <div class="videos-grid" id="videosGrid"></div>
             <div class="no-result" id="noResult">
                 <i class="fas fa-search"></i>
-                <h3>Aucune vidéo trouvée</h3>
+                <h3>Aucun résultat trouvé</h3>
                 <p>Essayez un autre mot-clé ou un autre filtre.</p>
             </div>
         </div>
@@ -421,7 +376,7 @@
 
     <script>
         // ============================================================
-        // LISTE DES VIDÉOS
+        // 3 VIDÉOS EN VEDETTE (en haut)
         // ============================================================
         const videosFeatured = [
             { id: '1PFy05jHyXY', titre: 'Découvrir Demma — Présentation', categorie: 'informations' },
@@ -429,6 +384,9 @@
             { id: 'CUEEM_o8oiY', titre: 'Communication entre membres', categorie: 'communication' }
         ];
 
+        // ============================================================
+        // TOUTES LES AUTRES VIDÉOS (en bas)
+        // ============================================================
         const videosAll = [
             { id: 'QA2o3ricIOg', titre: 'Échange #1 — Découverte', categorie: 'echanges' },
             { id: 'h8o49cNKBWc', titre: 'Échange #2 — Troc digital', categorie: 'echanges' },
@@ -442,19 +400,6 @@
             { id: 'U1880buqamw', titre: 'Information #3 — Géographie', categorie: 'informations' },
             { id: 'UXOmORbpMR0', titre: 'Communication #3 — Rencontres', categorie: 'communication' }
         ];
-
-        // ============================================================
-        // LECTEUR PRINCIPAL
-        // ============================================================
-        const mainPlayer = document.getElementById('mainPlayer');
-
-        function chargerVideoPrincipale(videoId) {
-            mainPlayer.innerHTML = '<iframe src="https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
-        }
-
-        if (videosFeatured.length > 0) {
-            chargerVideoPrincipale(videosFeatured[0].id);
-        }
 
         // ============================================================
         // OUTILS
@@ -498,8 +443,7 @@
                 '</div>';
 
             card.addEventListener('click', function() {
-                chargerVideoPrincipale(video.id);
-                mainPlayer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                window.open('https://www.youtube.com/watch?v=' + video.id, '_blank');
             });
 
             return card;
@@ -522,7 +466,7 @@
         afficherVideos();
 
         // ============================================================
-        // FILTRES (cartes cliquables)
+        // FILTRES (4 cartes cliquables)
         // ============================================================
         let filtreActif = 'all';
         let rechercheTexte = '';
@@ -537,7 +481,7 @@
         });
 
         // ============================================================
-        // RECHERCHE
+        // RECHERCHE (cherche dans TOUT : vidéos, catégories, thèmes)
         // ============================================================
         document.getElementById('searchInput').addEventListener('input', function() {
             rechercheTexte = this.value.toLowerCase().trim();
@@ -551,12 +495,16 @@
             const noResult = document.getElementById('noResult');
             let visibleCount = 0;
 
+            // Filtrer la grille du bas
             document.querySelectorAll('#videosGrid .video-card').forEach(card => {
                 const categorie = card.dataset.categorie;
                 const titre = card.dataset.titre.toLowerCase();
+                const categorieLabel = getCategorieLabel(categorie).toLowerCase();
 
                 const matchCategorie = (filtreActif === 'all') || (categorie === filtreActif);
-                const matchRecherche = (rechercheTexte === '') || (titre.indexOf(rechercheTexte) !== -1);
+                const matchRecherche = (rechercheTexte === '') ||
+                                       (titre.indexOf(rechercheTexte) !== -1) ||
+                                       (categorieLabel.indexOf(rechercheTexte) !== -1);
 
                 if (matchCategorie && matchRecherche) {
                     card.style.display = 'block';
@@ -568,12 +516,16 @@
 
             noResult.style.display = (visibleCount === 0) ? 'block' : 'none';
 
+            // Filtrer aussi la grille du haut
             document.querySelectorAll('#featuredGrid .video-card').forEach(card => {
                 const categorie = card.dataset.categorie;
                 const titre = card.dataset.titre.toLowerCase();
+                const categorieLabel = getCategorieLabel(categorie).toLowerCase();
 
                 const matchCategorie = (filtreActif === 'all') || (categorie === filtreActif);
-                const matchRecherche = (rechercheTexte === '') || (titre.indexOf(rechercheTexte) !== -1);
+                const matchRecherche = (rechercheTexte === '') ||
+                                       (titre.indexOf(rechercheTexte) !== -1) ||
+                                       (categorieLabel.indexOf(rechercheTexte) !== -1);
 
                 card.style.display = (matchCategorie && matchRecherche) ? 'block' : 'none';
             });
