@@ -471,14 +471,33 @@
         let filtreActif = 'all';
         let rechercheTexte = '';
 
-        document.querySelectorAll('#categoriesGrid .category-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('#categoriesGrid .category-card').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-                filtreActif = this.dataset.filter;
-                appliquerFiltres();
-            });
-        });
+        // ============================================================
+// CARTES CATÉGORIES → redirection vers leurs pages respectives
+// ============================================================
+const PAGES_CATEGORIES = {
+    echanges:      'echanges.html',
+    informations:  'informations.html',
+    communication: 'communication.html',
+    conservation:  'conservation.html'
+};
+
+document.querySelectorAll('#categoriesGrid .category-card').forEach(card => {
+    card.addEventListener('click', function() {
+        const filtre = this.dataset.filter;
+
+        // Si la carte a une page dédiée → redirection
+        if (PAGES_CATEGORIES[filtre]) {
+            window.location.href = PAGES_CATEGORIES[filtre];
+            return;
+        }
+
+        // Sinon (carte "Tous" uniquement) → filtre comme avant
+        document.querySelectorAll('#categoriesGrid .category-card').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        filtreActif = filtre;
+        appliquerFiltres();
+    });
+});
 
         // ============================================================
         // RECHERCHE (cherche dans TOUT : vidéos, catégories, thèmes)
