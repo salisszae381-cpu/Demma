@@ -416,14 +416,14 @@ async function chargerUtilisateur() {
 }
 
 /* =============================================================
-   MEMBRES
+   MEMBRES (lecture via profiles_public → accessible à tous)
    ============================================================= */
 async function chargerMembres() {
   const client = initialiserSupabase();
   if (!client) return;
 
   const { data, error } = await client
-    .from('profiles')
+    .from('profiles_public')
     .select('id, nom, avatar_url, domaine, sexe, age, pays, created_at')
     .order('created_at', { ascending: false });
 
@@ -444,17 +444,18 @@ function abonnerTempsReel() {
 
   if (realtimeCh) client.removeChannel(realtimeCh);
 
+  // Temps réel sur profiles_public (les vues exposent le même canal)
   realtimeCh = client
     .channel('profiles-echanges')
     .on('postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'profiles' },
+        { event: 'INSERT', schema: 'public', table: 'profiles_public' },
         payload => {
           if (CURRENT_USER && payload.new.id === CURRENT_USER.id) return;
           ALL_MEMBERS.unshift(payload.new);
           renderMembers();
         })
     .on('postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'profiles' },
+        { event: 'UPDATE', schema: 'public', table: 'profiles_public' },
         payload => {
           const i = ALL_MEMBERS.findIndex(m => m.id === payload.new.id);
           if (i !== -1) ALL_MEMBERS[i] = { ...ALL_MEMBERS[i], ...payload.new };
@@ -529,14 +530,12 @@ function renderMembers() {
       const action = btn.dataset.action;
 
       if (action === 'discuss') {
-        // Discuter : réservé aux membres connectés
         if (!CURRENT_USER) {
           window.location.href = 'connexion.html?redirect=echanges.html';
           return;
         }
         window.location.href = 'messagerie.html?user=' + encodeURIComponent(id);
       } else {
-        // Profil : accessible à TOUT LE MONDE (lecture seule)
         ouvrirFicheProfil(id);
       }
     });
@@ -544,7 +543,7 @@ function renderMembers() {
 }
 
 /* =============================================================
-   FICHE PROFIL (modale lecture seule, accessible à tous)
+   FICHE PROFIL (lecture via profiles_public, accessible à tous)
    ============================================================= */
 async function ouvrirFicheProfil(userId) {
   const overlay = document.getElementById('profilOverlay');
@@ -555,7 +554,7 @@ async function ouvrirFicheProfil(userId) {
   overlay.classList.add('show');
 
   const { data, error } = await client
-    .from('profiles')
+    .from('profiles_public')
     .select('id, nom, avatar_url, domaine, sexe, age, pays, created_at')
     .eq('id', userId)
     .single();
@@ -585,7 +584,6 @@ async function ouvrirFicheProfil(userId) {
   html += '<div class="profil-info-row"><span class="label"><i class="fas fa-calendar"></i> ' + t('inscription') + '</span><span class="value">' + dateInscription + '</span></div>';
   html += '</div>';
 
-  // Bouton "Discuter avec ce membre" — visible par tous, mais réservé aux connectés
   html += '<div class="profil-actions">';
   html += '<button id="btnDiscuterDepuisProfil"><i class="fas fa-comments"></i> ' + t('discuterAvec') + '</button>';
   html += '</div>';
