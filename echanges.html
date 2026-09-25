@@ -147,6 +147,76 @@
   }
   @keyframes sp { to { transform: rotate(360deg); } }
 
+  /* === MODALE PROFIL (lecture seule, accessible à TOUT LE MONDE) === */
+  .profil-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(10, 22, 40, 0.7); z-index: 3000;
+    align-items: center; justify-content: center;
+    padding: 20px; overflow-y: auto;
+  }
+  .profil-overlay.show { display: flex; }
+  .profil-box {
+    background: #fff; border-radius: 32px;
+    padding: 32px 28px; max-width: 500px; width: 100%;
+    position: relative; text-align: center;
+    max-height: 90vh; overflow-y: auto;
+  }
+  .profil-box .close-btn {
+    position: absolute; top: 16px; right: 16px;
+    background: #f5f0f0; border: none;
+    width: 40px; height: 40px; border-radius: 50%;
+    font-size: 18px; color: var(--rouge);
+    cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+  }
+  .profil-box .big-avatar {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: var(--noir); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; font-weight: 700; margin: 0 auto 16px;
+    background-size: cover; background-position: center;
+    border: 4px solid #f0f2f5;
+  }
+  .profil-box h2 {
+    font-size: 22px; font-weight: 700;
+    color: var(--noir); margin-bottom: 4px;
+  }
+  .profil-box .subtitle {
+    color: var(--gris-texte); font-size: 14px; margin-bottom: 24px;
+  }
+  .profil-info-list {
+    text-align: left; background: #fafdff;
+    border-radius: 16px; padding: 16px 20px;
+    margin-bottom: 16px; border: 1px solid #e8eef6;
+  }
+  .profil-info-row {
+    display: flex; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid #eef3f9; font-size: 14px;
+  }
+  .profil-info-row:last-child { border-bottom: none; }
+  .profil-info-row .label {
+    color: var(--gris-texte); font-weight: 500;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .profil-info-row .label i { color: var(--rouge); width: 18px; }
+  .profil-info-row .value {
+    color: var(--noir); font-weight: 600;
+    text-align: right; max-width: 60%; word-break: break-word;
+  }
+  .profil-actions {
+    display: flex; gap: 10px; margin-top: 20px;
+  }
+  .profil-actions button {
+    flex: 1; padding: 14px 20px; border-radius: 60px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: inherit; border: none;
+    display: inline-flex; align-items: center;
+    justify-content: center; gap: 8px;
+    background: var(--noir); color: #fff;
+    transition: 0.15s;
+  }
+  .profil-actions button:hover { background: var(--rouge); }
+
   body.rtl { direction: rtl; }
 
   @media (max-width: 640px) {
@@ -165,17 +235,17 @@
       <a href="index.html"><h1>Demma<span>.</span></h1></a>
     </div>
     <div class="nav-right">
-      <a href="fil-actualite.html" class="btn-outline">
+      <a href="fil-actualite.html" class="btn-outline nav-protected">
         <i class="fas fa-newspaper"></i>
-        <span>Fil d'actualité</span>
+        <span id="t-navFil">Fil d'actualité</span>
       </a>
-      <a href="amis.html" class="btn-outline">
+      <a href="amis.html" class="btn-outline nav-protected">
         <i class="fas fa-users"></i>
-        <span>Amis</span>
+        <span id="t-navAmis">Amis</span>
       </a>
-      <a href="profil.html" class="btn-outline">
+      <a href="profil.html" class="btn-outline nav-protected">
         <i class="fas fa-user"></i>
-        <span id="t-navProfile">Mon profil</span>
+        <span id="t-navProfil">Mon profil</span>
       </a>
     </div>
   </nav>
@@ -215,6 +285,14 @@
 
 </div>
 
+<!-- MODALE PROFIL (accessible à tout le monde) -->
+<div class="profil-overlay" id="profilOverlay">
+  <div class="profil-box">
+    <button class="close-btn" id="profilClose"><i class="fas fa-times"></i></button>
+    <div id="profilContent"></div>
+  </div>
+</div>
+
 <script src="js/supabase.js"></script>
 
 <script>
@@ -229,11 +307,16 @@ const I18N = {
     loading: "Chargement des membres...",
     empty: "Aucun membre trouvé",
     discuss: "Discuter",
-    profile: "Profil",
+    profile: "Voir le profil",
     since: "Membre depuis",
     guest: "Créez un compte pour participer aux échanges",
     years: "ans",
-    navProfile: "Mon profil"
+    navFil: "Fil d'actualité",
+    navAmis: "Amis",
+    navProfil: "Mon profil",
+    sexe: "Sexe", age: "Âge", pays: "Pays", domaine: "Domaine", inscription: "Inscription",
+    profilIntrouvable: "Profil introuvable",
+    discuterAvec: "Discuter avec ce membre"
   },
   en: {
     title: "Member exchanges",
@@ -242,11 +325,16 @@ const I18N = {
     loading: "Loading members...",
     empty: "No member found",
     discuss: "Chat",
-    profile: "Profile",
+    profile: "View profile",
     since: "Member since",
     guest: "Create an account to join exchanges",
     years: "yrs",
-    navProfile: "My profile"
+    navFil: "News feed",
+    navAmis: "Friends",
+    navProfil: "My profile",
+    sexe: "Gender", age: "Age", pays: "Country", domaine: "Domain", inscription: "Joined",
+    profilIntrouvable: "Profile not found",
+    discuterAvec: "Chat with this member"
   },
   ar: {
     title: "التبادلات بين الأعضاء",
@@ -255,11 +343,16 @@ const I18N = {
     loading: "جارٍ تحميل الأعضاء...",
     empty: "لم يتم العثور على أي عضو",
     discuss: "محادثة",
-    profile: "الملف",
+    profile: "عرض الملف",
     since: "عضو منذ",
     guest: "أنشئ حسابًا للمشاركة في التبادلات",
     years: "سنة",
-    navProfile: "ملفي"
+    navFil: "آخر الأخبار",
+    navAmis: "الأصدقاء",
+    navProfil: "ملفي",
+    sexe: "الجنس", age: "العمر", pays: "البلد", domaine: "المجال", inscription: "التسجيل",
+    profilIntrouvable: "الملف غير موجود",
+    discuterAvec: "محادثة مع هذا العضو"
   }
 };
 
@@ -272,7 +365,9 @@ function appliquerLangue() {
   document.getElementById('t-title').textContent      = t('title');
   document.getElementById('t-subtitle').textContent   = t('subtitle');
   document.getElementById('t-loading').textContent    = t('loading');
-  document.getElementById('t-navProfile').textContent = t('navProfile');
+  document.getElementById('t-navFil').textContent     = t('navFil');
+  document.getElementById('t-navAmis').textContent    = t('navAmis');
+  document.getElementById('t-navProfil').textContent  = t('navProfil');
   document.getElementById('searchInput').placeholder  = t('search');
   document.querySelectorAll('.lang-switch button').forEach(b => {
     b.classList.toggle('active', b.dataset.lang === LANG);
@@ -339,7 +434,6 @@ async function chargerMembres() {
     return;
   }
 
-  // On exclut l'utilisateur connecté de la liste (il ne va pas se discuter lui-même)
   ALL_MEMBERS = (data || []).filter(m => !CURRENT_USER || m.id !== CURRENT_USER.id);
   renderMembers();
 }
@@ -370,7 +464,7 @@ function abonnerTempsReel() {
 }
 
 /* =============================================================
-   RENDU
+   FILTRE + RENDU
    ============================================================= */
 function filtrer() {
   const q = FILTER.trim().toLowerCase();
@@ -434,18 +528,98 @@ function renderMembers() {
       const id     = btn.dataset.id;
       const action = btn.dataset.action;
 
-      if (!CURRENT_USER) {
-        // Non connecté → redirection vers connexion, retour sur échanges
-        window.location.href = 'connexion.html?redirect=echanges.html';
-        return;
-      }
-
       if (action === 'discuss') {
-        // Ta messagerie accepte ?user=ID (lignes 795-820 de messagerie.html)
+        // Discuter : réservé aux membres connectés
+        if (!CURRENT_USER) {
+          window.location.href = 'connexion.html?redirect=echanges.html';
+          return;
+        }
         window.location.href = 'messagerie.html?user=' + encodeURIComponent(id);
       } else {
-        // Ta messagerie accepte maintenant ?profil=ID (grâce aux 4 lignes ajoutées)
-        window.location.href = 'messagerie.html?profil=' + encodeURIComponent(id);
+        // Profil : accessible à TOUT LE MONDE (lecture seule)
+        ouvrirFicheProfil(id);
+      }
+    });
+  });
+}
+
+/* =============================================================
+   FICHE PROFIL (modale lecture seule, accessible à tous)
+   ============================================================= */
+async function ouvrirFicheProfil(userId) {
+  const overlay = document.getElementById('profilOverlay');
+  const content = document.getElementById('profilContent');
+  const client  = initialiserSupabase();
+
+  content.innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-spin" style="font-size:32px;color:var(--rouge);"></i></div>';
+  overlay.classList.add('show');
+
+  const { data, error } = await client
+    .from('profiles')
+    .select('id, nom, avatar_url, domaine, sexe, age, pays, created_at')
+    .eq('id', userId)
+    .single();
+
+  if (error || !data) {
+    content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--rouge);">' + t('profilIntrouvable') + '</div>';
+    return;
+  }
+
+  const p = data;
+  const initial = (p.nom || '?').charAt(0).toUpperCase();
+  const avatarStyle = p.avatar_url ? "background-image:url('" + p.avatar_url + "');" : '';
+  const dateLocale = LANG === 'ar' ? 'ar-MA' : LANG === 'en' ? 'en-US' : 'fr-FR';
+  const dateInscription = p.created_at
+    ? new Date(p.created_at).toLocaleDateString(dateLocale, { day: '2-digit', month: 'long', year: 'numeric' })
+    : '—';
+
+  let html = '<div class="big-avatar" style="' + avatarStyle + '">' + (p.avatar_url ? '' : initial) + '</div>';
+  html += '<h2>' + escapeHTML(p.nom || '—') + '</h2>';
+  html += '<p class="subtitle">' + escapeHTML(p.domaine || '—') + '</p>';
+
+  html += '<div class="profil-info-list">';
+  if (p.sexe)    html += '<div class="profil-info-row"><span class="label"><i class="fas fa-venus-mars"></i> ' + t('sexe') + '</span><span class="value">' + escapeHTML(p.sexe) + '</span></div>';
+  if (p.age)     html += '<div class="profil-info-row"><span class="label"><i class="fas fa-birthday-cake"></i> ' + t('age') + '</span><span class="value">' + p.age + ' ' + t('years') + '</span></div>';
+  if (p.pays)    html += '<div class="profil-info-row"><span class="label"><i class="fas fa-globe-africa"></i> ' + t('pays') + '</span><span class="value">' + escapeHTML(p.pays) + '</span></div>';
+  if (p.domaine) html += '<div class="profil-info-row"><span class="label"><i class="fas fa-briefcase"></i> ' + t('domaine') + '</span><span class="value">' + escapeHTML(p.domaine) + '</span></div>';
+  html += '<div class="profil-info-row"><span class="label"><i class="fas fa-calendar"></i> ' + t('inscription') + '</span><span class="value">' + dateInscription + '</span></div>';
+  html += '</div>';
+
+  // Bouton "Discuter avec ce membre" — visible par tous, mais réservé aux connectés
+  html += '<div class="profil-actions">';
+  html += '<button id="btnDiscuterDepuisProfil"><i class="fas fa-comments"></i> ' + t('discuterAvec') + '</button>';
+  html += '</div>';
+
+  content.innerHTML = html;
+
+  document.getElementById('btnDiscuterDepuisProfil').addEventListener('click', () => {
+    if (!CURRENT_USER) {
+      window.location.href = 'connexion.html?redirect=echanges.html';
+      return;
+    }
+    window.location.href = 'messagerie.html?user=' + encodeURIComponent(p.id);
+  });
+}
+
+/* Fermeture modale */
+document.getElementById('profilClose').addEventListener('click', () => {
+  document.getElementById('profilOverlay').classList.remove('show');
+});
+document.getElementById('profilOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('profilOverlay')) {
+    document.getElementById('profilOverlay').classList.remove('show');
+  }
+});
+
+/* =============================================================
+   NAVBAR — rediriger les visiteurs non connectés
+   ============================================================= */
+function protegerNavbar() {
+  document.querySelectorAll('.nav-protected').forEach(lien => {
+    lien.addEventListener('click', e => {
+      if (!CURRENT_USER) {
+        e.preventDefault();
+        window.location.href = 'connexion.html?redirect=echanges.html';
       }
     });
   });
@@ -465,6 +639,7 @@ document.getElementById('searchInput').addEventListener('input', e => {
 (async function init() {
   appliquerLangue();
   await chargerUtilisateur();
+  protegerNavbar();
   await chargerMembres();
   abonnerTempsReel();
 })();
